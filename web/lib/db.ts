@@ -97,7 +97,7 @@ export async function getLeagueTableGroups() {
     orderBy: [{ season: { current: 'desc' } }, { position: 'asc' }],
   });
 
-  return rows.reduce((groups: Record<string, any[]>, row) => {
+  return rows.reduce((groups: Record<string, any[]>, row: any) => {
     const seasonName = row.season?.name ?? 'Unassigned Season';
     const seasonKey = row.season?.current ? `${seasonName} (Current)` : seasonName;
     if (!groups[seasonKey]) {
