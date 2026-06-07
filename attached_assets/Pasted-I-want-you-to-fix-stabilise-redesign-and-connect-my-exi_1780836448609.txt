@@ -1,0 +1,592 @@
+I want you to fix, stabilise, redesign, and connect my existing RSA website correctly.
+
+IMPORTANT:
+Do NOT create an Expo/mobile app.
+Do NOT create a new website from scratch.
+Do NOT rebuild the project into something unrelated.
+Do NOT follow any previous mobile-artifact instructions.
+Use the existing GitHub-imported project code already inside Replit.
+
+I do NOT want to use Vercel anymore.
+I want this website to run, build, preview, and deploy/host properly on Replit.
+
+Main goal:
+Make the existing RSA website professional, clean, secure, Discord-connected, role-aware, roster-aware, permission-based, Replit-ready, and error-free from a build/deployment point of view.
+
+This is likely a monorepo with:
+- a Next.js website, probably inside /web
+- a Discord bot, probably inside /bot
+- shared/database code
+- Prisma/database functionality
+- Discord authentication/data
+- Discord role detection logic
+- existing bot/database logic that may already sync roles or rosters
+
+First, inspect the project before changing anything:
+1. Find the existing web app folder.
+2. Find the existing Discord bot folder.
+3. Find shared/database folders.
+4. Find the Prisma schema/database models.
+5. Find existing Discord auth logic.
+6. Find existing Discord role detection/sync logic.
+7. Find existing roster/team/free agent/manager logic.
+8. Find existing permission logic.
+9. Find all assets/images, especially rsa1.png.
+10. Tell me your plan before making major changes.
+
+Branding:
+Use original RSA branding only.
+
+Use:
+- RSA
+- RSA Operations Centre
+- RSA Management Platform
+- RSA Members Only
+- rsa1.png as the real logo
+
+Do NOT use:
+- RFA
+- Orbis
+- Roblox Football Association
+- Orbis League Management Platform
+- red placeholder logo
+- fake placeholder branding
+
+The current preview showed a plain red rounded square/circle as the logo. That is wrong.
+Replace it everywhere with rsa1.png.
+
+Use rsa1.png in:
+- public login page
+- dashboard header
+- navigation/header branding
+- relevant branded cards
+- favicon/app icon if appropriate and safe
+
+Fix broken image paths and load all existing PNG/image assets correctly, including:
+- rsa1.png
+- team logos
+- league logos
+- player avatars/images if supported
+- staff/referee/media icons if supported
+- any other existing website assets
+
+Do not delete original assets unless absolutely necessary.
+
+Original design requirement:
+The starting page currently looks too similar to the RFA/Orbis reference image I showed earlier. I do not want copyright issues or copied styling.
+
+Use the reference only as general inspiration for a professional dark sports management platform, but make the RSA version original and unique.
+
+The RSA design should be:
+- clean
+- modern
+- professional
+- dark themed
+- original to RSA
+- not a clone of the RFA/Orbis design
+- not messy
+- not placeholder-looking
+- not Replit-looking
+- not cluttered
+- responsive on desktop and mobile
+- clearly interactive
+
+Public logged-out landing page:
+First-time users and logged-out users must automatically see a clean RSA Discord authentication page.
+
+Logged-out users must NOT see:
+- dashboard
+- sidebar
+- internal navigation
+- admin pages
+- staff pages
+- roster pages
+- player data
+- league data
+- management tools
+
+The public landing page should include:
+- rsa1.png logo
+- RSA Operations Centre branding
+- dark professional background
+- clear explanation that this is a private RSA Discord-authenticated management system
+- badge/pill saying “PRIVATE LEAGUE — RSA MEMBERS ONLY”
+- “Not signed in” status
+- “Sign in with Discord” button
+- access requirement cards:
+  1. “In the RSA Discord”
+  2. “RSA Verified”
+- small note saying users will be redirected to Discord to confirm identity
+- professional spacing, hover effects, and clean layout
+
+Logged-out users clicking internal links should be redirected back to this login page.
+
+Authentication:
+Users must sign in with Discord before accessing the system.
+
+After Discord login:
+1. Register the user in the database if they are new.
+2. Update the user if they already exist.
+3. Store/update:
+   - Discord user ID
+   - username
+   - display name/global name if available
+   - avatar URL
+   - email only if already available from the current auth setup
+   - last login time
+4. Check whether they are in the RSA Discord server.
+5. Fetch their Discord roles server-side only.
+6. Store/update their Discord roles in the database.
+7. Use their Discord roles to decide access, permissions, dashboard sections, roster status, team, staff status, manager status, referee status, and free agent status.
+
+Do not expose Discord bot tokens or secrets to the frontend.
+Discord role detection must happen server-side only.
+
+Discord role/server detection:
+The website should automatically detect everything it can from the RSA Discord server using the existing bot/database system if already present.
+
+It should detect:
+- verified members
+- Free Agents
+- signed players
+- team roles
+- managers
+- assistant managers if roles exist
+- staff
+- senior staff
+- commissioners
+- executives
+- referees/officials
+- media
+- developers
+- leadership
+- bot owner
+- team membership
+- roster membership
+- squad size
+- team managers
+- player status
+- free agent status
+
+Free Agents and signed players:
+Players are called “Free Agents” when they have the Free Agent role.
+
+But players can also be signed to teams such as Spain.
+
+The system should understand:
+
+- If a member has the “Free Agent” role and no team role, they should be listed as a Free Agent.
+- If a member has a team role like “Spain”, they should be detected as signed to Spain.
+- If a member has “Spain” and a player role, they should appear on the Spain roster.
+- If a member has “Spain” and “Manager”, they should be detected as the Spain manager.
+- If a member has “Spain” and “Assistant Manager” or similar, they should be detected as Spain assistant manager if that role exists.
+- If a member leaves the Spain role, the website should remove them from Spain roster on next sync/login/update.
+- Team roles should update roster pages automatically where the existing system supports it.
+
+Spain is only an example.
+Do not hardcode only Spain.
+This must work dynamically for all teams that exist in the database, config, Discord roles, or assets.
+
+Roster system:
+The website should automatically build or update rosters based on Discord roles and the existing database structure.
+
+For each team, detect and display:
+- team name
+- team logo/png if available
+- manager
+- assistant manager if available
+- players
+- Free Agents not assigned to a team
+- squad size
+- staff assigned to team if supported
+- roster status
+- empty roster fallback if no players are found
+
+Discord-connected website:
+Make the website properly connected to Discord and the bot/database system.
+
+The website should sync or detect:
+- Discord users
+- Discord roles
+- staff roles
+- manager roles
+- referee/official roles
+- player/free agent roles
+- team roles
+- rosters
+- squad sizes
+- team managers
+- verification status
+- permissions
+- user profile data
+- avatars
+- username/display name
+
+If this already exists in the GitHub code, verify it works instead of rewriting it.
+
+Very important:
+I believe some of this auto-detection already exists in my GitHub code.
+Inspect and verify the existing implementation first.
+Do not duplicate systems unnecessarily.
+Do not create conflicting role logic if the bot already handles it.
+Reuse existing bot/shared/database role detection where possible.
+
+Role sync endpoint:
+If useful and not already implemented, add a secure role-sync endpoint so the Discord bot can push updated member roles to the website/database whenever roles change in the server.
+
+The role-sync endpoint should:
+1. Be server-side only.
+2. Accept role updates from the Discord bot.
+3. Verify the request using a shared secret from Replit Secrets/environment variables.
+4. Use a variable such as ROLE_SYNC_SECRET if no existing secure internal secret exists.
+5. Reject unauthorized requests.
+6. Reject requests for the wrong guild.
+7. Update the matching user by Discord user ID.
+8. Store/update latest Discord roles.
+9. Update verification status.
+10. Update staff/manager/referee/player/free agent/team status where the existing database supports it.
+11. Update roster/team connections safely.
+12. Not duplicate users.
+13. Not break Discord login/auth.
+14. Not break the Discord bot.
+
+The bot should call this endpoint when possible on:
+- member role update
+- member join
+- member leave
+- member update
+- manual sync command if one already exists or is safe to add
+
+Do not expose this endpoint to frontend users without protection.
+Do not expose ROLE_SYNC_SECRET in client code.
+
+Bot owner:
+I am the bot owner and my ID is already in the environment configuration.
+Do not hardcode my ID.
+Do not ask me to paste the ID into chat.
+Verify the existing owner ID variable/config is used correctly.
+
+The bot owner should have full website access.
+
+If the bot owner environment variable is named BOT_OWNER_ID, OWNER_ID, DISCORD_OWNER_ID, or already exists in the project, use that existing variable.
+Only list the required Replit Secret name if needed.
+
+Permissions:
+The website must be permission-based.
+
+Users should be able to click and interact with things only if their role allows it.
+
+Normal users should be able to view permitted pages but not change important data.
+High-permission roles should be able to manage appropriate sections.
+Only the bot owner should have full access to everything.
+
+Permission hierarchy:
+
+1. Bot Owner
+- full access to everything
+- can view, create, edit, delete, approve, override, configure, sync, and manage all areas
+
+2. RSA Leadership / Commissioners / Executives
+Example roles may include:
+- Leadership
+- RSA
+- RSA | Commissioners
+- RSA | Vice Commissioners
+- RSA | Executive
+- RSA | Chairman
+- RSA | Vice Chairman
+
+Permissions:
+- high-level league management
+- manage teams, rosters, players, discipline, transfers, fixtures, results, announcements, reports, and staff areas
+- cannot access owner-only system controls unless also bot owner
+
+3. Senior Staff / Staff
+Example roles may include:
+- RSA | Staff
+- RSA | Senior Staff
+- RSA | Panel
+- RSA | Head Of Staff
+- RSA | Director
+
+Permissions:
+- use staff tools
+- manage assigned operations
+- view and update limited operational data
+- cannot manage system settings or owner tools
+
+4. Developers
+Example roles may include:
+- RSA | Developer
+- RSA | Head of Development
+
+Permissions:
+- can access technical/status pages if they exist
+- can help manage website tools if allowed
+- should not automatically get league decision powers unless also staff/leadership
+- must not see secrets in frontend
+
+5. Managers
+Permissions:
+- can view manager dashboard
+- can manage their own team only
+- can view roster and player profiles
+- can submit signings/releases/transfers if supported
+- cannot edit other teams unless also staff/leadership
+
+6. Referees / Officials
+Example roles may include:
+- RSA | Officials
+- Referee
+- Match Official
+
+Permissions:
+- can view fixtures/results
+- can submit or update match reports only if supported
+- cannot manage teams, rosters, users, or system settings
+
+7. Media
+Permissions:
+- can view media/announcement areas
+- can draft or submit content if supported
+- cannot manage players, teams, rosters, or system settings
+
+8. Players / Free Agents
+Permissions:
+- can view their own profile
+- can view allowed league/team information
+- Free Agents appear as Free Agents
+- signed players appear under their team roster
+- cannot edit important records or team data
+
+9. Verified RSA Members
+Permissions:
+- basic access only
+- can view permitted pages
+- cannot edit or manage data
+
+10. Not verified / not in server
+Permissions:
+- no dashboard access
+- show access denied or verification required page only
+
+Server-side security:
+Do not only hide buttons in the frontend.
+
+For important actions, add server-side permission checks:
+- API routes
+- database updates
+- roster changes
+- transfer changes
+- staff changes
+- team changes
+- discipline changes
+- fixture/result updates
+- announcements
+- admin actions
+- role/user management
+- sync tools
+
+Unauthorized users must not be able to bypass permissions by calling an API route directly.
+
+Interaction/UI behaviour:
+Make the website feel interactive and professional.
+
+For allowed actions:
+- buttons should be clearly clickable
+- hover states should be visible
+- cards should feel responsive
+- forms/modals should be clean where existing actions exist
+
+For restricted actions:
+- hide the button, disable it, or show a clean “You do not have permission” message
+- do not show broken/empty buttons
+- do not let unauthorized users submit changes
+
+Logged-in dashboard:
+After a verified RSA Discord user logs in, show a professional dashboard.
+
+The dashboard should have:
+- dark premium RSA UI
+- rsa1.png logo
+- top navigation where possible
+- no messy public sidebar on the login page
+- clear navigation sections
+- active state styling
+- user card on top right
+- Discord avatar
+- Discord username/display name
+- verification badge
+- detected main role
+- detected team role if available
+- sign out button
+- stat cards
+- clean widgets
+- professional spacing
+- responsive layout
+
+Suggested dashboard navigation:
+Show links based on permissions:
+- Dashboard
+- Player Profiles
+- Teams
+- Rosters
+- Transfers
+- Fixtures
+- Results
+- League Table
+- Staff
+- Managers
+- Referees/Officials
+- Discipline
+- Announcements
+- Statistics
+- Admin/Settings only for high-permission users
+
+Do not show irrelevant links to users who do not have permission.
+
+Role display:
+The top-right user card should display real authenticated data:
+- Discord avatar
+- username/display name
+- verified status
+- main detected role
+- team if any
+- sign out button
+
+Do not hardcode fake user data.
+
+Access denied page:
+If a logged-in user is not in the RSA Discord or not verified, show a clean RSA-branded page saying:
+- they must be in the RSA Discord
+- they must be verified
+- they can sign out and try again
+- no internal dashboard access
+
+Replit hosting:
+I do NOT want to use Vercel anymore.
+Make the project work properly on Replit.
+
+Please:
+1. Identify the web folder.
+2. Identify the bot folder.
+3. Identify shared/database folders.
+4. Set the correct Replit run command.
+5. Set the correct Replit build command.
+6. Set the correct Replit start/deploy command.
+7. Make sure the app binds to the correct Replit port.
+8. Make sure environment variables are read from Replit Secrets.
+9. Do not make the app Vercel-dependent.
+
+Environment variables:
+Do not hardcode secrets.
+Do not print secrets.
+Do not ask me to paste secret values into chat.
+
+List only required Replit Secret names.
+
+Likely variables may include:
+- DATABASE_URL
+- DISCORD_CLIENT_ID
+- DISCORD_CLIENT_SECRET
+- DISCORD_BOT_TOKEN
+- DISCORD_GUILD_ID
+- NEXTAUTH_SECRET or AUTH_SECRET
+- NEXTAUTH_URL or the correct Replit URL
+- BOT_OWNER_ID or the existing owner ID variable if needed
+- ROLE_SYNC_SECRET if role-sync endpoint is added
+
+Only list variables actually used by the project.
+
+Error-free requirement:
+Make this work without TypeScript, build, runtime, or deployment errors.
+
+Search the whole web project and fix:
+- implicit any errors
+- Object.entries unknown errors
+- untyped map callbacks
+- untyped forEach callbacks
+- untyped filter callbacks
+- untyped find callbacks
+- untyped reduce callbacks
+- untyped sort callbacks
+- unsafe null/undefined access
+- broken imports
+- server/client component issues
+- auth callback errors
+- Prisma/database type issues
+- environment variable issues
+- Replit run/start/build command issues
+- broken image paths
+- missing assets
+- old RFA/Orbis branding references
+- routes exposing private pages to logged-out users
+- API routes without server-side permission checks
+
+Be smart:
+If you fix one error pattern, search the whole project for the same pattern and fix it everywhere.
+
+Testing:
+After making changes:
+1. Run the website in Replit preview.
+2. Run the production build.
+3. If there is an error, fix it.
+4. Run the build again.
+5. Repeat until the build passes.
+6. Confirm logged-out users see only the RSA Discord login page.
+7. Confirm verified users see the dashboard.
+8. Confirm private routes are protected.
+9. Confirm Discord role detection is server-side only.
+10. Confirm role-based permissions are enforced.
+11. Confirm bot owner has full access using the existing environment variable/config.
+12. Confirm normal users cannot edit restricted data.
+13. Confirm staff, managers, referees, players, and Free Agents get appropriate access.
+14. Confirm team roles like Spain correctly populate rosters.
+15. Confirm Spain + Manager means manager of Spain.
+16. Confirm all teams are handled dynamically, not hardcoded.
+17. Confirm rsa1.png replaces the red placeholder logo.
+18. Confirm all relevant PNGs/assets load correctly.
+19. Confirm bot compatibility is preserved.
+20. Confirm no TypeScript/build/deployment errors remain.
+
+Before major changes:
+Show me a short plan first.
+Do not make huge random rewrites without explaining what you are doing.
+
+Final report:
+When finished, tell me:
+1. Files changed.
+2. Branding changes made.
+3. Where rsa1.png is used.
+4. What old placeholder logos were removed/replaced.
+5. Auth changes made.
+6. Discord role detection verified/changed.
+7. Roster/team detection verified/changed.
+8. Free Agent detection verified/changed.
+9. Manager/team relationship detection verified/changed.
+10. Permission system changes made.
+11. Access protection changes made.
+12. Role-sync endpoint added or verified.
+13. Bot files changed, if any.
+14. Replit commands.
+15. Required Replit Secrets.
+16. Whether preview works.
+17. Whether production build passes.
+18. Whether bot compatibility was preserved.
+19. Which roles get which permissions.
+20. Whether bot owner full access was verified.
+21. Whether all image assets/PNGs load correctly.
+22. Whether any old RFA/Orbis branding remains and why.
+
+Final result:
+The public first screen must be an original clean RSA Discord login/auth page, not a copy of the RFA/Orbis design.
+The logo must be rsa1.png, not the red placeholder.
+The dashboard should only appear after a verified RSA Discord user logs in.
+The website should automatically detect Discord roles, teams, managers, rosters, staff, referees, Free Agents, squad sizes, and permissions.
+Free Agents should show as Free Agents unless they have a team role.
+Team roles like Spain should automatically put users on the Spain roster.
+Spain + Manager should mean manager of Spain.
+This logic should work for every team, not just Spain.
+Only high-permission roles can change important data.
+Only the bot owner has full website access.
+The whole project should be RSA-branded, Replit-ready, secure, professional, interactive, connected to Discord, compatible with the bot, and error-free from a build/deployment point of view.
