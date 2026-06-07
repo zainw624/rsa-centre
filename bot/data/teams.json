@@ -1,0 +1,696 @@
+{
+  "teams": [
+    {
+      "teamId": "usa",
+      "teamName": "USA",
+      "teamCode": "USA",
+      "roleId": "1512921192527565044",
+      "coachDiscordId": "",
+      "logo": "assets/usa.png",
+      "rosterLimit": 16,
+      "rosterPlayers": []
+    },
+    {
+      "teamId": "sweden",
+      "teamName": "Sweden",
+      "teamCode": "SWE",
+      "roleId": "1512811729166405763",
+      "coachDiscordId": "",
+      "logo": "assets/sweden.png",
+      "rosterLimit": 16,
+      "rosterPlayers": []
+    },
+    {
+      "teamId": "spain",
+      "teamName": "Spain",
+      "teamCode": "ESP",
+      "roleId": "1512180540436906044",
+      "coachDiscordId": "",
+      "logo": "assets/spain.png",
+      "rosterLimit": 16,
+      "rosterPlayers": [
+        {
+          "playerId": "1498400942461026314",
+          "playerName": "lauralohl",
+          "joinedAt": "2026-06-06T20:49:20.122Z"
+        },
+        {
+          "playerId": "753316730507362395",
+          "playerName": ".vfxrie.",
+          "joinedAt": "2026-06-06T20:49:20.122Z"
+        },
+        {
+          "playerId": "1039629004589768765",
+          "playerName": "lordjxpiter.",
+          "joinedAt": "2026-06-06T20:49:20.122Z"
+        },
+        {
+          "playerId": "791986883977805834",
+          "playerName": "xadriaanx",
+          "joinedAt": "2026-06-06T20:49:20.122Z"
+        },
+        {
+          "playerId": "1153011330316509406",
+          "playerName": "4b8l",
+          "joinedAt": "2026-06-06T20:49:20.122Z"
+        },
+        {
+          "playerId": "659932710630064151",
+          "playerName": "hollan",
+          "joinedAt": "2026-06-06T20:49:20.122Z"
+        },
+        {
+          "playerId": "795367482952384552",
+          "playerName": "soyunthegoat",
+          "joinedAt": "2026-06-06T20:49:20.122Z"
+        },
+        {
+          "playerId": "673717470170972173",
+          "playerName": "0abw",
+          "joinedAt": "2026-06-06T20:49:20.122Z"
+        },
+        {
+          "playerId": "730967660564840448",
+          "playerName": "skilleado",
+          "joinedAt": "2026-06-06T20:49:20.122Z"
+        },
+        {
+          "playerId": "889911928309309492",
+          "playerName": "reydeldembow1",
+          "joinedAt": "2026-06-06T20:49:20.122Z"
+        },
+        {
+          "playerId": "1450242691056013322",
+          "playerName": "1117000",
+          "joinedAt": "2026-06-06T20:49:20.122Z"
+        },
+        {
+          "playerId": "1088897746456547400",
+          "playerName": "bossmatixonnek",
+          "joinedAt": "2026-06-06T20:49:20.122Z"
+        },
+        {
+          "playerId": "750400414100226178",
+          "playerName": "oxiian",
+          "joinedAt": "2026-06-06T20:49:20.122Z"
+        },
+        {
+          "playerId": "1486908813289455748",
+          "playerName": "kaidea123xx",
+          "joinedAt": "2026-06-06T20:49:20.122Z"
+        },
+        {
+          "playerId": "740266815799689228",
+          "playerName": "tungtungagent",
+          "joinedAt": "2026-06-06T20:49:20.122Z"
+        }
+      ]
+    },
+    {
+      "teamId": "japan",
+      "teamName": "Japan",
+      "teamCode": "JPN",
+      "roleId": "1512180583042781284",
+      "coachDiscordId": "",
+      "logo": "assets/japan.png",
+      "rosterLimit": 16,
+      "rosterPlayers": [
+        {
+          "playerId": "1200010689406832663",
+          "playerName": "swaabi.",
+          "joinedAt": "2026-06-06T20:49:20.124Z"
+        },
+        {
+          "playerId": "1028382756796907552",
+          "playerName": "ferisss_4",
+          "joinedAt": "2026-06-06T20:49:20.124Z"
+        },
+        {
+          "playerId": "1425499605386395779",
+          "playerName": "luki33__",
+          "joinedAt": "2026-06-06T20:49:20.124Z"
+        },
+        {
+          "playerId": "1319973147352629288",
+          "playerName": "kurewka_2",
+          "joinedAt": "2026-06-06T20:49:20.124Z"
+        },
+        {
+          "playerId": "1295062782680498277",
+          "playerName": "pianka07",
+          "joinedAt": "2026-06-06T20:49:20.124Z"
+        },
+        {
+          "playerId": "1408795167263031386",
+          "playerName": "pankott",
+          "joinedAt": "2026-06-06T20:49:20.124Z"
+        },
+        {
+          "playerId": "1241407924585234525",
+          "playerName": "tzymek",
+          "joinedAt": "2026-06-06T20:49:20.124Z"
+        },
+        {
+          "playerId": "1450933339727859815",
+          "playerName": "xx_ggpp0",
+          "joinedAt": "2026-06-06T20:49:20.124Z"
+        }
+      ]
+    },
+    {
+      "teamId": "belgium",
+      "teamName": "Belgium",
+      "teamCode": "BEL",
+      "roleId": "1512180623278739587",
+      "coachDiscordId": "",
+      "logo": "assets/belgium.png",
+      "rosterLimit": 16,
+      "rosterPlayers": [
+        {
+          "playerId": "1048184513257295902",
+          "playerName": "o3o1",
+          "joinedAt": "2026-06-06T20:49:20.125Z"
+        }
+      ]
+    },
+    {
+      "teamId": "turkiye",
+      "teamName": "Türkiye",
+      "teamCode": "TUR",
+      "roleId": "1512921194100166820",
+      "coachDiscordId": "",
+      "logo": "assets/turkiye.png",
+      "rosterLimit": 16,
+      "rosterPlayers": []
+    },
+    {
+      "teamId": "netherlands",
+      "teamName": "Netherlands",
+      "teamCode": "NED",
+      "roleId": "1512180758653960312",
+      "coachDiscordId": "",
+      "logo": "assets/netherlands.png",
+      "rosterLimit": 16,
+      "rosterPlayers": [
+        {
+          "playerId": "1214664614932119573",
+          "playerName": "kozuball",
+          "joinedAt": "2026-06-06T20:49:20.126Z"
+        },
+        {
+          "playerId": "1354933946449657886",
+          "playerName": "kxpiizv1",
+          "joinedAt": "2026-06-06T20:49:20.126Z"
+        },
+        {
+          "playerId": "1383472815553904743",
+          "playerName": "legendwitherr",
+          "joinedAt": "2026-06-06T20:49:20.126Z"
+        },
+        {
+          "playerId": "1134139217681858640",
+          "playerName": "turozis",
+          "joinedAt": "2026-06-06T20:49:20.126Z"
+        },
+        {
+          "playerId": "1198287093126922321",
+          "playerName": "dabeast_a1",
+          "joinedAt": "2026-06-06T20:49:20.126Z"
+        },
+        {
+          "playerId": "1113114913267781682",
+          "playerName": "sinuura",
+          "joinedAt": "2026-06-06T20:49:20.126Z"
+        },
+        {
+          "playerId": "1368659191295643839",
+          "playerName": "whipinvictus.",
+          "joinedAt": "2026-06-06T20:49:20.126Z"
+        }
+      ]
+    },
+    {
+      "teamId": "germany",
+      "teamName": "Germany",
+      "teamCode": "GER",
+      "roleId": "1512180806414635039",
+      "coachDiscordId": "",
+      "logo": "assets/germany.png",
+      "rosterLimit": 16,
+      "rosterPlayers": [
+        {
+          "playerId": "1509176038125601014",
+          "playerName": "h6kimi",
+          "joinedAt": "2026-06-06T20:49:20.127Z"
+        },
+        {
+          "playerId": "1309897446108696577",
+          "playerName": "izephynee",
+          "joinedAt": "2026-06-06T20:49:20.127Z"
+        },
+        {
+          "playerId": "1453845669789040873",
+          "playerName": "very_vic",
+          "joinedAt": "2026-06-06T20:49:20.127Z"
+        },
+        {
+          "playerId": "1388528583806419026",
+          "playerName": "scorphinio",
+          "joinedAt": "2026-06-06T20:49:20.127Z"
+        },
+        {
+          "playerId": "1241707975731581040",
+          "playerName": "zopiv",
+          "joinedAt": "2026-06-06T20:49:20.127Z"
+        },
+        {
+          "playerId": "817146273471791157",
+          "playerName": "sxbax",
+          "joinedAt": "2026-06-06T20:49:20.127Z"
+        },
+        {
+          "playerId": "1003671942655643828",
+          "playerName": "vaggos125",
+          "joinedAt": "2026-06-06T20:49:20.127Z"
+        },
+        {
+          "playerId": "1272559415853191189",
+          "playerName": "kkyrami",
+          "joinedAt": "2026-06-06T20:49:20.127Z"
+        },
+        {
+          "playerId": "549753863314341909",
+          "playerName": "aurophuan",
+          "joinedAt": "2026-06-06T20:49:20.127Z"
+        },
+        {
+          "playerId": "1323606235672608800",
+          "playerName": "rocco22_31",
+          "joinedAt": "2026-06-06T20:49:20.127Z"
+        },
+        {
+          "playerId": "745313391782002811",
+          "playerName": "chmm21",
+          "joinedAt": "2026-06-06T20:49:20.127Z"
+        },
+        {
+          "playerId": "1129852114974285854",
+          "playerName": "darealkylianmbaba",
+          "joinedAt": "2026-06-06T20:49:20.127Z"
+        },
+        {
+          "playerId": "1095666307359326248",
+          "playerName": "kostaspro4839",
+          "joinedAt": "2026-06-06T20:49:20.127Z"
+        },
+        {
+          "playerId": "1257736967878082651",
+          "playerName": "officialcsplayer",
+          "joinedAt": "2026-06-06T20:49:20.127Z"
+        },
+        {
+          "playerId": "1358817814957391912",
+          "playerName": "nvndooo",
+          "joinedAt": "2026-06-06T20:49:20.127Z"
+        }
+      ]
+    },
+    {
+      "teamId": "norway",
+      "teamName": "Norway",
+      "teamCode": "NOR",
+      "roleId": "1512180859241758780",
+      "coachDiscordId": "",
+      "logo": "assets/norway.png",
+      "rosterLimit": 16,
+      "rosterPlayers": [
+        {
+          "playerId": "855527268414914570",
+          "playerName": "miihaajlo",
+          "joinedAt": "2026-06-06T20:49:20.128Z"
+        },
+        {
+          "playerId": "633800868029923333",
+          "playerName": "mrfishywishy",
+          "joinedAt": "2026-06-06T20:49:20.128Z"
+        },
+        {
+          "playerId": "575059019777966098",
+          "playerName": "itzramos",
+          "joinedAt": "2026-06-06T20:49:20.128Z"
+        },
+        {
+          "playerId": "1301897392085401661",
+          "playerName": "danish52hoho",
+          "joinedAt": "2026-06-06T20:49:20.128Z"
+        },
+        {
+          "playerId": "521390031059812355",
+          "playerName": "iam.him",
+          "joinedAt": "2026-06-06T20:49:20.128Z"
+        },
+        {
+          "playerId": "447352931679993856",
+          "playerName": "etoneili.",
+          "joinedAt": "2026-06-06T20:49:20.128Z"
+        },
+        {
+          "playerId": "589608765805035524",
+          "playerName": "tigelston",
+          "joinedAt": "2026-06-06T20:49:20.128Z"
+        },
+        {
+          "playerId": "578578352697507850",
+          "playerName": "benzowski",
+          "joinedAt": "2026-06-06T20:49:20.128Z"
+        },
+        {
+          "playerId": "735278201210929163",
+          "playerName": "anton._848",
+          "joinedAt": "2026-06-06T20:49:20.128Z"
+        }
+      ]
+    },
+    {
+      "teamId": "senegal",
+      "teamName": "Senegal",
+      "teamCode": "SEN",
+      "roleId": "1512180889663180920",
+      "coachDiscordId": "",
+      "logo": "assets/senegal.png",
+      "rosterLimit": 16,
+      "rosterPlayers": [
+        {
+          "playerId": "1485604064279531552",
+          "playerName": "crazy02_111111111111111111111111",
+          "joinedAt": "2026-06-06T20:49:20.129Z"
+        },
+        {
+          "playerId": "1491431134217900193",
+          "playerName": "kayvertac",
+          "joinedAt": "2026-06-06T20:49:20.129Z"
+        },
+        {
+          "playerId": "1198606130306371634",
+          "playerName": "drexxos",
+          "joinedAt": "2026-06-06T20:49:20.129Z"
+        }
+      ]
+    },
+    {
+      "teamId": "morocco",
+      "teamName": "Morocco",
+      "teamCode": "MAR",
+      "roleId": "1512921195107061890",
+      "coachDiscordId": "",
+      "logo": "assets/morocco.png",
+      "rosterLimit": 16,
+      "rosterPlayers": []
+    },
+    {
+      "teamId": "croatia",
+      "teamName": "Croatia",
+      "teamCode": "CRO",
+      "roleId": "1512181006088798328",
+      "coachDiscordId": "",
+      "logo": "assets/croatia.png",
+      "rosterLimit": 16,
+      "rosterPlayers": [
+        {
+          "playerId": "1273635195005698141",
+          "playerName": "ammarking241_10769",
+          "joinedAt": "2026-06-06T20:49:20.131Z"
+        },
+        {
+          "playerId": "1364172263485603912",
+          "playerName": "zvkariux",
+          "joinedAt": "2026-06-06T20:49:20.131Z"
+        },
+        {
+          "playerId": "1270009688854888551",
+          "playerName": "daris006_07690",
+          "joinedAt": "2026-06-06T20:49:20.131Z"
+        },
+        {
+          "playerId": "1452384137645129748",
+          "playerName": "vidal_rel",
+          "joinedAt": "2026-06-06T20:49:20.131Z"
+        },
+        {
+          "playerId": "1073488800426229850",
+          "playerName": "axel5962",
+          "joinedAt": "2026-06-06T20:49:20.131Z"
+        },
+        {
+          "playerId": "1267109631025483836",
+          "playerName": "vyrzusss_97549",
+          "joinedAt": "2026-06-06T20:49:20.131Z"
+        },
+        {
+          "playerId": "1137103474434257038",
+          "playerName": "adam0960_70173",
+          "joinedAt": "2026-06-06T20:49:20.131Z"
+        },
+        {
+          "playerId": "751429298400788561",
+          "playerName": "ezewki",
+          "joinedAt": "2026-06-06T20:49:20.131Z"
+        },
+        {
+          "playerId": "948263685565079562",
+          "playerName": "q5ggb",
+          "joinedAt": "2026-06-06T20:49:20.131Z"
+        },
+        {
+          "playerId": "1252567123381850172",
+          "playerName": "sebastian13_11",
+          "joinedAt": "2026-06-06T20:49:20.131Z"
+        },
+        {
+          "playerId": "1362142249500020776",
+          "playerName": "gatzz0611",
+          "joinedAt": "2026-06-06T20:49:20.131Z"
+        }
+      ]
+    },
+    {
+      "teamId": "ghana",
+      "teamName": "Ghana",
+      "teamCode": "GHA",
+      "roleId": "1512181058387578960",
+      "coachDiscordId": "",
+      "logo": "assets/ghana.png",
+      "rosterLimit": 16,
+      "rosterPlayers": [
+        {
+          "playerId": "1488194820999610600",
+          "playerName": "spaxii_",
+          "joinedAt": "2026-06-06T20:49:20.131Z"
+        },
+        {
+          "playerId": "1340633388280840284",
+          "playerName": "pxrate1",
+          "joinedAt": "2026-06-06T20:49:20.131Z"
+        },
+        {
+          "playerId": "1203482344938410025",
+          "playerName": "ttscquad",
+          "joinedAt": "2026-06-06T20:49:20.131Z"
+        },
+        {
+          "playerId": "1366295114477207602",
+          "playerName": "mrnkg_gk",
+          "joinedAt": "2026-06-06T20:49:20.131Z"
+        },
+        {
+          "playerId": "962659218610085890",
+          "playerName": "vurqoa",
+          "joinedAt": "2026-06-06T20:49:20.131Z"
+        },
+        {
+          "playerId": "1194014395756453902",
+          "playerName": "custumise",
+          "joinedAt": "2026-06-06T20:49:20.131Z"
+        },
+        {
+          "playerId": "1476713520774119555",
+          "playerName": ".trexnaldo.",
+          "joinedAt": "2026-06-06T20:49:20.131Z"
+        },
+        {
+          "playerId": "850276477529358426",
+          "playerName": "psykeoutpsykeoutpsykeout_",
+          "joinedAt": "2026-06-06T20:49:20.131Z"
+        },
+        {
+          "playerId": "1492542523820871700",
+          "playerName": "gimmegarmz",
+          "joinedAt": "2026-06-06T20:49:20.131Z"
+        },
+        {
+          "playerId": "1140234380216905830",
+          "playerName": "fereessa",
+          "joinedAt": "2026-06-06T20:49:20.131Z"
+        },
+        {
+          "playerId": "814291878324207616",
+          "playerName": "aban0b",
+          "joinedAt": "2026-06-06T20:49:20.131Z"
+        },
+        {
+          "playerId": "1307724694790602782",
+          "playerName": "shine0719.",
+          "joinedAt": "2026-06-06T20:49:20.131Z"
+        }
+      ]
+    },
+    {
+      "teamId": "brazil",
+      "teamName": "Brazil",
+      "teamCode": "BRA",
+      "roleId": "1512181130940387430",
+      "coachDiscordId": "",
+      "logo": "assets/brazil.png",
+      "rosterLimit": 16,
+      "rosterPlayers": [
+        {
+          "playerId": "1272281639615074304",
+          "playerName": "05on",
+          "joinedAt": "2026-06-06T20:49:20.132Z"
+        },
+        {
+          "playerId": "1330725010343460875",
+          "playerName": "dadderes_26715",
+          "joinedAt": "2026-06-06T20:49:20.132Z"
+        },
+        {
+          "playerId": "858782665679175686",
+          "playerName": "mateomsfv",
+          "joinedAt": "2026-06-06T20:49:20.132Z"
+        },
+        {
+          "playerId": "1324569501219557379",
+          "playerName": "xozil100",
+          "joinedAt": "2026-06-06T20:49:20.132Z"
+        },
+        {
+          "playerId": "575034991050883092",
+          "playerName": "doncorleone0",
+          "joinedAt": "2026-06-06T20:49:20.132Z"
+        },
+        {
+          "playerId": "921832035063050280",
+          "playerName": "nqvah",
+          "joinedAt": "2026-06-06T20:49:20.132Z"
+        },
+        {
+          "playerId": "1330781872468529172",
+          "playerName": "elugic.",
+          "joinedAt": "2026-06-06T20:49:20.132Z"
+        },
+        {
+          "playerId": "667432352678412320",
+          "playerName": "varciiix",
+          "joinedAt": "2026-06-06T20:49:20.132Z"
+        },
+        {
+          "playerId": "1375501971452067850",
+          "playerName": "mezoramos",
+          "joinedAt": "2026-06-06T20:49:20.132Z"
+        },
+        {
+          "playerId": "1215368499413651497",
+          "playerName": "1035726925725",
+          "joinedAt": "2026-06-06T20:49:20.132Z"
+        },
+        {
+          "playerId": "1299785306970787860",
+          "playerName": "5destiny_",
+          "joinedAt": "2026-06-06T20:49:20.132Z"
+        }
+      ]
+    },
+    {
+      "teamId": "england",
+      "teamName": "England",
+      "teamCode": "ENG",
+      "roleId": "1512181202252201984",
+      "coachDiscordId": "",
+      "logo": "assets/england.png",
+      "rosterLimit": 16,
+      "rosterPlayers": [
+        {
+          "playerId": "879293765469233223",
+          "playerName": "ankleerrr",
+          "joinedAt": "2026-06-06T20:49:20.133Z"
+        },
+        {
+          "playerId": "925526540765266030",
+          "playerName": "derogatively",
+          "joinedAt": "2026-06-06T20:49:20.133Z"
+        },
+        {
+          "playerId": "995394576112164948",
+          "playerName": "saucin163",
+          "joinedAt": "2026-06-06T20:49:20.133Z"
+        },
+        {
+          "playerId": "1386095379128254627",
+          "playerName": "usern9ww",
+          "joinedAt": "2026-06-06T20:49:20.133Z"
+        },
+        {
+          "playerId": "1252010320700899449",
+          "playerName": "_2nlx",
+          "joinedAt": "2026-06-06T20:49:20.133Z"
+        },
+        {
+          "playerId": "979440712531718194",
+          "playerName": "onlytrakka",
+          "joinedAt": "2026-06-06T20:49:20.133Z"
+        },
+        {
+          "playerId": "1396920716556894298",
+          "playerName": "hakkeemmmmmm",
+          "joinedAt": "2026-06-06T20:49:20.133Z"
+        },
+        {
+          "playerId": "1112257806070976572",
+          "playerName": "dxnte3",
+          "joinedAt": "2026-06-06T20:49:20.133Z"
+        }
+      ]
+    },
+    {
+      "teamId": "france",
+      "teamName": "France",
+      "teamCode": "FRA",
+      "roleId": "1512181238444724395",
+      "coachDiscordId": "744523810195111987",
+      "logo": "assets/france.png",
+      "rosterLimit": 16,
+      "rosterPlayers": [
+        {
+          "playerId": "581188140610486446",
+          "playerName": "oltion",
+          "joinedAt": "2026-06-06T20:49:20.133Z"
+        },
+        {
+          "playerId": "1008815388609486848",
+          "playerName": "sytll",
+          "joinedAt": "2026-06-06T20:49:20.133Z"
+        },
+        {
+          "playerId": "744523810195111987",
+          "playerName": "21flow",
+          "joinedAt": "2026-06-06T20:49:20.133Z"
+        },
+        {
+          "playerId": "943622021277958186",
+          "playerName": "consznn",
+          "joinedAt": "2026-06-06T20:49:20.133Z"
+        }
+      ]
+    }
+  ]
+}

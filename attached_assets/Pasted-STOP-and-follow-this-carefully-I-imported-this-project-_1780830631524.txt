@@ -1,0 +1,221 @@
+STOP and follow this carefully.
+
+I imported this project from my GitHub repository into Replit.
+
+I do NOT want to use Vercel anymore.
+I want this existing GitHub-imported project to run, build, and deploy/host properly on Replit.
+
+I also want you to make the project as error-free as possible from a build/deployment point of view.
+
+Do NOT create a brand-new website.
+Do NOT rebuild the app from scratch.
+Do NOT redesign the whole website.
+Use the existing code already imported into this Replit project.
+
+Important context:
+This project is likely a monorepo with:
+- a Next.js website, probably inside /web
+- a Discord bot, probably inside /bot
+- shared/database code
+- Prisma/database functionality
+- Discord authentication/data
+- code that was originally being prepared for Vercel, but I now want it to work on Replit instead
+
+Main goal:
+Make the existing website work perfectly on Replit, with no build errors, no deployment errors, no TypeScript errors, and no broken Discord bot compatibility.
+
+Very important rules:
+- Use the existing imported GitHub code.
+- Do not create a new app.
+- Do not replace the current website with a new generated one.
+- Do not delete existing features.
+- Do not break the Discord bot.
+- Do not break shared database code.
+- Do not expose, print, or hardcode secrets/tokens.
+- Do not make random refactors.
+- Do not stop after fixing one error.
+- Keep fixing and testing until the website build passes successfully.
+- Be smart: if one file has an error pattern, search the whole project for the same pattern and fix all similar issues.
+- Fix deployment-blocking errors, runtime-breaking errors, TypeScript errors, and Replit hosting issues.
+- Ignore cosmetic warnings unless they stop the app from building or running.
+
+First, before making more changes:
+1. Inspect the existing project structure.
+2. Tell me if this is a monorepo.
+3. Identify the website folder.
+4. Identify the bot folder.
+5. Identify shared/database folders.
+6. Tell me what files you already created or changed.
+7. Revert/remove newly generated files if they are unrelated to the original imported project.
+8. Show me your plan before major changes.
+
+Website features to preserve:
+- Discord login/auth
+- Discord user/profile data
+- player profiles
+- staff directory
+- activity logs
+- standings
+- notifications
+- free agency/player information
+- team/role-based data
+- database-backed pages
+- clean responsive UI
+- compatibility with the Discord bot
+- compatibility with shared database/data structure
+
+Discord bot compatibility:
+The website and Discord bot should still work together through the shared database/data structure.
+
+Before changing:
+- Prisma schema
+- database models
+- user fields
+- team fields
+- role fields
+- shared database helpers
+- bot-related functions
+
+Check whether the change could break the bot. If a shared/database change is required, keep it backward-compatible where possible and explain why.
+
+Replit setup requirements:
+1. Find the correct install command.
+2. Find the correct website dev/run command.
+3. Find the correct production build command.
+4. Find the correct start/deploy command for Replit hosting.
+5. Configure the app to run in Replit preview.
+6. Configure the app to host/deploy on Replit.
+7. Make sure the app binds to the correct Replit port/environment.
+8. Make sure environment variables come from Replit Secrets.
+9. Remove or ignore Vercel-only assumptions only where they block Replit usage.
+10. Do not make the project Vercel-dependent.
+
+Error-free/build-safe requirements:
+Search the whole project and fix all build/deployment-blocking issues, including:
+
+TypeScript issues:
+- implicit any errors
+- unknown values from Object.entries
+- untyped .map() callbacks
+- untyped .forEach() callbacks
+- untyped .filter() callbacks
+- untyped .find() callbacks
+- untyped .reduce() callbacks
+- untyped .sort() callbacks
+- possibly undefined arrays before .map()
+- possibly undefined arrays before .length
+- unsafe null/undefined access
+- broken imports
+- broken shared types
+- broken Prisma/client types
+- incorrect return types
+- Date fields using .toISOString() when they may already be strings
+
+Next.js issues:
+- incorrect server/client component usage
+- missing "use client" where required
+- browser-only code running on server components
+- broken app router pages
+- broken dynamic route pages
+- invalid environment variable access
+- missing imports
+- unsafe database calls during build
+- pages crashing when database data is empty
+- build-blocking ESLint or TypeScript problems
+
+Prisma/database issues:
+- Prisma client generation
+- broken Prisma imports
+- missing DATABASE_URL handling
+- database queries returning null/undefined
+- unsafe assumptions about database results
+- shared database code used by both web and bot
+- compatibility between web app, Prisma, and Discord bot
+
+Dependency/package issues:
+- missing dependencies
+- wrong workspace commands
+- broken package scripts
+- package-lock problems
+- monorepo workspace issues
+- incorrect root/web/bot scripts
+- modules imported but not installed
+
+Replit deployment issues:
+- wrong run command
+- wrong build command
+- wrong start command
+- wrong working directory
+- wrong port binding
+- Replit preview not opening
+- production server not starting
+- environment variables missing from Replit Secrets
+
+Testing instructions:
+1. Install dependencies correctly.
+2. Run the website in Replit preview.
+3. Run the production build.
+4. If the build fails, fix the exact error.
+5. Run the build again.
+6. Repeat until the production build passes.
+7. After fixing one error, search for the same pattern elsewhere.
+8. Do not say “fixed” unless the build actually passes.
+9. Check the bot code has not been broken by website changes.
+10. Confirm the final Replit setup works.
+
+Use these commands if applicable:
+- npm install
+- npm run build
+- npm --workspace web run build
+- npm --workspace web run dev
+- npm --workspace web run start
+
+If the project uses different scripts, identify and use the correct ones from package.json.
+
+Environment variables:
+Do not ask me to paste secret values into chat.
+Do not hardcode secrets.
+List only the variable names I need to add in Replit Secrets.
+
+Likely examples may include:
+- DATABASE_URL
+- DISCORD_CLIENT_ID
+- DISCORD_CLIENT_SECRET
+- DISCORD_BOT_TOKEN
+- NEXTAUTH_SECRET
+- NEXTAUTH_URL
+- any other variable actually used by the code
+
+Only list variables actually required by the project.
+
+Final report required:
+When finished, give me a clear report with:
+
+1. Whether you reverted any newly generated unwanted files.
+2. The project structure you found.
+3. The website folder.
+4. The bot folder.
+5. Shared/database folders.
+6. Correct Replit install command.
+7. Correct Replit run/dev command.
+8. Correct Replit production build command.
+9. Correct Replit start/deploy command.
+10. Every file changed.
+11. Every error fixed.
+12. Any repeated error patterns you searched for and fixed project-wide.
+13. Whether the website runs in Replit preview.
+14. Whether the production build passes.
+15. Whether the deployment/start command works.
+16. Whether Discord bot compatibility was preserved.
+17. Replit Secrets/environment variable names I need to add.
+18. Anything still missing or requiring my action.
+
+Final requirement:
+The final project should be the existing GitHub-imported website, not a new website, fixed and stabilised so it is Replit-ready, production-build safe, deployment-safe, error-free from a build point of view, and compatible with the Discord bot.
+
+Again:
+Do not use Vercel anymore.
+Do not rebuild from scratch.
+Use the existing imported code.
+Be smart and fix repeated error patterns across the project.
+Keep testing until the website actually builds and runs properly on Replit.

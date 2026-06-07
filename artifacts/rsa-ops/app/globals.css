@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  font-family: Inter, system-ui, sans-serif;
+  background: #0b1017;
+  color: #f8f8f4;
+}
+
+html,
+body {
+  min-height: 100%;
+  background: radial-gradient(circle at top, rgba(201, 165, 90, 0.08), transparent 25%),
+    linear-gradient(180deg, #090c12 0%, #09101b 40%, #08101a 100%);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  color: #f8f8f4;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button,
+a {
+  font: inherit;
+}
+
+::selection {
+  background: rgba(201, 165, 90, 0.22);
+}
+
+.main-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, rgba(11, 16, 23, 0.96) 0%, rgba(8, 13, 21, 0.99) 100%);
+}
+
+.card {
+  border: 1px solid rgba(201, 165, 90, 0.12);
+  background: rgba(18, 27, 38, 0.92);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+}
+
+:root {
+  --rsa-gold: #c9a55a;
+  --rsa-border: rgba(201,165,90,0.12);
+}
+
+.border-rsa-border { border-color: var(--rsa-border); }
+.text-rsa-gold { color: var(--rsa-gold); }
+
+@media (max-width: 640px) {
+  .main-shell { padding: 0; }
+  .card { border-radius: 12px; padding: 12px; }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .card { padding: 16px; }
+}
+
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--rsa-gold);
+  outline-offset: 2px;
+}

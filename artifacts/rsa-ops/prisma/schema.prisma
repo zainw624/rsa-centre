@@ -1,0 +1,351 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String         @id @default(cuid())
+  discordId  String         @unique
+  name       String?
+  email      String?        @unique
+  image      String?
+  roles      String[]       @default([])
+  permission String         @default("viewer")
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+  accounts   Account[]
+  sessions   Session[]
+  events     CommandEvent[]
+  roster     RosterPlayer[]
+  transfers  Transfer[]     @relation("UserTransfers")
+  sanctions  Sanction[]     @relation("UserSanctions")
+  imposedSanctions Sanction[] @relation("UserImposedSanctions")
+  assignments ManagerAssignment[]
+}
+
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?  @db.Text
+  access_token       String?  @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?  @db.Text
+  session_state      String?
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Team {
+  id                 String             @id @default(cuid())
+  teamId             String             @unique
+  teamName           String
+  teamCode           String
+  logo               String?
+  roleId             String?
+  coachDiscordId     String?
+  rosterLimit        Int                @default(16)
+  rosterPlayers      RosterPlayer[]
+  managerAssignments ManagerAssignment[]
+  transfers          Transfer[]
+  sanctions          Sanction[]
+  results            Result[]
+  fixtures           Fixture[]
+  leagueTableEntries LeagueTable[]
+  staffRoles         StaffRole[]
+  awards             Award[]
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+}
+
+model RosterPlayer {
+  id        String   @id @default(cuid())
+  playerId  String
+  playerTag String
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  team      Team     @relation(fields: [teamId], references: [id])
+  teamId    String
+  joinedAt  DateTime
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Transfer {
+  id            String   @id @default(cuid())
+  transactionId String   @unique
+  type          String
+  status        String
+  action        String?
+  playerId      String
+  playerTag     String
+  userId        String?
+  user          User?    @relation("UserTransfers", fields: [userId], references: [id])
+  fromTeam      String?
+  toTeam        String?
+  teamId        String?
+  team          Team?    @relation(fields: [teamId], references: [id])
+  sourceCommand String?
+  reason        String?
+  guildId       String
+  staffId       String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Sanction {
+  id          String   @id @default(cuid())
+  sanctionType String
+  status      String   @default("active")
+  playerId    String
+  playerTag   String
+  userId      String?
+  user        User?    @relation("UserSanctions", fields: [userId], references: [id])
+  roleId      String?
+  teamId      String?
+  team        Team?    @relation(fields: [teamId], references: [id])
+  reason      String?
+  imposedById String?
+  imposedBy   User?    @relation("UserImposedSanctions", fields: [imposedById], references: [id])
+  activeUntil DateTime?
+  createdAt   DateTime @default(now())
+  resolvedAt  DateTime?
+  updatedAt   DateTime @updatedAt
+}
+
+model Fixture {
+  id           String   @id @default(cuid())
+  homeTeam     String
+  awayTeam     String
+  homeTeamCode String
+  awayTeamCode String
+  kickoff      DateTime
+  competition  String
+  venue        String?
+  notes        String?
+  status       String   @default("scheduled")
+  archived     Boolean  @default(false)
+  creatorId    String?
+  creatorName  String?
+  teamId       String?
+  team         Team?    @relation(fields: [teamId], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  results      Result[]
+}
+
+model Result {
+  id          String   @id @default(cuid())
+  fixtureId   String?
+  fixture     Fixture? @relation(fields: [fixtureId], references: [id])
+  homeTeam    String
+  awayTeam    String
+  homeScore   Int
+  awayScore   Int
+  competition String
+  teamId      String?
+  team        Team?    @relation(fields: [teamId], references: [id])
+  matchDate   DateTime
+  status      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Competition {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  seasonId    String?
+  season      Season?  @relation(fields: [seasonId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model LeagueTable {
+  id             String   @id @default(cuid())
+  seasonId       String?
+  season         Season?  @relation(fields: [seasonId], references: [id])
+  teamId         String?
+  team           Team?    @relation(fields: [teamId], references: [id])
+  position       Int
+  played         Int
+  won            Int
+  drew           Int
+  lost           Int
+  goalsFor       Int
+  goalsAgainst   Int
+  goalDifference Int
+  points         Int
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model StaffRole {
+  id              String              @id @default(cuid())
+  roleName        String
+  discordRoleId   String?
+  permissionLevel String
+  description     String?
+  teamId          String?
+  team            Team?               @relation(fields: [teamId], references: [id])
+  assignments     ManagerAssignment[]
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+}
+
+model ManagerAssignment {
+  id           String   @id @default(cuid())
+  teamId       String?
+  team         Team?    @relation(fields: [teamId], references: [id])
+  userId       String?
+  user         User?    @relation(fields: [userId], references: [id])
+  staffRoleId  String?
+  staffRole    StaffRole? @relation(fields: [staffRoleId], references: [id])
+  role         String
+  active       Boolean  @default(true)
+  assignedAt   DateTime @default(now())
+  removedAt    DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  type      String
+  text      String
+  emoji     String?
+  playerId  String?
+  playerTag String?
+  teamId    String?
+  teamName  String?
+  staffId   String?
+  fixtureId String?
+  sanctionId String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+}
+
+model AuditLog {
+  id            String   @id @default(cuid())
+  actionType    String
+  sourceCommand String?
+  userId        String?
+  targetPlayerId String?
+  targetTeamId  String?
+  previousValue Json?
+  newValue      Json?
+  details       Json?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Settings {
+  id                         String   @id @default(cuid())
+  guildId                    String   @unique
+  botOwnerId                 String?
+  transferWindowOpen         Boolean  @default(true)
+  worldCupMode               Boolean  @default(false)
+  freeAgentRoleName          String   @default("Free Agent")
+  sanctionedRoleId           String?
+  cupTiedRoleId              String?
+  managerRoleNames           String[]
+  sanctionRoleNames          String[]
+  auditRoleNames             String[]
+  worldCupLockRoleNames      String[]
+  worldCupUnlockRoleNames    String[]
+  staffCentreRoleNames       String[]
+  contractsChannelId         String?
+  releaseChannelId           String?
+  fixturesAnnouncementChannelId String?
+  createdAt                  DateTime @default(now())
+  updatedAt                  DateTime @updatedAt
+}
+
+model Season {
+  id              String            @id @default(cuid())
+  name            String
+  startDate       DateTime?
+  endDate         DateTime?
+  current         Boolean           @default(false)
+  competitions    Competition[]
+  leagueTableEntries LeagueTable[]
+  awards          Award[]
+  hallOfFameEntries HallOfFameEntry[]
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+}
+
+model Award {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  seasonId    String?
+  season      Season?  @relation(fields: [seasonId], references: [id])
+  recipientId String?
+  teamId      String?
+  team        Team?    @relation(fields: [teamId], references: [id])
+  playerId    String?
+  achievement String?
+  awardedAt   DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model HallOfFameEntry {
+  id        String   @id @default(cuid())
+  playerId  String
+  playerTag String
+  achievement String
+  seasonId  String?
+  season    Season?  @relation(fields: [seasonId], references: [id])
+  year      Int
+  createdAt DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  title     String
+  message   String?
+  level     String
+  type      String?
+  payload   Json?
+  readBy    String[]
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CommandEvent {
+  id        String   @id @default(cuid())
+  command   String
+  details   Json
+  actorId   String?
+  actor     User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now())
+}

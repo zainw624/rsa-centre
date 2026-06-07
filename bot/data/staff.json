@@ -1,0 +1,154 @@
+{
+  "managers": [],
+  "assistants": [],
+  "staffAudit": [],
+  "leadership": {
+    "1469086162344874037": {
+      "USA": {
+        "teamName": "USA",
+        "teamCode": "USA",
+        "managers": [],
+        "assistants": [],
+        "status": "Vacant Team",
+        "statusIndicator": "🔴",
+        "lastUpdated": "2026-06-06T20:55:34.181Z"
+      },
+      "Sweden": {
+        "teamName": "Sweden",
+        "teamCode": "SWE",
+        "managers": [],
+        "assistants": [],
+        "status": "Vacant Team",
+        "statusIndicator": "🔴",
+        "lastUpdated": "2026-06-06T20:55:34.181Z"
+      },
+      "Spain": {
+        "teamName": "Spain",
+        "teamCode": "ESP",
+        "managers": [],
+        "assistants": [],
+        "status": "Vacant Team",
+        "statusIndicator": "🔴",
+        "lastUpdated": "2026-06-06T20:55:34.181Z"
+      },
+      "Japan": {
+        "teamName": "Japan",
+        "teamCode": "JPN",
+        "managers": [],
+        "assistants": [],
+        "status": "Vacant Team",
+        "statusIndicator": "🔴",
+        "lastUpdated": "2026-06-06T20:55:34.181Z"
+      },
+      "Belgium": {
+        "teamName": "Belgium",
+        "teamCode": "BEL",
+        "managers": [],
+        "assistants": [],
+        "status": "Vacant Team",
+        "statusIndicator": "🔴",
+        "lastUpdated": "2026-06-06T20:55:34.181Z"
+      },
+      "Türkiye": {
+        "teamName": "Türkiye",
+        "teamCode": "TUR",
+        "managers": [],
+        "assistants": [],
+        "status": "Vacant Team",
+        "statusIndicator": "🔴",
+        "lastUpdated": "2026-06-06T20:55:34.181Z"
+      },
+      "Netherlands": {
+        "teamName": "Netherlands",
+        "teamCode": "NED",
+        "managers": [],
+        "assistants": [],
+        "status": "Vacant Team",
+        "statusIndicator": "🔴",
+        "lastUpdated": "2026-06-06T20:55:34.181Z"
+      },
+      "Germany": {
+        "teamName": "Germany",
+        "teamCode": "GER",
+        "managers": [],
+        "assistants": [],
+        "status": "Vacant Team",
+        "statusIndicator": "🔴",
+        "lastUpdated": "2026-06-06T20:55:34.181Z"
+      },
+      "Norway": {
+        "teamName": "Norway",
+        "teamCode": "NOR",
+        "managers": [],
+        "assistants": [],
+        "status": "Vacant Team",
+        "statusIndicator": "🔴",
+        "lastUpdated": "2026-06-06T20:55:34.181Z"
+      },
+      "Senegal": {
+        "teamName": "Senegal",
+        "teamCode": "SEN",
+        "managers": [],
+        "assistants": [],
+        "status": "Vacant Team",
+        "statusIndicator": "🔴",
+        "lastUpdated": "2026-06-06T20:55:34.181Z"
+      },
+      "Morocco": {
+        "teamName": "Morocco",
+        "teamCode": "MAR",
+        "managers": [],
+        "assistants": [],
+        "status": "Vacant Team",
+        "statusIndicator": "🔴",
+        "lastUpdated": "2026-06-06T20:55:34.181Z"
+      },
+      "Croatia": {
+        "teamName": "Croatia",
+        "teamCode": "CRO",
+        "managers": [],
+        "assistants": [],
+        "status": "Vacant Team",
+        "statusIndicator": "🔴",
+        "lastUpdated": "2026-06-06T20:55:34.182Z"
+      },
+      "Ghana": {
+        "teamName": "Ghana",
+        "teamCode": "GHA",
+        "managers": [],
+        "assistants": [],
+        "status": "Vacant Team",
+        "statusIndicator": "🔴",
+        "lastUpdated": "2026-06-06T20:55:34.182Z"
+      },
+      "Brazil": {
+        "teamName": "Brazil",
+        "teamCode": "BRA",
+        "managers": [],
+        "assistants": [],
+        "status": "Vacant Team",
+        "statusIndicator": "🔴",
+        "lastUpdated": "2026-06-06T20:55:34.182Z"
+      },
+      "England": {
+        "teamName": "England",
+        "teamCode": "ENG",
+        "managers": [],
+        "assistants": [],
+        "status": "Vacant Team",
+        "statusIndicator": "🔴",
+        "lastUpdated": "2026-06-06T20:55:34.182Z"
+      },
+      "France": {
+        "teamName": "France",
+        "teamCode": "FRA",
+        "managers": [],
+        "assistants": [],
+        "status": "Vacant Team",
+        "statusIndicator": "🔴",
+        "lastUpdated": "2026-06-06T20:55:34.182Z"
+      }
+    }
+  },
+  "lastSyncedAt": "2026-06-06T20:55:35.355Z"
+}
