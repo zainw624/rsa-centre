@@ -1,0 +1,127 @@
+Yes, add the role-sync endpoint, but do it securely and make sure it stays compatible with the existing Discord bot and website.
+
+I want the Discord bot to be able to notify the website/database whenever a member’s roles change in the RSA Discord server.
+
+Main goal:
+Create a secure server-side role-sync system so the bot can push updated Discord member role data into the website database automatically.
+
+Important:
+Do NOT expose this endpoint publicly without protection.
+Do NOT let random users call it.
+Do NOT expose the bot token.
+Do NOT expose Discord secrets to the frontend.
+Do NOT hardcode secrets.
+Use Replit Secrets/environment variables.
+
+The role-sync endpoint should:
+1. Be server-side only.
+2. Accept role updates from the Discord bot.
+3. Verify the request is authorized using a shared secret/API key from environment variables.
+4. Update the matching user in the database by Discord user ID.
+5. Store/update their latest Discord roles.
+6. Update their verification status.
+7. Update staff/manager/referee/player/free agent/team status where the existing database supports it.
+8. Update roster/team connections where safe.
+9. Not duplicate users.
+10. Not break existing Discord login/auth.
+11. Not break the Discord bot.
+
+Use an environment variable such as:
+ROLE_SYNC_SECRET
+
+Only the bot should know this secret.
+
+Endpoint behaviour:
+The bot should send:
+- Discord user ID
+- username/display name if available
+- avatar URL if available
+- list of role IDs
+- list of role names if available
+- guild ID
+- timestamp
+
+The endpoint should:
+- reject requests without the correct secret
+- reject requests for the wrong guild
+- safely update the user
+- safely update roles
+- safely update permissions
+- safely update team/roster status
+- return a clean success/error response
+
+Role logic:
+Use the existing RSA role detection system if it already exists.
+
+Verify that the website/bot can detect:
+- Free Agent role
+- team roles like Spain
+- Manager role
+- staff roles
+- referee/official roles
+- media roles
+- leadership roles
+- bot owner
+- verified role
+
+Examples:
+- Free Agent + no team role = user appears as Free Agent
+- Spain role = user appears on Spain roster
+- Spain + Manager role = user is manager of Spain
+- Spain + Assistant Manager role = user is assistant manager of Spain if that role exists
+- removing Spain role should remove them from Spain roster on next sync
+- this should work dynamically for all teams, not hardcoded only Spain
+
+Bot owner:
+My bot owner ID is already in the environment configuration.
+Do not hardcode it.
+Verify the existing owner ID variable is used correctly.
+The bot owner should keep full website access.
+
+Bot update:
+If needed, update the Discord bot so it calls this endpoint when:
+- a member’s roles change
+- a member joins
+- a member leaves
+- a member is updated
+- manual sync command is run, if one exists or is easy to add safely
+
+Use Discord.js events if the bot already uses Discord.js.
+
+Security:
+- Use ROLE_SYNC_SECRET or existing secure internal secret.
+- Add server-side validation.
+- Do not allow frontend users to call this directly.
+- Do not print secrets in logs.
+- Do not expose the endpoint secret in client code.
+- Keep permission checks server-side.
+
+Replit:
+This project is now hosted on Replit, not Vercel.
+Make sure the endpoint URL works correctly on Replit.
+List the Replit Secret names I need to add, but do not ask me to paste secret values into chat.
+
+Testing:
+After adding it:
+1. Run the website in Replit preview.
+2. Run the production build.
+3. Fix any build errors.
+4. Confirm the endpoint exists.
+5. Confirm unauthorized requests are rejected.
+6. Confirm authorized bot requests update user roles.
+7. Confirm role updates change website permissions correctly.
+8. Confirm roster/team detection still works.
+9. Confirm bot compatibility is preserved.
+10. Confirm no TypeScript/build/deployment errors remain.
+
+Final report:
+Tell me:
+1. Endpoint path created.
+2. Files changed.
+3. Bot files changed, if any.
+4. Database fields updated.
+5. Required Replit Secrets.
+6. How the bot calls the endpoint.
+7. How unauthorized requests are blocked.
+8. Whether production build passes.
+9. Whether bot compatibility was preserved.

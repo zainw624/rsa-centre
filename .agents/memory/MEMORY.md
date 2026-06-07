@@ -1,2 +1,3 @@
 - [RSA Ops page error pattern](rsa-ops-page-error-pattern.md) — all shell pages use try/catch + amber banner; never crash on missing DB
 - [RSA Ops session fields](rsa-ops-session-fields.md) — session.user has id/discordId/permission/roles/name/image; permission drives access
+- [RSA roles-sync endpoint](rsa-roles-sync-endpoint.md) — POST /api/roles-sync; bot push endpoint; secret + guild validation; upserts user, roster, manager, audit
