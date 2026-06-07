@@ -1,0 +1,22 @@
+"use strict";
+/*
+ * ATTENTION: An "eval-source-map" devtool has been used.
+ * This devtool is neither made for production nor for readable output files.
+ * It uses "eval()" calls to create a separate source file with attached SourceMaps in the browser devtools.
+ * If you are trying to read the output file, select a different devtool (https://webpack.js.org/configuration/devtool/)
+ * or disable the default devtool with "devtool: false".
+ * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
+ */
+self["webpackHotUpdate_N_E"]("middleware",{
+
+/***/ "(middleware)/./middleware.ts":
+/*!***********************!*\
+  !*** ./middleware.ts ***!
+  \***********************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   config: () => (/* binding */ config),\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var next_auth_middleware__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! next-auth/middleware */ \"(middleware)/../../node_modules/.pnpm/next-auth@4.24.14_next@15.5.19_react-dom@18.3.1_react@18.3.1__react@18.3.1__react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next-auth/middleware.js\");\n/* harmony import */ var next_auth_middleware__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(next_auth_middleware__WEBPACK_IMPORTED_MODULE_0__);\n\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,next_auth_middleware__WEBPACK_IMPORTED_MODULE_0__.withAuth)({\n    pages: {\n        signIn: '/login',\n        error: '/login'\n    }\n}));\nconst config = {\n    matcher: [\n        '/dashboard/:path*',\n        '/player-profiles/:path*',\n        '/teams/:path*',\n        '/managers/:path*',\n        '/staff/:path*',\n        '/rosters/:path*',\n        '/transfers/:path*',\n        '/discipline/:path*',\n        '/fixtures/:path*',\n        '/results/:path*',\n        '/world-cup/:path*',\n        '/league-table/:path*',\n        '/statistics/:path*',\n        '/compliance/:path*',\n        '/activity/:path*',\n        '/administration/:path*',\n        '/archives/:path*',\n        '/awards/:path*',\n        '/hall-of-fame/:path*',\n        '/notifications/:path*',\n        '/search/:path*',\n        '/playerinfo/:path*'\n    ]\n};\n//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiKG1pZGRsZXdhcmUpLy4vbWlkZGxld2FyZS50cyIsIm1hcHBpbmdzIjoiOzs7Ozs7O0FBQWdEO0FBRWhELGlFQUFlQSw4REFBUUEsQ0FBQztJQUN0QkMsT0FBTztRQUNMQyxRQUFRO1FBQ1JDLE9BQU87SUFDVDtBQUNGLEVBQUUsRUFBQztBQUVJLE1BQU1DLFNBQVM7SUFDcEJDLFNBQVM7UUFDUDtRQUNBO1FBQ0E7UUFDQTtRQUNBO1FBQ0E7UUFDQTtRQUNBO1FBQ0E7UUFDQTtRQUNBO1FBQ0E7UUFDQTtRQUNBO1FBQ0E7UUFDQTtRQUNBO1FBQ0E7UUFDQTtRQUNBO1FBQ0E7UUFDQTtLQUNEO0FBQ0gsRUFBRSIsInNvdXJjZXMiOlsiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS9hcnRpZmFjdHMvcnNhLW9wcy9taWRkbGV3YXJlLnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IHdpdGhBdXRoIH0gZnJvbSAnbmV4dC1hdXRoL21pZGRsZXdhcmUnO1xuXG5leHBvcnQgZGVmYXVsdCB3aXRoQXV0aCh7XG4gIHBhZ2VzOiB7XG4gICAgc2lnbkluOiAnL2xvZ2luJyxcbiAgICBlcnJvcjogJy9sb2dpbidcbiAgfVxufSk7XG5cbmV4cG9ydCBjb25zdCBjb25maWcgPSB7XG4gIG1hdGNoZXI6IFtcbiAgICAnL2Rhc2hib2FyZC86cGF0aConLFxuICAgICcvcGxheWVyLXByb2ZpbGVzLzpwYXRoKicsXG4gICAgJy90ZWFtcy86cGF0aConLFxuICAgICcvbWFuYWdlcnMvOnBhdGgqJyxcbiAgICAnL3N0YWZmLzpwYXRoKicsXG4gICAgJy9yb3N0ZXJzLzpwYXRoKicsXG4gICAgJy90cmFuc2ZlcnMvOnBhdGgqJyxcbiAgICAnL2Rpc2NpcGxpbmUvOnBhdGgqJyxcbiAgICAnL2ZpeHR1cmVzLzpwYXRoKicsXG4gICAgJy9yZXN1bHRzLzpwYXRoKicsXG4gICAgJy93b3JsZC1jdXAvOnBhdGgqJyxcbiAgICAnL2xlYWd1ZS10YWJsZS86cGF0aConLFxuICAgICcvc3RhdGlzdGljcy86cGF0aConLFxuICAgICcvY29tcGxpYW5jZS86cGF0aConLFxuICAgICcvYWN0aXZpdHkvOnBhdGgqJyxcbiAgICAnL2FkbWluaXN0cmF0aW9uLzpwYXRoKicsXG4gICAgJy9hcmNoaXZlcy86cGF0aConLFxuICAgICcvYXdhcmRzLzpwYXRoKicsXG4gICAgJy9oYWxsLW9mLWZhbWUvOnBhdGgqJyxcbiAgICAnL25vdGlmaWNhdGlvbnMvOnBhdGgqJyxcbiAgICAnL3NlYXJjaC86cGF0aConLFxuICAgICcvcGxheWVyaW5mby86cGF0aConXG4gIF1cbn07XG4iXSwibmFtZXMiOlsid2l0aEF1dGgiLCJwYWdlcyIsInNpZ25JbiIsImVycm9yIiwiY29uZmlnIiwibWF0Y2hlciJdLCJpZ25vcmVMaXN0IjpbXSwic291cmNlUm9vdCI6IiJ9\n//# sourceURL=webpack-internal:///(middleware)/./middleware.ts\n");
+
+/***/ })
+
+});

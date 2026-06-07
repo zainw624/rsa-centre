@@ -25,7 +25,8 @@ export async function POST(request: Request) {
     try {
       const member = await fetchGuildMember(u.discordId).catch(() => null);
       if (!member) continue;
-      const roleNames = (member.roles || []).map((r: string) => roleMap[r] || r).filter(Boolean);
+      const memberRoleIds = (member.roles as string[] | undefined) ?? [];
+      const roleNames = memberRoleIds.map((r: string) => roleMap[r] || r).filter(Boolean);
       await prisma.user.update({ where: { id: u.id }, data: { roles: roleNames } });
       updated++;
     } catch (e) {

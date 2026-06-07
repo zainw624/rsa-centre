@@ -1,0 +1,218 @@
+I want to update the opening/login page design and branding.
+
+Important correction:
+Completely replace all RFA and ORBIS branding with original RSA branding.
+
+Do NOT use:
+- RFA
+- Roblox Football Association
+- Orbis
+- Orbis League Management Platform
+- RFA Members Only
+
+Use RSA branding instead.
+
+The logo file to use is:
+rsa1.png
+
+Please find rsa1.png in the existing project files and use it as the main logo on the opening/login page. If it is not in the correct public/assets folder, move or copy it to the correct place for the Next.js web app, but do not delete the original unless necessary.
+
+This project was imported from GitHub into Replit.
+I do NOT want to use Vercel anymore.
+I want this existing website to run, build, and deploy/host properly on Replit.
+
+Do NOT create a brand-new website.
+Do NOT rebuild the app from scratch.
+Do NOT redesign the whole project into something unrelated.
+Use the existing imported code.
+
+Main goal:
+Create a polished RSA-branded private Discord login landing page, connected to Discord authentication, where users must sign in with Discord before accessing the private website.
+
+Opening page design:
+Use the uploaded screenshot only as layout/style inspiration, but replace all branding with RSA.
+
+The page should include:
+- dark premium background
+- RSA logo using rsa1.png
+- RSA platform branding
+- top header with RSA logo/branding on the left
+- “Not signed in” text on the right
+- “Login with Discord” button on the right
+- centered hero content
+- small badge/pill saying something like:
+  “PRIVATE LEAGUE — RSA MEMBERS ONLY”
+- large title:
+  “RSA”
+  or
+  “RSA Management Platform”
+- subtitle explaining it is the official private player/staff management platform for RSA
+- access requirement cards:
+  1. “In the RSA Discord”
+  2. “RSA Verified”
+- large “Sign in with Discord” button
+- small text saying users will be redirected to Discord to confirm their identity
+- clean responsive mobile layout
+- polished dark UI with subtle borders and Discord-style button colour
+
+Do not include any text saying:
+- RFA
+- Orbis
+- Roblox Football Association
+- made better
+- premium clarity
+- AI generated
+- based on screenshot
+
+Authentication requirement:
+Users must login with Discord before accessing the website.
+
+After Discord login:
+1. Register/store the user’s Discord account in the system/database if they are new.
+2. Update the existing user record if they already exist.
+3. Save useful Discord data such as:
+   - Discord user ID
+   - username
+   - display name/global name if available
+   - avatar URL
+   - email only if already requested by the auth setup and available
+   - last login time
+4. Check whether the user is in the required RSA Discord server/guild.
+5. Automatically detect the roles they have in the RSA Discord server.
+6. Store/update their Discord roles in the database.
+7. Use their roles to place them in the correct website section/access level.
+
+Role/access behaviour:
+The website should automatically detect a logged-in user’s Discord roles from the RSA Discord server.
+
+Use role data to determine:
+- whether they are verified
+- whether they are a player
+- whether they are staff
+- whether they are media
+- whether they are an official
+- whether they are a manager
+- whether they belong to a team
+- whether they should appear in staff/player/team areas
+
+If a user has team roles, update their profile/team connection where the existing system supports it.
+
+If the user is not in the RSA Discord or is not verified:
+- do not allow access to the private dashboard
+- show a clean RSA-branded access denied / not verified page
+- explain that they must be in the RSA Discord and verified
+- keep the design consistent with the login page
+
+Discord bot compatibility:
+The website must remain compatible with the existing Discord bot.
+Do not break the bot.
+Do not break shared database code.
+Do not change Prisma schema, user fields, team fields, role fields, or bot-related functions unless absolutely required.
+If a shared/database change is required, explain why first and keep it backward-compatible where possible.
+
+Technical requirements:
+1. Inspect the existing project structure first.
+2. Find the existing Next.js web app folder, likely /web.
+3. Find the existing Discord bot folder, likely /bot.
+4. Find the current auth setup.
+5. Find the current database/Prisma setup.
+6. Find existing user, role, team, profile, staff, and player data models.
+7. Reuse the existing system instead of replacing it.
+8. Implement the RSA login page as the default public page before login.
+9. Protect private pages so only authenticated, verified Discord users can access them.
+10. Make sure the Discord auth flow works.
+11. Make sure user registration/update after login works.
+12. Make sure Discord role detection works.
+13. Make sure database updates are safe and do not duplicate users.
+14. Make sure the site builds successfully.
+15. Make sure it runs properly on Replit.
+16. Make sure the final setup is Replit-ready, not Vercel-dependent.
+
+Discord auth/role detection notes:
+- Use the existing Discord OAuth/auth system if one already exists.
+- If using NextAuth/Auth.js or another existing auth library, keep it consistent with the project.
+- The website should use Discord OAuth for login.
+- Role detection should fetch the user’s guild membership/roles from the RSA Discord server using the correct server/guild ID and bot credentials/server-side API.
+- Do not expose the Discord bot token to the client.
+- Keep all sensitive tokens in Replit Secrets/environment variables.
+- Only server-side code should access Discord secrets/tokens.
+
+Environment variables:
+Do not hardcode secrets.
+Do not print secrets.
+List the required Replit Secret names only.
+
+Likely required variables may include:
+- DISCORD_CLIENT_ID
+- DISCORD_CLIENT_SECRET
+- DISCORD_BOT_TOKEN
+- DISCORD_GUILD_ID
+- NEXTAUTH_SECRET or AUTH_SECRET depending on the current auth setup
+- NEXTAUTH_URL or the correct Replit app URL variable depending on the current setup
+- DATABASE_URL
+- any other variables already used by the project
+
+Only list variables that the actual project needs.
+
+Error-free requirement:
+Make this work without build errors, deployment errors, or TypeScript errors.
+
+Search and fix:
+- implicit any errors
+- Object.entries unknown errors
+- untyped map/filter/find/reduce/sort callbacks
+- unsafe null/undefined access
+- broken imports
+- server/client component issues
+- auth callback errors
+- Prisma/database type issues
+- environment variable errors
+- Replit run/start/build command issues
+- incorrect references to old RFA/Orbis branding
+
+Branding cleanup:
+Search the website for all old branding references and replace them properly:
+- Replace “RFA” with “RSA” where it refers to the league/platform branding.
+- Replace “Roblox Football Association” with the correct RSA wording.
+- Replace “Orbis” with RSA branding.
+- Replace “Orbis League Management Platform” with “RSA Management Platform” or similar.
+- Make sure the landing page and auth pages are fully RSA-branded.
+
+Be careful:
+If “RFA” appears in database values, role names, or bot logic that the current Discord server depends on, do not blindly change it unless it is safe. Explain before changing role/database logic.
+
+Testing:
+After implementing:
+1. Run the website in Replit preview.
+2. Run the production build.
+3. If an error appears, fix it.
+4. Run the build again.
+5. Repeat until the build passes.
+6. Confirm the Discord bot compatibility was preserved.
+7. Confirm private routes are protected.
+8. Confirm login page appears for logged-out users.
+9. Confirm user registration/update logic exists after Discord login.
+10. Confirm role detection logic exists and is server-side only.
+11. Confirm the landing page uses rsa1.png.
+12. Confirm no visible RFA/Orbis branding remains on the opening page.
+
+Before making major changes:
+Show me a plan first.
+
+When finished, report:
+1. Files changed.
+2. Branding changes made.
+3. Where rsa1.png is used.
+4. Login/auth changes made.
+5. Database/user registration changes made.
+6. Discord role detection changes made.
+7. Access protection changes made.
+8. Replit environment variables required.
+9. Replit run/build/start commands.
+10. Whether the site runs in Replit preview.
+11. Whether the production build passes.
+12. Whether bot compatibility was preserved.
+13. Whether any old RFA/Orbis branding remains and why.
+
+Final requirement:
+The final result should be the existing website, not a brand-new unrelated website, with original RSA branding using rsa1.png, a polished RSA Discord login landing page, Discord authentication connected, automatic user registration, Discord server role detection, protected private access, Replit hosting compatibility, and no build/deployment errors.

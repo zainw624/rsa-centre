@@ -39,7 +39,8 @@ export const authOptions: NextAuthOptions = {
       }
 
       const roleMap = await fetchGuildRoles();
-      const roleNames = mapDiscordRoles(member.roles ?? [], roleMap);
+      const memberRoles = (member.roles as string[] | undefined) ?? [];
+      const roleNames = mapDiscordRoles(memberRoles, roleMap);
       const permission = resolvePermission(roleNames, botOwnerId, discordProfile.id as string);
       const avatarUrl = discordProfile.avatar
         ? `https://cdn.discordapp.com/avatars/${discordProfile.id}/${discordProfile.avatar}.png`
