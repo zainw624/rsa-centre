@@ -2,7 +2,6 @@ import { redirect } from 'next/navigation';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { BrandHeader } from '@/components/BrandHeader';
-import { RoleBadge } from '@/components/RoleBadge';
 import StatCard from '@/components/widgets/StatCard';
 import StatusCard from '@/components/widgets/StatusCard';
 import ActivityCard from '@/components/widgets/ActivityCard';
@@ -26,69 +25,112 @@ import {
 
 export const dynamic = 'force-dynamic';
 
+const EMPTY_TOTALS = { playersCount: 0, teamsCount: 0, managersCount: 0, assistantManagersCount: 0, staffCount: 0 };
+const EMPTY_HEALTH = { percentCompleted: 0, played: 0, totalFixtures: 0 };
+
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
+  if (!session) redirect('/login');
 
-  if (!session) {
-    redirect('/login');
+  let totals    = EMPTY_TOTALS;
+  let settings: any  = null;
+  let fixtures: any[] = [];
+  let results: any[]  = [];
+  let transfers: any[] = [];
+  let activity: any[]  = [];
+  let leagueRows: any[] = [];
+  let sanctions: any[]  = [];
+  let cupTied: any[]   = [];
+  let leagueHealth     = EMPTY_HEALTH;
+  let dbError          = false;
+
+  try {
+    [totals, settings, fixtures, results, transfers, activity, leagueRows, sanctions, cupTied, leagueHealth] =
+      await Promise.all([
+        getTotals(),
+        getSettings(),
+        getUpcomingFixtures(6),
+        getLatestResults(6),
+        getTransfers(8),
+        getRecentActivity(12),
+        getLeagueSnapshot(6),
+        getActiveSanctions(6),
+        getCupTiedPlayers(),
+        getLeagueHealth(),
+      ]);
+  } catch {
+    dbError = true;
   }
-  // Load dashboard data from the database in parallel
-  const [totals, settings, fixtures, results, transfers, activity, leagueRows, sanctions, cupTied, leagueHealth] = await Promise.all([
-    getTotals(),
-    getSettings(),
-    getUpcomingFixtures(6),
-    getLatestResults(6),
-    getTransfers(8),
-    getRecentActivity(12),
-    getLeagueSnapshot(6),
-    getActiveSanctions(6),
-    getCupTiedPlayers(),
-    getLeagueHealth(),
-  ]);
+
+  const userName   = session.user?.name ?? 'RSA Member';
+  const permission = session.user?.permission ?? 'viewer';
 
   return (
-    <main className="main-shell">
-      <div className="mx-auto w-full max-w-7xl">
-        <BrandHeader />
+    <div className="mx-auto w-full max-w-7xl">
+      <BrandHeader
+        title={`Welcome back, ${userName.split('#')[0]}`}
+        subtitle={`Signed in as ${permission.charAt(0).toUpperCase() + permission.slice(1)}`}
+      />
 
-        <section className="mt-6 grid gap-6 lg:grid-cols-4">
-          <div className="col-span-3 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <StatCard title="Total Players" value={totals.playersCount} />
-            <StatCard title="Total Teams" value={totals.teamsCount} />
-            <StatCard title="Total Managers" value={totals.managersCount} />
-            <StatCard title="Assistant Managers" value={totals.assistantManagersCount} />
-            <StatCard title="Total Staff" value={totals.staffCount} />
-            <StatusCard title="Transfer Window" status={settings?.transferWindowOpen ? 'Open' : 'Closed'} hint={settings?.transferWindowOpen ? 'Transfers are being accepted' : 'Transfers are currently closed'} />
+      {dbError && (
+        <div className="mt-5 flex items-center gap-3 rounded-2xl border border-amber-500/20 bg-amber-500/05 px-5 py-4 text-sm text-amber-300">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 shrink-0">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+          <span>
+            <strong className="font-semibold text-amber-200">Database not connected.</strong>{' '}
+            Set <code className="rounded bg-black/30 px-1 text-xs">DATABASE_URL</code> in Replit Secrets and run{' '}
+            <code className="rounded bg-black/30 px-1 text-xs">npx prisma db push</code> to activate live data.
+          </span>
+        </div>
+      )}
+
+      <section className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+        <StatCard title="Total Players"       value={totals.playersCount} />
+        <StatCard title="Total Teams"         value={totals.teamsCount} />
+        <StatCard title="Managers"            value={totals.managersCount} />
+        <StatCard title="Asst. Managers"      value={totals.assistantManagersCount} />
+        <StatCard title="Total Staff"         value={totals.staffCount} />
+      </section>
+
+      <section className="mt-4 grid gap-4 sm:grid-cols-3">
+        <StatusCard
+          title="Transfer Window"
+          status={settings?.transferWindowOpen ? 'Open' : 'Closed'}
+          hint={settings?.transferWindowOpen ? 'Transfers are being accepted' : 'Transfers are currently closed'}
+        />
+        <StatusCard
+          title="World Cup Mode"
+          status={settings?.worldCupMode ? 'Active' : 'Inactive'}
+        />
+        <StatusCard
+          title="League Health"
+          status={`${leagueHealth.percentCompleted}% Complete`}
+          hint={`Played ${leagueHealth.played} of ${leagueHealth.totalFixtures} fixtures`}
+        />
+      </section>
+
+      <section className="mt-4 grid gap-4 lg:grid-cols-3">
+        <FixtureCard fixtures={fixtures} />
+        <ResultCard  results={results} />
+        <TransferCard transfers={transfers} />
+      </section>
+
+      <section className="mt-4 grid gap-4 lg:grid-cols-3">
+        <div className="lg:col-span-2">
+          <ActivityCard items={activity.map((a: any) => ({ id: a.id, text: a.text, createdAt: a.createdAt }))} />
+        </div>
+        <div className="flex flex-col gap-4">
+          <LeagueTablePreview rows={leagueRows} />
+          <ComplianceCard issues={sanctions} />
+          <div className="rounded-2xl border border-rsa-border bg-white/3 p-4">
+            <p className="text-xs font-semibold uppercase tracking-widest text-rsa-gold">Sanctions</p>
+            <p className="mt-2 text-2xl font-bold text-white">{sanctions.length}</p>
+            <p className="mt-1 text-xs text-slate-500">Active · {cupTied.length} cup-tied</p>
           </div>
-
-          <aside className="col-span-1 space-y-6">
-            <StatusCard title="World Cup Mode" status={settings?.worldCupMode ? 'Active' : 'Inactive'} />
-            <StatusCard title="League Health" status={`${leagueHealth.percentCompleted}% Complete`} hint={`Played ${leagueHealth.played} / ${leagueHealth.totalFixtures}`} />
-            <ComplianceCard issues={sanctions} />
-          </aside>
-        </section>
-
-        <section className="mt-6 grid gap-6 lg:grid-cols-3">
-          <FixtureCard fixtures={fixtures} />
-          <ResultCard results={results} />
-          <TransferCard transfers={transfers} />
-        </section>
-
-        <section className="mt-6 grid gap-6 lg:grid-cols-3">
-          <div className="lg:col-span-2">
-            <ActivityCard items={activity.map((a: any) => ({ id: a.id, text: a.text, createdAt: a.createdAt }))} />
-          </div>
-          <div>
-            <LeagueTablePreview rows={leagueRows} />
-            <div className="mt-4" />
-            <div className="card rounded-2xl border border-rsa-border p-4">
-              <p className="text-xs uppercase tracking-widest text-rsa-gold">Active Sanctions</p>
-              <div className="mt-3 text-sm text-white">{sanctions.length} active</div>
-              <p className="mt-2 text-xs text-slate-400">Cup tied players: {cupTied.length}</p>
-            </div>
-          </div>
-        </section>
-      </div>
-    </main>
+        </div>
+      </section>
+    </div>
   );
 }
