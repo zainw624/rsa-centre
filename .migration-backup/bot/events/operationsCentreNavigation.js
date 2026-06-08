@@ -1,6 +1,8 @@
 module.exports = {
   name: 'interactionCreate',
   async execute(interaction) {
+    // Only proceed if this is a button interaction and the helper exists
+    if (!interaction || typeof interaction.isButton !== 'function') return;
     if (!interaction.isButton()) return;
 
     // Only handle dashboard page navigation buttons

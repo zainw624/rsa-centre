@@ -33,7 +33,7 @@ export default async function LoginPage() {
           </div>
           <div className="login-header-right">
             <span className="login-not-signed">Not signed in</span>
-            <Link href="/api/auth/signin/discord" className="login-header-btn">
+            <Link href="/api/auth/signin/discord?callbackUrl=/dashboard" className="login-header-btn">
               <DiscordIcon />
               Login with Discord
             </Link>
@@ -96,7 +96,7 @@ export default async function LoginPage() {
           </div>
 
           {/* CTA */}
-          <Link href="/api/auth/signin/discord" className="login-cta-btn">
+          <Link href="/api/auth/signin/discord?callbackUrl=/dashboard" className="login-cta-btn">
             <DiscordIcon size={22} />
             Sign in with Discord
           </Link>

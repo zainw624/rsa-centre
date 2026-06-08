@@ -5,17 +5,21 @@ module.exports = {
   once: false,
   async execute(interaction) {
     try {
-      if (interaction.type === InteractionType.ApplicationCommand) {
+      // Handle chat input (slash) commands first, using the safe method when available
+      const isChatInput = typeof interaction?.isChatInputCommand === 'function'
+        ? interaction.isChatInputCommand()
+        : interaction && interaction.type === InteractionType.ApplicationCommand;
+
+      if (isChatInput) {
         const command = interaction.client.commands.get(interaction.commandName);
-        if (!command) {
-          return;
-        }
+        if (!command) return;
         await command.execute(interaction);
         return;
       }
 
-      if (interaction.isButton()) {
-        if (interaction.customId.startsWith('rsa-sign-')) {
+      // Only proceed with button handling if the method exists and returns true
+      if (interaction && typeof interaction.isButton === 'function' && interaction.isButton()) {
+        if (interaction.customId && interaction.customId.startsWith('rsa-sign-')) {
           const signCommand = interaction.client.commands.get('sign');
           if (signCommand && typeof signCommand.handleButtonInteraction === 'function') {
             await signCommand.handleButtonInteraction(interaction);
@@ -25,9 +29,9 @@ module.exports = {
     } catch (error) {
       console.error('Interaction error:', error);
       try {
-        if (interaction.replied || interaction.deferred) {
+        if (interaction && (interaction.replied || interaction.deferred)) {
           await interaction.editReply({ content: '❌ An unexpected error occurred while processing this interaction.', embeds: [] });
-        } else {
+        } else if (interaction && typeof interaction.reply === 'function') {
           await interaction.reply({ content: '❌ An unexpected error occurred while processing this interaction.', flags: 64 });
         }
       } catch {

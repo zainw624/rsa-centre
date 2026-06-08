@@ -247,15 +247,35 @@ async function handleClientReady() {
     }
 
     const commands = buildCommands();
-    await client.application.commands.set(commands);
-    console.log('✅ Global slash commands registered');
+    const targetGuildId = process.env.DISCORD_GUILD_ID;
 
-    for (const guild of client.guilds.cache.values()) {
-      await guild.commands.set(commands).catch((err) => {
-        console.warn(`⚠️ Failed to register guild commands for ${guild.id}: ${err.message}`);
-      });
+    if (targetGuildId) {
+      // Prefer registering as guild commands for development/testing to avoid global duplication
+      const targetGuild = client.guilds.cache.get(targetGuildId);
+      if (targetGuild) {
+        await targetGuild.commands.set(commands);
+        console.log(`✅ Registered guild slash commands for ${targetGuildId}`);
+      } else {
+        // If the configured guild isn't in cache, register to all guilds as a fallback
+        for (const guild of client.guilds.cache.values()) {
+          await guild.commands.set(commands).catch((err) => {
+            console.warn(`⚠️ Failed to register guild commands for ${guild.id}: ${err.message}`);
+          });
+        }
+        console.log('✅ Guild slash commands registered (fallback to all guilds)');
+      }
+    } else {
+      // No specific guild configured: register global commands
+      await client.application.commands.set(commands);
+      console.log('✅ Global slash commands registered');
+
+      for (const guild of client.guilds.cache.values()) {
+        await guild.commands.set(commands).catch((err) => {
+          console.warn(`⚠️ Failed to register guild commands for ${guild.id}: ${err.message}`);
+        });
+      }
+      console.log('✅ Guild slash commands registered');
     }
-    console.log('✅ Guild slash commands registered');
 
     client.emit('appReady');
     console.log('✅ App ready event emitted');
@@ -282,7 +302,24 @@ function registerBotEvent(event) {
     return;
   }
 
-  const listener = (...args) => event.execute(client, ...args);
+  const listener = (...args) => {
+    try {
+      const expectedParams = typeof event.execute === 'function' ? event.execute.length : 0;
+      // If the handler expects exactly the same number of args as emitted, call with those args
+      if (expectedParams === args.length) {
+        return event.execute(...args);
+      }
+      // If the handler expects one extra param (client), provide it first
+      if (expectedParams === args.length + 1) {
+        return event.execute(client, ...args);
+      }
+      // Fallback: call with the emitted args
+      return event.execute(...args);
+    } catch (err) {
+      console.error(`Error in event handler '${event.name}':`, err);
+    }
+  };
+
   if (event.once) {
     client.once(event.name, listener);
   } else {
