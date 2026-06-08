@@ -1,0 +1,716 @@
+I want you to carefully update, strengthen, and verify my RSA Operations Centre project.
+
+This is a Next.js/Replit website connected to a Discord bot for the Roblox Soccer Association league. I want the Discord server, Discord bot, database, and website to work together automatically.
+
+The goal is a safe, fully functional, interactive, systematic, automatic RSA league management system where I do not need to manually update teams, rosters, groups, player stats, standings, signings, releases, scouting, or free agency data.
+
+IMPORTANT RULES:
+- Do NOT rebuild the whole website from scratch.
+- Do NOT replace working code unless it is necessary to fix the requested features.
+- Do NOT duplicate pages, commands, API routes, database models, components, or config files.
+- Do NOT delete unrelated files.
+- Do NOT expose secrets or print secret values.
+- Do NOT hardcode fake statistics.
+- Do NOT sabotage or weaken working authentication, routing, bot code, dashboard code, database code, or API code.
+- Only change what is needed for the features in this prompt.
+- Keep the current RSA logo/crest everywhere it is already used.
+- Do NOT forget the logo.
+- Do NOT remove the RSA logo.
+- Do NOT change the RSA logo file unless it is broken.
+- Preserve the professional RSA football-management layout.
+- Restyle the website to match the warm gold/yellow RSA screenshot I sent.
+- Take inspiration from the screenshots, but do not copy them exactly.
+
+BUILD SAFETY INSTRUCTIONS:
+- Before editing, run git status and inspect the existing structure.
+- Prefer small, targeted edits over large rewrites.
+- Reuse existing components, routes, API handlers, bot handlers, Prisma models, and config files.
+- For the gold/yellow theme, first look for existing global CSS, Tailwind config, theme tokens, layout files, or shared components.
+- Do not manually restyle every page separately if a shared theme file can handle it.
+- If a requested feature already exists, strengthen/fix it instead of creating a duplicate.
+- If a requested feature does not exist and adding it would require a large new system, stop and report what is missing before building a separate system.
+- Do not run destructive database commands.
+- Do not reset, wipe, delete, or recreate the database.
+- Do not remove existing official match/player data unless I clearly asked you to reset it.
+- If Prisma changes are needed, make the smallest safe schema change and explain it.
+- If the build fails because of missing secrets, do not fake values. Report which secrets are missing without printing secret values.
+- Keep the app buildable at every stage.
+- Avoid changing package versions unless absolutely necessary.
+- Do not install unnecessary dependencies.
+- Do not change project structure unless the current structure is broken.
+- Do not remove Replit compatibility.
+
+MAIN DESIGN UPDATE:
+I do NOT want the main website theme to stay dark blue.
+
+Change the main RSA Operations Centre theme to match the warm gold/yellow gradient screenshot I sent.
+
+The whole website should feel like the RSA login screenshot:
+- Warm gold/yellow gradient background
+- Black and dark gold premium panels
+- Gold highlights
+- Subtle glow effects
+- RSA crest/logo clearly used
+- Clean professional football-management layout
+- Premium private league style
+
+However, keep the dashboard structure and functionality:
+- Group tabs
+- League table cards
+- Team roster cards
+- Player avatars
+- Team flags/logos
+- Rank/class badges
+- Statistics cards
+- Top scorers
+- Top assists
+- Clean sheets
+- Man of the Match
+- Players page
+- Teams page
+- League page
+- Knockout page
+- Statistics page
+- Seasons page
+- Staff page
+- Announces page
+
+Do NOT keep the old dark blue theme as the main theme.
+Replace the main dashboard background/theme with the warm gold/yellow RSA theme from the screenshot.
+
+Do NOT redesign the layout from scratch.
+Only restyle the current dashboard/pages so they match the gold RSA branding.
+
+The dashboard can still use dark cards for readability, but the overall page background, borders, highlights, buttons, cards, and accents should feel gold/black instead of blue/dark navy.
+
+Use this style direction:
+- Background: warm gold/yellow gradient with darker black-gold edges
+- Cards: black or very dark brown with subtle gold borders
+- Active tabs: gold highlight instead of blue
+- Buttons: black/gold or gold/black
+- Text: white, cream, gold, and muted beige
+- Tables: dark premium panels with gold accents
+- Navigation active state: gold, not blue
+- Dashboard panels: premium black/gold style
+- Borders: subtle gold lines
+- Hover states: soft gold glow
+- Keep everything readable and professional
+- Make sure text contrast is strong and readable
+- Make sure mobile/tablet responsiveness is not broken
+
+Current preferred login screen style:
+- Warm gold/yellow gradient background
+- Dark gold/black premium look
+- RSA crest/logo visible at the top and in the hero section
+- Text should say:
+  “Access the official Roblox Soccer Association hub — reserved for RSA players, staff, and verified members only.”
+- Keep it short, sharp, and professional.
+
+Official RSA Season 2026 groups:
+
+GROUP A
+- United States (HOST)
+- Norway
+- Croatia
+- Japan
+
+GROUP B
+- Ghana
+- Turkiye
+- Brazil
+- Belgium
+
+GROUP C
+- Portugal
+- England
+- France
+- Spain
+
+GROUP D
+- Netherlands
+- Germany
+- Senegal
+- Morocco
+
+Use “Morocco”, not “Morroco”.
+Keep “United States (HOST)” displayed clearly.
+Only use Groups A-D for now unless the existing app requires E-F placeholders.
+
+UPDATED DISCORD CHANNEL IDS:
+- Bot commands channel: 1512871626637578371
+- Signings channel: 1512857515858329841
+- Releases channel: 1512857516860637386
+- Free agency channel: 1512857513710846055
+- Scouting channel: 1513527717453103285
+
+Replace any old channel IDs with these new IDs where appropriate.
+Do not create duplicate config values if a central config file already exists.
+Update the existing config.
+
+PROJECT GOAL:
+The website should automatically update from Discord bot actions and Discord server role changes. I do not want to manually update teams, rosters, groups, player stats, standings, signings, releases, scouting, or free agency data.
+
+1. Preserve and restyle the website design
+
+Keep the current website layout and functionality, but restyle the theme to warm gold/yellow RSA branding.
+
+Keep:
+- Clean football management layout
+- Group tabs
+- League table cards
+- Team roster cards
+- Player avatars
+- Team flags/logos
+- Rank/class badges
+- Statistics cards
+- Top scorers
+- Top assists
+- Clean sheets
+- Man of the Match
+- Players page
+- Teams page
+- League page
+- Knockout page
+- Statistics page
+- Seasons page
+- Staff page
+- Announces page
+
+Change:
+- Old dark blue/navy main theme should become warm gold/yellow/black
+- Blue active navigation highlights should become gold active navigation highlights
+- Blue borders should become gold/dark gold borders where suitable
+- Buttons should match black/gold RSA branding
+- Cards should remain readable but feel premium gold/black
+
+Do not make the site plain.
+Do not remove dashboard pages.
+Do not remove the RSA crest/logo.
+Do not replace the entire structure.
+
+2. Login page/logo requirements
+
+Keep the RSA logo/crest as the official site branding.
+
+Make sure:
+- The top-left brand uses the RSA crest
+- The hero section uses the RSA crest
+- The login page uses the warm gold/yellow gradient style
+- The login text is short and professional
+- The Discord login button still works
+- Logged-out users are sent to /login
+- /dashboard is hidden until login
+
+Suggested hero text:
+“Access the official Roblox Soccer Association hub — reserved for RSA players, staff, and verified members only.”
+
+Keep the wording clean and do not make it too similar to other leagues.
+
+3. Make the dashboard interactive
+
+Confirm or implement:
+
+League page:
+- Shows Group A-D tabs
+- Clicking each group updates the table
+- Each group shows the correct 4 teams
+- Table columns:
+  - Position
+  - Team
+  - Points
+  - Games Played
+  - Wins
+  - Draws
+  - Losses
+  - Goals For
+  - Goals Against
+  - Goal Difference
+
+Teams page:
+- Shows all teams
+- Shows team cards
+- Shows roster count
+- Clicking/opening a team shows the roster
+- Roster shows player username, team, rank/class if supported, wage if supported, Discord info if supported, and Roblox info if supported
+
+Players page:
+- Shows players from the database
+- Supports existing search/filter functionality
+- Shows team assignment and stats where available
+
+Statistics page:
+- Shows top scorers
+- Shows top assists
+- Shows clean sheets
+- Shows Man of the Match
+- Supports Overall filter
+- Supports Group A-D filters
+- Supports class/rank filter if the current system already has it
+- Uses real database values, not fake hardcoded data
+
+Seasons page:
+- Shows Season 2026 data using the existing season system
+
+Staff page:
+- Must remain protected
+
+Announces page:
+- Must remain protected
+
+4. Database/live update system
+
+Make sure the website data comes from the database/API wherever possible.
+
+The following should be database-driven:
+- Groups
+- Teams
+- Rosters
+- Players
+- Discord IDs
+- Roblox usernames if supported
+- Team assignments
+- Player rank/class
+- Wages if supported
+- Match results
+- Points
+- Games played
+- Wins
+- Draws
+- Losses
+- Goals for
+- Goals against
+- Goal difference
+- Goals
+- Assists
+- Clean sheets
+- Man of the Match awards
+- Seasons
+
+If the Prisma schema already supports this, use the existing schema.
+If fields are missing, add the smallest safe Prisma schema change needed.
+Do not create duplicate models if similar models already exist.
+Do not break existing database logic.
+
+5. Discord bot + website sync
+
+The Discord bot, Discord server roles, database, and website should sync automatically.
+
+When a player gets a team role in Discord:
+- Detect the role during sync
+- Add the player to the correct team roster on the website
+- Remove the player from their old team if they had one
+- Update the database
+
+When a player loses a team role:
+- Remove them from that roster or mark them inactive depending on the existing database design
+
+When a player signs for a team using the bot:
+- The bot updates the database
+- The website roster updates automatically
+- The signing is sent to the signings channel: 1512857515858329841
+
+When a player is released:
+- The bot updates the database
+- The website removes or marks the player inactive
+- The release is sent to the releases channel: 1512857516860637386
+
+When a player is transferred:
+- The bot updates the old team and new team
+- The website reflects the new roster automatically
+
+When match results are submitted:
+- The bot updates match results
+- The website updates the group table automatically
+- Points, GP, W, D, L, GF, GA, and GD update correctly
+
+When stats are submitted:
+- The bot updates player stats
+- The Statistics page updates automatically
+- Goals, assists, clean sheets, and MOTM are correct
+
+When Discord roles change:
+- The roles-sync system updates website permissions and roster/team status
+
+6. Fix Discord bot commands
+
+My Discord bot commands currently do not work properly. Review and fix the bot code carefully.
+
+Check:
+- Slash command registration
+- Command names
+- Command files
+- Command handlers
+- Command permissions
+- Channel restrictions
+- Role restrictions
+- Guild ID setup
+- Discord client login
+- Bot token usage
+- Environment variable names
+- API calls between bot and website
+- Prisma/database calls
+- Error handling
+- Interaction replies
+- Deferred replies where needed
+- Duplicate command registration
+- Missing intents
+- Missing imports
+- TypeScript errors
+- Runtime errors
+
+Do not delete commands unless they are broken duplicates.
+Do not create duplicate versions of commands if one already exists.
+Fix the existing command system properly.
+
+Commands should support, where already implemented:
+- Signing players
+- Releasing players
+- Transfers
+- Match results
+- Player stats
+- Announcements
+- Free agency announcements
+- Scouting
+- Role syncing
+
+7. Updated command channel rules
+
+Use these new channel IDs:
+
+Bot commands channel:
+1512871626637578371
+
+Signings channel:
+1512857515858329841
+
+Releases channel:
+1512857516860637386
+
+Free agency channel:
+1512857513710846055
+
+Scouting channel:
+1513527717453103285
+
+For /announcefa:
+- Can only be used in the bot commands channel: 1512871626637578371
+- Sends the announcement to the free agency channel: 1512857513710846055
+- Only users with the “Free Agent” role can use it
+- Do not include wages
+- Do not include class/rank
+- Make the embed look professional
+- Do not include wording like “made premium”, “10x better”, or anything that reveals design instructions
+
+For /scout or scouting command:
+- Can only be used according to the existing manager permission logic from /sign
+- Sends to the scouting channel: 1513527717453103285
+- Keep the format professional
+
+For /sign:
+- Use the existing manager permission logic
+- Send successful signing announcements to: 1512857515858329841
+- Update the database
+- Update the website roster automatically
+
+For /release:
+- Use the existing permission logic
+- Send successful release announcements to: 1512857516860637386
+- Update the database
+- Update the website roster automatically
+
+8. Authentication and permissions
+
+Keep authentication secure:
+- Logged-out users go to /login
+- /dashboard is protected
+- Discord login works
+- Discord roles decide access level
+- Private RSA members only
+- Staff/admin pages are protected
+- Bot endpoints are protected
+- Do not expose secrets
+- Do not print secret values
+
+Required Replit Secrets:
+- DATABASE_URL
+- NEXTAUTH_SECRET
+- NEXTAUTH_URL
+- DISCORD_CLIENT_ID
+- DISCORD_CLIENT_SECRET
+- DISCORD_BOT_TOKEN
+- DISCORD_GUILD_ID
+- BOT_OWNER_ID
+- ROLES_SYNC_SECRET
+
+Check whether these are present, but do not print the values.
+
+9. API endpoints
+
+Review existing API endpoints and fix only what is broken.
+
+Check:
+- /api/roles-sync
+- Bot sync endpoints
+- Roster endpoints
+- Player endpoints
+- Team endpoints
+- Stats endpoints
+- Match result endpoints
+- Auth/session endpoints
+
+/api/roles-sync must:
+- Accept POST requests
+- Require x-sync-secret header
+- Return 401 if the secret is missing or wrong
+- Update website/database data safely
+- Not expose private data
+
+Do not create duplicate API routes if existing routes can be fixed.
+
+10. Automatic standings calculation
+
+Make sure group tables calculate correctly from match results where possible.
+
+Rules:
+- Win = 3 points
+- Draw = 1 point
+- Loss = 0 points
+- GP = matches played
+- GF = goals scored
+- GA = goals conceded
+- GD = GF - GA
+
+If the app currently stores standings directly, keep compatibility but make sure match result updates keep standings correct.
+
+11. Official groups setup
+
+Update the current season groups to:
+
+Group A:
+- United States (HOST)
+- Norway
+- Croatia
+- Japan
+
+Group B:
+- Ghana
+- Turkiye
+- Brazil
+- Belgium
+
+Group C:
+- Portugal
+- England
+- France
+- Spain
+
+Group D:
+- Netherlands
+- Germany
+- Senegal
+- Morocco
+
+For newly created teams/groups only, initial standings values should be:
+- 0 points
+- 0 games played
+- 0 wins
+- 0 draws
+- 0 losses
+- 0 goals for
+- 0 goals against
+- 0 goal difference
+
+Do not overwrite existing official match data, player data, roster data, or standings unless it is clearly test/demo data.
+
+12. Automatic system behaviour
+
+Make the system work automatically where the existing architecture allows it.
+
+The website should not require manual edits to code for normal league updates.
+
+Normal updates should happen through:
+- Discord bot commands
+- Discord role sync
+- Database/API updates
+- Admin/staff tools if already implemented
+
+The system should support:
+- Live roster updates
+- Team role detection
+- Player signings
+- Player releases
+- Transfers
+- Free agency announcements
+- Scouting announcements
+- Match result updates
+- Statistics updates
+- Group table updates
+- Season-based data
+
+If any of these features are not currently implemented, do not fake them.
+Report what is missing and add only safe, minimal support if it fits the existing project.
+
+13. Data integrity and safety
+
+Make sure the system avoids bad data.
+
+Add or preserve validation for:
+- Required fields
+- Valid team names
+- Valid group names
+- Valid season
+- Valid Discord user IDs
+- Valid channel IDs
+- Valid score values
+- Valid stat values
+- No negative goals, assists, clean sheets, or MOTM counts
+- No duplicate active roster entries for the same player
+- No player active on multiple teams unless the current rules allow it
+- No duplicate teams in the same season/group
+- No unauthorised bot/API updates
+
+Use safe error handling:
+- Return clear errors from API routes
+- Do not leak secrets
+- Do not crash the server on bad input
+- Log useful errors without exposing private values
+
+14. Interactivity and user experience
+
+Make sure pages feel interactive and usable.
+
+Check:
+- Group tabs work
+- Filters work
+- Search works where it exists
+- Team cards open or navigate correctly
+- Player links/cards work where they exist
+- Stats filters update the displayed data
+- Loading states exist where needed
+- Empty states are clean and professional
+- Error states are clear and not ugly
+- Mobile layout is not broken
+- Tables do not overflow badly
+- Buttons and tabs have hover/active states
+- The gold theme is consistent across pages
+
+15. Security checks
+
+Check for basic security issues:
+- No secrets in client-side code
+- No bot token exposed to browser
+- No secret values printed in logs or reports
+- Bot/API sync routes protected
+- Staff pages protected
+- Announces pages protected
+- Unauthenticated users redirected correctly
+- Unauthorised users blocked correctly
+- Role-based access still works
+- x-sync-secret is required for sync endpoints
+- Discord OAuth still works
+
+16. Safety rules before changing code
+
+Before editing:
+- Inspect the current file structure
+- Find existing dashboard components
+- Find existing bot command files
+- Find existing config/channel ID files
+- Find existing Prisma schema
+- Find existing API routes
+- Find existing styling/theme files
+- Reuse existing architecture
+
+Do not:
+- Duplicate command files
+- Duplicate database models
+- Duplicate API endpoints
+- Replace the app with a new structure
+- Delete unrelated working files
+- Commit secrets
+- Commit .env files
+- Remove the logo
+- Change the logo
+- Break login
+- Break dashboard redirects
+- Break Discord OAuth
+- Break existing pages
+
+17. Run checks
+
+After making changes, run:
+
+pnpm --filter @workspace/rsa-ops run build
+
+Also run any bot check/build command that exists in the project.
+
+Check and fix:
+- TypeScript errors
+- Next.js errors
+- Prisma errors
+- Bot errors
+- API route errors
+- Broken imports
+- Missing environment variables
+- Slash command registration issues
+- Runtime errors
+
+Do not ignore errors.
+
+If the build fails:
+- Read the full error
+- Fix the actual cause
+- Do not hide or suppress the error
+- Re-run the build
+- Repeat until it passes or report the remaining blocker clearly
+
+18. Git save
+
+After the build/checks pass:
+- Run git status
+- Show the changed files
+- Stage only the correct project files
+- Do not stage .env files, secret files, tokens, logs, or temporary files
+- Commit with a clear message, for example:
+  “Apply RSA gold theme and strengthen Discord sync”
+
+Do not commit secrets.
+Do not commit .env files.
+
+19. Final report
+
+Give me a clear final report with:
+
+- Files changed
+- What was updated on the login page
+- Confirmation that the RSA logo is still used
+- What theme/styling was changed
+- Confirmation that the main theme is now warm gold/yellow instead of dark blue
+- What dashboard pages were strengthened
+- What interactivity was checked
+- What Discord bot commands were fixed
+- Updated channel IDs used
+- How Discord server sync works
+- How website auto-updates work
+- Groups added/updated
+- Whether data validation is safe
+- Whether /api/roles-sync works
+- Whether authentication still works
+- Whether staff/announces pages are protected
+- Whether build passed
+- Whether bot checks passed
+- Missing secrets, if any
+- Any errors found and fixed
+- Any errors still remaining
+- Git commit hash
+
+Important:
+Do not claim everything works unless the build passes.
+Do not say the bot is fixed unless commands were checked.
+Do not say sync works unless the API/database/bot connection was checked.
+Do not replace things I have not asked you to replace.
+Do not duplicate anything.
+Do not remove the logo.
+Do not keep the old blue/dark navy theme as the main website theme.
+Do not fake completed features.
+Do not hide errors.
