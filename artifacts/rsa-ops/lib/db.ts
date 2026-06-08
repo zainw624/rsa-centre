@@ -708,3 +708,179 @@ export async function upsertPlayerStatRecord(data: {
     update: { playerTag, teamId, goals, assists, cleanSheets, motm },
   });
 }
+
+/** Increment player stats for one match (additive, safe for match-by-match updates) */
+export async function incrementPlayerStat(data: {
+  playerId: string;
+  playerTag: string;
+  seasonId: string;
+  teamId?: string | null;
+  goals?: number;
+  assists?: number;
+  cleanSheets?: number;
+  motm?: number;
+}) {
+  const { playerId, playerTag, seasonId, teamId = null, goals = 0, assists = 0, cleanSheets = 0, motm = 0 } = data;
+
+  const existing = await prisma.playerStat.findUnique({
+    where: { playerId_seasonId: { playerId, seasonId } },
+  });
+
+  if (existing) {
+    return prisma.playerStat.update({
+      where: { playerId_seasonId: { playerId, seasonId } },
+      data: {
+        playerTag,
+        teamId: teamId ?? existing.teamId,
+        goals:       { increment: goals },
+        assists:     { increment: assists },
+        cleanSheets: { increment: cleanSheets },
+        motm:        { increment: motm },
+      },
+    });
+  }
+
+  return prisma.playerStat.create({
+    data: { playerId, playerTag, seasonId, teamId, goals, assists, cleanSheets, motm },
+  });
+}
+
+async function resortGroupPositions(group: string, seasonId?: string) {
+  const rows = await prisma.leagueTable.findMany({
+    where: { group, ...(seasonId ? { seasonId } : {}) },
+    orderBy: [{ points: 'desc' }, { goalDifference: 'desc' }, { goalsFor: 'desc' }],
+  });
+  await Promise.all(
+    rows.map((row: any, i: number) =>
+      prisma.leagueTable.update({ where: { id: row.id }, data: { position: i + 1 } }),
+    ),
+  );
+}
+
+/**
+ * Record a match result and update LeagueTable standings for both teams.
+ * Win = 3 pts, Draw = 1 pt each, Loss = 0 pts.
+ * Also records an ActivityLog entry.
+ */
+export async function updateStandingsFromResult(data: {
+  homeTeamName: string;
+  awayTeamName: string;
+  homeScore: number;
+  awayScore: number;
+  seasonId?: string;
+  competition?: string;
+  submittedById?: string;
+}) {
+  const { homeTeamName, awayTeamName, homeScore, awayScore, seasonId, competition = 'RSA Season 2026', submittedById } = data;
+
+  const findTeam = (name: string) =>
+    prisma.team.findFirst({
+      where: {
+        OR: [
+          { teamName: { equals: name, mode: 'insensitive' } },
+          { teamCode: { equals: name, mode: 'insensitive' } },
+          { teamId:   { equals: name.toLowerCase() } },
+          { teamName: { contains: name, mode: 'insensitive' } },
+        ],
+      },
+    });
+
+  const [homeTeam, awayTeam] = await Promise.all([findTeam(homeTeamName), findTeam(awayTeamName)]);
+  if (!homeTeam) return { ok: false, error: `Team not found: ${homeTeamName}` };
+  if (!awayTeam) return { ok: false, error: `Team not found: ${awayTeamName}` };
+
+  const homeWin  = homeScore > awayScore;
+  const awayWin  = awayScore > homeScore;
+  const draw     = homeScore === awayScore;
+
+  const findEntry = (teamId: string) =>
+    prisma.leagueTable.findFirst({ where: { teamId, ...(seasonId ? { seasonId } : {}) } });
+
+  const [homeEntry, awayEntry] = await Promise.all([findEntry(homeTeam.id), findEntry(awayTeam.id)]);
+
+  const updates: Promise<any>[] = [];
+
+  if (homeEntry) {
+    updates.push(
+      prisma.leagueTable.update({
+        where: { id: homeEntry.id },
+        data: {
+          played:        { increment: 1 },
+          won:           { increment: homeWin ? 1 : 0 },
+          drew:          { increment: draw    ? 1 : 0 },
+          lost:          { increment: awayWin ? 1 : 0 },
+          goalsFor:      { increment: homeScore },
+          goalsAgainst:  { increment: awayScore },
+          goalDifference:{ increment: homeScore - awayScore },
+          points:        { increment: homeWin ? 3 : draw ? 1 : 0 },
+        },
+      }),
+    );
+  }
+
+  if (awayEntry) {
+    updates.push(
+      prisma.leagueTable.update({
+        where: { id: awayEntry.id },
+        data: {
+          played:        { increment: 1 },
+          won:           { increment: awayWin ? 1 : 0 },
+          drew:          { increment: draw    ? 1 : 0 },
+          lost:          { increment: homeWin ? 1 : 0 },
+          goalsFor:      { increment: awayScore },
+          goalsAgainst:  { increment: homeScore },
+          goalDifference:{ increment: awayScore - homeScore },
+          points:        { increment: awayWin ? 3 : draw ? 1 : 0 },
+        },
+      }),
+    );
+  }
+
+  // Record the result
+  updates.push(
+    prisma.result.create({
+      data: {
+        homeTeam:   homeTeam.teamName,
+        awayTeam:   awayTeam.teamName,
+        homeScore,
+        awayScore,
+        competition,
+        matchDate:  new Date(),
+        status:     'completed',
+        teamId:     homeTeam.id,
+      },
+    }),
+  );
+
+  // Activity log
+  updates.push(
+    prisma.activityLog.create({
+      data: {
+        type:     'result',
+        text:     `${homeTeam.teamName} ${homeScore}–${awayScore} ${awayTeam.teamName}`,
+        emoji:    '⚽',
+        teamId:   homeTeam.id,
+        teamName: homeTeam.teamName,
+        staffId:  submittedById,
+      },
+    }),
+  );
+
+  await Promise.all(updates);
+
+  // Re-sort group positions
+  const groupsSeen = new Set<string>();
+  if (homeTeam.group) groupsSeen.add(homeTeam.group);
+  if (awayTeam.group) groupsSeen.add(awayTeam.group);
+  await Promise.all([...groupsSeen].map((g) => resortGroupPositions(g, seasonId)));
+
+  return {
+    ok: true,
+    homeTeam: homeTeam.teamName,
+    awayTeam: awayTeam.teamName,
+    homeScore,
+    awayScore,
+    homeEntry: Boolean(homeEntry),
+    awayEntry: Boolean(awayEntry),
+  };
+}
