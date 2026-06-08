@@ -6,15 +6,6 @@ const { createTransactionId, loadTransactions, saveTransactions, getTransactionB
 const { buildSigningEmbed } = require('../utils/embeds');
 const { memberHasRoleNames } = require('../utils/permissions');
 const { getProcessedLogoAttachment } = require('../utils/logo');
-const {
-  addRosterPlayer: dbAddRosterPlayer,
-  removeRosterPlayer: dbRemoveRosterPlayer,
-  createTransfer: dbCreateTransfer,
-  updateTransferStatus: dbUpdateTransferStatus,
-  createActivityLog: dbCreateActivityLog,
-  createAuditLog: dbCreateAuditLog,
-  upsertTeam: dbUpsertTeam,
-} = require('../utils/database');
 
 const AUTO_ACCEPT_TIMEOUT_MS = 12 * 60 * 60 * 1000; // 12 hours
 const pendingTimeouts = new Map();
@@ -182,15 +173,72 @@ module.exports = {
       return;
     }
 
-    const dbTeam = await dbUpsertTeam({
-      teamId: team.teamId,
-      teamName: team.teamName,
-      teamCode: team.teamCode,
-      logo: team.logo,
-      roleId: team.roleId,
-      coachDiscordId: interaction.user.id,
-      rosterLimit: team.rosterLimit,
-    });
+    // Validate environment for website API call
+    const websiteUrl = process.env.WEBSITE_URL;
+    const syncSecret = process.env.ROLES_SYNC_SECRET;
+    if (!websiteUrl) {
+      await interaction.editReply({ content: '❌ Bot signing is unavailable: WEBSITE_URL not configured.' });
+      return;
+    }
+    if (!syncSecret) {
+      await interaction.editReply({ content: '❌ Bot signing is unavailable: ROLES_SYNC_SECRET not configured.' });
+      return;
+    }
+
+    const transactionId = createTransactionId();
+
+    // Call website API to handle database writes
+    let apiResponse;
+    try {
+      const signResponse = await fetch(`${websiteUrl}/api/bot/sign`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-sync-secret': syncSecret,
+        },
+        body: JSON.stringify({
+          teamId: team.teamId,
+          teamName: team.teamName,
+          teamCode: team.teamCode,
+          logo: team.logo,
+          roleId: team.roleId,
+          coachDiscordId: interaction.user.id,
+          playerId: targetMember.id,
+          playerTag: targetMember.user.tag,
+          transactionId,
+          guildId: interaction.guild.id,
+          staffId: interaction.user.id,
+        }),
+      });
+
+      if (!signResponse.ok) {
+        const errorData = await signResponse.json().catch(() => ({}));
+        throw new Error(`${signResponse.status}: ${errorData.error || 'Failed to sign player'}`);
+      }
+
+      apiResponse = await signResponse.json();
+    } catch (error) {
+      await interaction.editReply({
+        content: `❌ Failed to process signing: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      });
+      return;
+    }
+
+    // Update local file-based rosters for Discord role management
+    let updatedTeam;
+    try {
+      updatedTeam = await addPlayerToRoster(team.teamName, targetMember.id, targetMember.user.tag);
+      updatedTeam.coachDiscordId = interaction.user.id;
+      const teams = await loadTeams();
+      const persistedTeam = teams.find((entry) => entry.teamName === updatedTeam.teamName);
+      if (persistedTeam) {
+        persistedTeam.coachDiscordId = interaction.user.id;
+        await saveTeams(teams);
+      }
+    } catch (error) {
+      await interaction.editReply({ content: `❌ Unable to update local rosters: ${error.message}` });
+      return;
+    }
 
     const existingTeamRole = await getTeamForMember(targetMember);
     if (existingTeamRole) {
@@ -221,27 +269,6 @@ module.exports = {
       return;
     }
 
-    let updatedTeam;
-    try {
-      updatedTeam = await addPlayerToRoster(team.teamName, targetMember.id, targetMember.user.tag);
-      updatedTeam.coachDiscordId = interaction.user.id;
-      const teams = await loadTeams();
-      const persistedTeam = teams.find((entry) => entry.teamName === updatedTeam.teamName);
-      if (persistedTeam) {
-        persistedTeam.coachDiscordId = interaction.user.id;
-        await saveTeams(teams);
-      }
-
-      await dbAddRosterPlayer({
-        teamId: dbTeam.id,
-        playerId: targetMember.id,
-        playerTag: targetMember.user.tag,
-      });
-    } catch (error) {
-      await interaction.editReply({ content: `❌ Unable to add the player to the roster: ${error.message}` });
-      return;
-    }
-
     try {
       await targetMember.roles.remove(freeAgentRole);
       await targetMember.roles.add(teamRole);
@@ -251,7 +278,6 @@ module.exports = {
       return;
     }
 
-    const transactionId = createTransactionId();
     const embed = buildSigningEmbed(updatedTeam, `<@${targetMember.id}>`, transactionId);
     embed.setThumbnail(`attachment://${logoAttachment.name}`);
 
@@ -294,31 +320,6 @@ module.exports = {
       timestamp: new Date().toISOString(),
     });
     await saveTransactions(transactions);
-
-    await dbCreateTransfer({
-      transactionId,
-      type: 'sign',
-      status: 'pending',
-      action: 'sign',
-      playerId: targetMember.id,
-      playerTag: targetMember.user.tag,
-      fromTeam: 'Free Agent',
-      toTeam: team.teamName,
-      teamId: dbTeam.id,
-      sourceCommand: 'sign',
-      reason: 'Signing initiated via sign command',
-      guildId: interaction.guild.id,
-      staffId: interaction.user.id,
-    });
-
-    await dbCreateAuditLog({
-      actionType: 'sign_initiated',
-      sourceCommand: 'sign',
-      userId: interaction.user.id,
-      targetPlayerId: targetMember.id,
-      targetTeamId: dbTeam.id,
-      details: `Player ${targetMember.user.tag} signing initiated for ${team.teamName}`,
-    });
 
     pendingTimeouts.set(transactionId, setTimeout(() => runAutoAccept(interaction.client, transactionId), AUTO_ACCEPT_TIMEOUT_MS));
     await interaction.editReply({ content: `✅ Signing processed for ${targetMember.user.tag}. A contract has been posted to the contracts channel.` });
