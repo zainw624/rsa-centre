@@ -80,12 +80,14 @@ export async function POST(request: Request) {
 
     await prisma.activityLog.create({
       data: {
-        eventType: 'player_signed',
-        userId: body.staffId || '',
-        targetId: playerId,
+        type: 'sign',
+        text: `Player ${playerTag} signing initiated for ${teamName}`,
+        playerId,
+        playerTag,
+        teamId: team.id,
+        teamName,
+        staffId: body.staffId || null,
         metadata: {
-          playerTag,
-          teamName,
           transactionId: body.transactionId,
         },
       },
