@@ -123,28 +123,11 @@ const buildCommands = () => {
 async function setupTeamRoles(guild) {
   let changed = false;
   for (const team of registry.teams) {
-    let teamRole = null;
-
-    if (team.roleId) {
-      teamRole = guild.roles.cache.get(team.roleId);
-    }
+    const teamRole = resolveTeamRole(guild, team);
 
     if (!teamRole) {
-      teamRole = guild.roles.cache.find((role) => role.name === team.teamName || role.name === team.teamCode);
-    }
-
-    if (!teamRole) {
-      try {
-        teamRole = await guild.roles.create({
-          name: team.teamName,
-          color: '#1f1f1f',
-          reason: `[RSA] Auto-created team role for ${team.teamName}`,
-        });
-        console.log(`✅ Created team role: ${team.teamName} (${teamRole.id})`);
-      } catch (error) {
-        console.error(`❌ Failed to create role for ${team.teamName}: ${error.message}`);
-        continue;
-      }
+      console.warn(`⚠️ Team role missing for ${team.teamName} — skipping auto-create`);
+      continue;
     }
 
     if (team.roleId !== teamRole.id) {
@@ -250,31 +233,25 @@ async function handleClientReady() {
     const targetGuildId = process.env.DISCORD_GUILD_ID;
 
     if (targetGuildId) {
-      // Prefer registering as guild commands for development/testing to avoid global duplication
-      const targetGuild = client.guilds.cache.get(targetGuildId);
+      let targetGuild = client.guilds.cache.get(targetGuildId);
+      if (!targetGuild) {
+        try {
+          targetGuild = await client.guilds.fetch(targetGuildId);
+        } catch (err) {
+          console.warn(`⚠️ Unable to fetch configured guild ${targetGuildId}: ${err.message}`);
+        }
+      }
+
       if (targetGuild) {
         await targetGuild.commands.set(commands);
         console.log(`✅ Registered guild slash commands for ${targetGuildId}`);
       } else {
-        // If the configured guild isn't in cache, register to all guilds as a fallback
-        for (const guild of client.guilds.cache.values()) {
-          await guild.commands.set(commands).catch((err) => {
-            console.warn(`⚠️ Failed to register guild commands for ${guild.id}: ${err.message}`);
-          });
-        }
-        console.log('✅ Guild slash commands registered (fallback to all guilds)');
+        console.warn(
+          `⚠️ DISCORD_GUILD_ID is set but guild ${targetGuildId} could not be found. Slash commands were not registered globally to avoid duplicates.`
+        );
       }
     } else {
-      // No specific guild configured: register global commands
-      await client.application.commands.set(commands);
-      console.log('✅ Global slash commands registered');
-
-      for (const guild of client.guilds.cache.values()) {
-        await guild.commands.set(commands).catch((err) => {
-          console.warn(`⚠️ Failed to register guild commands for ${guild.id}: ${err.message}`);
-        });
-      }
-      console.log('✅ Guild slash commands registered');
+      console.warn('⚠️ DISCORD_GUILD_ID is not configured. Slash commands are not registered to avoid global duplication.');
     }
 
     client.emit('appReady');

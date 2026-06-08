@@ -211,12 +211,28 @@ module.exports = {
         }),
       });
 
+      const errorData = await signResponse.json().catch(() => ({}));
       if (!signResponse.ok) {
-        const errorData = await signResponse.json().catch(() => ({}));
-        throw new Error(`${signResponse.status}: ${errorData.error || 'Failed to sign player'}`);
+        if (signResponse.status === 401) {
+          await interaction.editReply({ content: '❌ Website sync failed: authorization secret mismatch.' });
+          return;
+        }
+        if (signResponse.status === 404) {
+          await interaction.editReply({ content: '❌ Website API route not found at /api/bot/sign.' });
+          return;
+        }
+        if (signResponse.status === 500) {
+          await interaction.editReply({ content: '❌ Website error while processing signing. Please try again later.' });
+          return;
+        }
+
+        await interaction.editReply({
+          content: `❌ Signing failed: ${errorData.error || 'Unexpected response from the website.'}`,
+        });
+        return;
       }
 
-      apiResponse = await signResponse.json();
+      apiResponse = errorData;
     } catch (error) {
       await interaction.editReply({
         content: `❌ Failed to process signing: ${error instanceof Error ? error.message : 'Unknown error'}`,

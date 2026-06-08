@@ -398,15 +398,6 @@
       ]
     },
     {
-      "teamId": "morocco",
-      "teamName": "Morocco",
-      "teamCode": "MAR",
-      "roleId": "1512921195107061890",
-      "coachDiscordId": "",
-      "logo": "assets/morocco.png",
-      "rosterLimit": 16,
-      "rosterPlayers": []
-    },
     {
       "teamId": "croatia",
       "teamName": "Croatia",

@@ -1,7 +1,7 @@
 ﻿const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const { loadSettings } = require('../utils/settings');
 const { loadTransferWindow } = require('../utils/transferWindow');
-const { loadTeams, saveTeams, getTeamByName, getTeamForMember, addPlayerToRoster, removePlayerFromRoster, resolveTeamRole, syncRostersFromGuildRoles } = require('../utils/teams');
+const { loadTeams, saveTeams, getTeamById, getTeamByName, getTeamForMember, addPlayerToRoster, removePlayerFromRoster, resolveTeamRole, syncRostersFromGuildRoles } = require('../utils/teams');
 const { createTransactionId, loadTransactions, saveTransactions, getTransactionById, addTransaction } = require('../utils/transactions');
 const { buildSigningEmbed } = require('../utils/embeds');
 const { memberHasRoleNames } = require('../utils/permissions');
@@ -97,7 +97,7 @@ module.exports = {
         .setName('team')
         .setDescription('Select the national team')
         .setRequired(true)
-        .addChoices(...require('../data/teams.json').teams.map((team) => ({ name: team.teamName, value: team.teamName })))
+        .addChoices(...require('../data/teams.json').teams.map((team) => ({ name: team.teamName, value: team.teamId })))
     ),
 
   async execute(interaction) {
@@ -118,7 +118,7 @@ module.exports = {
     }
 
     const targetUser = interaction.options.getUser('player', true);
-    const teamName = interaction.options.getString('team', true);
+    const teamId = interaction.options.getString('team', true);
     await syncRostersFromGuildRoles(interaction.guild).catch(() => null);
     const targetMember = await getGuildMember(interaction, targetUser.id);
     if (!targetMember) {
@@ -167,9 +167,24 @@ module.exports = {
       return;
     }
 
-    const team = await getTeamByName(teamName);
+    const team = await getTeamById(teamId);
     if (!team) {
       await interaction.editReply({ content: '❌ Team not found in teams.json.' });
+      return;
+    }
+
+    const existingTeamRole = await getTeamForMember(targetMember);
+    if (existingTeamRole) {
+      if (existingTeamRole.teamName === team.teamName) {
+        await interaction.editReply({ content: '❌ The player is already signed to that national team.' });
+      } else {
+        await interaction.editReply({ content: '❌ The player already belongs to another national team.' });
+      }
+      return;
+    }
+
+    if (team.rosterPlayers.length >= team.rosterLimit) {
+      await interaction.editReply({ content: `❌ ${team.teamName} roster is full (${team.rosterLimit}/16).` });
       return;
     }
 
@@ -240,16 +255,6 @@ module.exports = {
       return;
     }
 
-    const existingTeamRole = await getTeamForMember(targetMember);
-    if (existingTeamRole) {
-      if (existingTeamRole.teamName === team.teamName) {
-        await interaction.editReply({ content: '❌ The player is already signed to that national team.' });
-      } else {
-        await interaction.editReply({ content: '❌ The player already belongs to another national team.' });
-      }
-      return;
-    }
-
     if (team.rosterPlayers.length >= team.rosterLimit) {
       await interaction.editReply({ content: `❌ ${team.teamName} roster is full (${team.rosterLimit}/16).` });
       return;
@@ -309,6 +314,7 @@ module.exports = {
       status: 'pending',
       playerId: targetMember.id,
       playerTag: targetMember.user.tag,
+      teamId: team.teamId,
       teamCode: team.teamCode,
       teamName: team.teamName,
       coachDiscordId: updatedTeam.coachDiscordId,
@@ -361,7 +367,7 @@ module.exports = {
       return;
     }
 
-    const team = await getTeamByName(transaction.teamName);
+    const team = transaction.teamId ? await getTeamById(transaction.teamId) : await getTeamByName(transaction.teamName);
     if (!team) {
       await interaction.reply({ content: '❌ Team information could not be loaded.', flags: 64 });
       return;

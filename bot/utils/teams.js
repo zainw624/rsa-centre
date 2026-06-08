@@ -40,15 +40,43 @@ async function normalizeTeams(teams) {
   return { teams, changed };
 }
 
+const TEAM_NAME_ALIASES = {
+  USA: ['United States', 'United States / USA (HOST)'],
+  'United States': ['USA'],
+  Türkiye: ['Turkiye'],
+  Turkiye: ['Türkiye'],
+};
+
+function normalizeRoleName(value) {
+  return value
+    ?.toString()
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}
+
+function getTeamRoleCandidates(team) {
+  const names = new Set([team.teamName, team.teamCode, team.teamId, team.roleId].filter(Boolean));
+  const aliases = TEAM_NAME_ALIASES[team.teamName] || [];
+  for (const alias of aliases) {
+    names.add(alias);
+  }
+  if (team.teamName) {
+    names.add(normalizeRoleName(team.teamName));
+  }
+  if (team.teamCode) {
+    names.add(normalizeRoleName(team.teamCode));
+  }
+  return Array.from(names);
+}
+
 function resolveTeamIdentifier(team, identifier) {
   if (!identifier || !team) return false;
-  const normalized = identifier.toString().trim();
-  return (
-    team.teamId === normalized ||
-    team.teamName === normalized ||
-    team.teamCode === normalized ||
-    team.roleId === normalized
-  );
+  const target = normalizeRoleName(identifier);
+  return getTeamRoleCandidates(team).some((name) => normalizeRoleName(name) === target);
 }
 
 async function loadTeams() {
@@ -120,7 +148,7 @@ function resolveTeamRole(guild, team) {
     const role = guild.roles.cache.get(team.roleId);
     if (role) return role;
   }
-  return guild.roles.cache.find((role) => role.name === team.teamName || role.name === team.teamCode);
+  return guild.roles.cache.find((role) => resolveTeamIdentifier(team, role.name));
 }
 
 function getLogoPathForTeam(team) {
@@ -234,9 +262,11 @@ async function getTeamForMember(member) {
     if (team.roleId && member.roles.cache.has(team.roleId)) {
       return team;
     }
-    const matchingRole = member.roles.cache.find((role) => role.name === team.teamName || role.name === team.teamCode || role.name === team.teamId);
-    if (matchingRole) {
-      return team;
+    if (!team.roleId) {
+      const matchingRole = member.roles.cache.find((role) => role.name === team.teamName || role.name === team.teamCode || role.name === team.teamId);
+      if (matchingRole) {
+        return team;
+      }
     }
   }
   return null;

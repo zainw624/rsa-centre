@@ -1,0 +1,222 @@
+{
+  "version": 3,
+  "pages404": true,
+  "caseSensitive": false,
+  "basePath": "",
+  "redirects": [
+    {
+      "source": "/:path+/",
+      "destination": "/:path+",
+      "internal": true,
+      "statusCode": 308,
+      "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$"
+    }
+  ],
+  "headers": [],
+  "rewrites": {
+    "beforeFiles": [],
+    "afterFiles": [],
+    "fallback": []
+  },
+  "dynamicRoutes": [
+    {
+      "page": "/api/auth/[...nextauth]",
+      "regex": "^/api/auth/(.+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPnextauth": "nxtPnextauth"
+      },
+      "namedRegex": "^/api/auth/(?<nxtPnextauth>.+?)(?:/)?$"
+    },
+    {
+      "page": "/player-profiles/[playerId]",
+      "regex": "^/player\\-profiles/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPplayerId": "nxtPplayerId"
+      },
+      "namedRegex": "^/player\\-profiles/(?<nxtPplayerId>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/teams/[team]",
+      "regex": "^/teams/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPteam": "nxtPteam"
+      },
+      "namedRegex": "^/teams/(?<nxtPteam>[^/]+?)(?:/)?$"
+    }
+  ],
+  "staticRoutes": [
+    {
+      "page": "/",
+      "regex": "^/(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/(?:/)?$"
+    },
+    {
+      "page": "/_not-found",
+      "regex": "^/_not\\-found(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_not\\-found(?:/)?$"
+    },
+    {
+      "page": "/access-denied",
+      "regex": "^/access\\-denied(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/access\\-denied(?:/)?$"
+    },
+    {
+      "page": "/activity",
+      "regex": "^/activity(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/activity(?:/)?$"
+    },
+    {
+      "page": "/administration",
+      "regex": "^/administration(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/administration(?:/)?$"
+    },
+    {
+      "page": "/archives",
+      "regex": "^/archives(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/archives(?:/)?$"
+    },
+    {
+      "page": "/awards",
+      "regex": "^/awards(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/awards(?:/)?$"
+    },
+    {
+      "page": "/compliance",
+      "regex": "^/compliance(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/compliance(?:/)?$"
+    },
+    {
+      "page": "/dashboard",
+      "regex": "^/dashboard(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard(?:/)?$"
+    },
+    {
+      "page": "/discipline",
+      "regex": "^/discipline(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/discipline(?:/)?$"
+    },
+    {
+      "page": "/fixtures",
+      "regex": "^/fixtures(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/fixtures(?:/)?$"
+    },
+    {
+      "page": "/hall-of-fame",
+      "regex": "^/hall\\-of\\-fame(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/hall\\-of\\-fame(?:/)?$"
+    },
+    {
+      "page": "/league-table",
+      "regex": "^/league\\-table(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/league\\-table(?:/)?$"
+    },
+    {
+      "page": "/login",
+      "regex": "^/login(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/login(?:/)?$"
+    },
+    {
+      "page": "/managers",
+      "regex": "^/managers(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/managers(?:/)?$"
+    },
+    {
+      "page": "/notifications",
+      "regex": "^/notifications(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/notifications(?:/)?$"
+    },
+    {
+      "page": "/player-profiles",
+      "regex": "^/player\\-profiles(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/player\\-profiles(?:/)?$"
+    },
+    {
+      "page": "/playerinfo",
+      "regex": "^/playerinfo(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/playerinfo(?:/)?$"
+    },
+    {
+      "page": "/results",
+      "regex": "^/results(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/results(?:/)?$"
+    },
+    {
+      "page": "/rosters",
+      "regex": "^/rosters(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/rosters(?:/)?$"
+    },
+    {
+      "page": "/search",
+      "regex": "^/search(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/search(?:/)?$"
+    },
+    {
+      "page": "/staff",
+      "regex": "^/staff(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/staff(?:/)?$"
+    },
+    {
+      "page": "/statistics",
+      "regex": "^/statistics(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/statistics(?:/)?$"
+    },
+    {
+      "page": "/teams",
+      "regex": "^/teams(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/teams(?:/)?$"
+    },
+    {
+      "page": "/transfers",
+      "regex": "^/transfers(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/transfers(?:/)?$"
+    },
+    {
+      "page": "/world-cup",
+      "regex": "^/world\\-cup(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/world\\-cup(?:/)?$"
+    }
+  ],
+  "dataRoutes": [],
+  "rsc": {
+    "header": "rsc",
+    "varyHeader": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "prefetchHeader": "next-router-prefetch",
+    "didPostponeHeader": "x-nextjs-postponed",
+    "contentTypeHeader": "text/x-component",
+    "suffix": ".rsc",
+    "prefetchSuffix": ".prefetch.rsc",
+    "prefetchSegmentHeader": "next-router-segment-prefetch",
+    "prefetchSegmentSuffix": ".segment.rsc",
+    "prefetchSegmentDirSuffix": ".segments"
+  },
+  "rewriteHeaders": {
+    "pathHeader": "x-nextjs-rewritten-path",
+    "queryHeader": "x-nextjs-rewritten-query"
+  }
+}

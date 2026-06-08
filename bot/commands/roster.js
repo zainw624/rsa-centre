@@ -1,11 +1,11 @@
 const { SlashCommandBuilder } = require('discord.js');
-const { getTeamByName, syncRostersFromGuildRoles } = require('../utils/teams');
+const { getTeamById, syncRostersFromGuildRoles } = require('../utils/teams');
 const { buildRosterEmbed } = require('../utils/embeds');
 const teamsData = require('../data/teams.json');
 
 const TEAM_CHOICES = teamsData.teams.map((team) => ({
   name: team.teamName,
-  value: team.teamName,
+  value: team.teamId,
 }));
 
 module.exports = {
@@ -23,11 +23,11 @@ module.exports = {
   async execute(interaction) {
     await interaction.deferReply();
 
-    const teamName = interaction.options.getString('team');
+    const teamId = interaction.options.getString('team');
     await syncRostersFromGuildRoles(interaction.guild);
-    const team = await getTeamByName(teamName);
+    const team = await getTeamById(teamId);
     if (!team) {
-      await interaction.editReply({ content: `❌ Team "${teamName}" not found.` });
+      await interaction.editReply({ content: '❌ Team not found.' });
       return;
     }
 

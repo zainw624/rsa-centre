@@ -129,25 +129,16 @@ async function setupTeamRoles(guild) {
       teamRole = guild.roles.cache.get(team.roleId);
     }
 
-    if (!teamRole) {
+    if (!teamRole && !team.roleId) {
       teamRole = guild.roles.cache.find((role) => role.name === team.teamName || role.name === team.teamCode);
     }
 
     if (!teamRole) {
-      try {
-        teamRole = await guild.roles.create({
-          name: team.teamName,
-          color: '#1f1f1f',
-          reason: `[RSA] Auto-created team role for ${team.teamName}`,
-        });
-        console.log(`✅ Created team role: ${team.teamName} (${teamRole.id})`);
-      } catch (error) {
-        console.error(`❌ Failed to create role for ${team.teamName}: ${error.message}`);
-        continue;
-      }
+      console.warn(`⚠️ Team role missing for ${team.teamName} (${team.teamCode}). Please create the role in Discord or update teams.json with a valid roleId.`);
+      continue;
     }
 
-    if (team.roleId !== teamRole.id) {
+    if (!team.roleId) {
       team.roleId = teamRole.id;
       changed = true;
     }
@@ -260,18 +251,16 @@ async function handleClientReady() {
             console.warn(`⚠️ Failed to register guild commands for ${guild.id}: ${err.message}`);
           });
         }
-        console.log('✅ Guild slash commands registered (fallback to all guilds)');
+        console.log('✅ Guild slash commands registered (fallback to cached guilds)');
       }
     } else {
-      await client.application.commands.set(commands);
-      console.log('✅ Global slash commands registered');
-
+      console.warn('⚠️ DISCORD_GUILD_ID is not configured. Skipping global command registration to avoid duplicate slash commands. Registering commands only for cached guilds.');
       for (const guild of client.guilds.cache.values()) {
         await guild.commands.set(commands).catch((err) => {
           console.warn(`⚠️ Failed to register guild commands for ${guild.id}: ${err.message}`);
         });
       }
-      console.log('✅ Guild slash commands registered');
+      console.log('✅ Guild slash commands registered for cached guilds');
     }
 
     client.emit('appReady');
