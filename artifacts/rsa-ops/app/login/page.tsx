@@ -70,8 +70,7 @@ export default async function LoginPage() {
           </h1>
 
           <p className="login-subtitle">
-            The official private management platform for RSA staff, players, and officials.
-            Your Discord roles automatically determine your access level.
+            Access the official Roblox Soccer Association hub — reserved for RSA players, staff, and verified members only.
           </p>
 
           {/* Access requirement cards */}
@@ -114,9 +113,9 @@ export default async function LoginPage() {
           display: flex;
           flex-direction: column;
           background:
-            radial-gradient(ellipse 80% 40% at 50% -10%, rgba(201,165,90,0.10) 0%, transparent 70%),
-            radial-gradient(ellipse 50% 30% at 80% 80%, rgba(88,101,242,0.06) 0%, transparent 60%),
-            linear-gradient(180deg, #080c14 0%, #090d17 50%, #08101a 100%);
+            radial-gradient(ellipse 90% 50% at 50% -8%, rgba(201,165,90,0.20) 0%, transparent 65%),
+            radial-gradient(ellipse 55% 30% at 10% 90%, rgba(180,130,40,0.08) 0%, transparent 55%),
+            linear-gradient(180deg, #0d0a05 0%, #0a0c0f 50%, #080b12 100%);
         }
 
         /* Header */

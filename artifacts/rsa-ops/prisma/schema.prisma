@@ -68,6 +68,7 @@ model Team {
   teamCode           String
   logo               String?
   roleId             String?
+  group              String?
   coachDiscordId     String?
   rosterLimit        Int                @default(16)
   rosterPlayers      RosterPlayer[]
@@ -79,6 +80,7 @@ model Team {
   leagueTableEntries LeagueTable[]
   staffRoles         StaffRole[]
   awards             Award[]
+  playerStats        PlayerStat[]
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
 }
@@ -193,6 +195,7 @@ model LeagueTable {
   season         Season?  @relation(fields: [seasonId], references: [id])
   teamId         String?
   team           Team?    @relation(fields: [teamId], references: [id])
+  group          String?
   position       Int
   played         Int
   won            Int
@@ -297,8 +300,27 @@ model Season {
   leagueTableEntries LeagueTable[]
   awards          Award[]
   hallOfFameEntries HallOfFameEntry[]
+  playerStats     PlayerStat[]
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
+}
+
+model PlayerStat {
+  id          String   @id @default(cuid())
+  playerId    String
+  playerTag   String
+  teamId      String?
+  team        Team?    @relation(fields: [teamId], references: [id])
+  seasonId    String?
+  season      Season?  @relation(fields: [seasonId], references: [id])
+  goals       Int      @default(0)
+  assists     Int      @default(0)
+  cleanSheets Int      @default(0)
+  motm        Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([playerId, seasonId])
 }
 
 model Award {

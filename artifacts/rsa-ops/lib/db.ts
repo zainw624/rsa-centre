@@ -645,3 +645,66 @@ export async function updateResult(id: string, data: any) {
 export async function deleteResult(id: string) {
   return prisma.result.delete({ where: { id } });
 }
+
+export async function getGroupStandings(): Promise<Record<string, any[]>> {
+  const rows = await prisma.leagueTable.findMany({
+    where: { group: { not: null } },
+    include: { team: true, season: true },
+    orderBy: [{ group: 'asc' }, { points: 'desc' }, { goalDifference: 'desc' }, { goalsFor: 'desc' }],
+  });
+
+  const result: Record<string, any[]> = { A: [], B: [], C: [], D: [] };
+  rows.forEach((row: any) => {
+    const g: string = row.group ?? '';
+    if (g && result[g] !== undefined) result[g].push(row);
+  });
+
+  Object.keys(result).forEach((g) => {
+    result[g] = result[g].map((row: any, i: number) => ({ ...row, position: i + 1 }));
+  });
+
+  return result;
+}
+
+export async function getPlayerLeaderboard(seasonId?: string) {
+  const where: any = {};
+  if (seasonId) where.seasonId = seasonId;
+
+  const stats = await prisma.playerStat.findMany({
+    where,
+    include: { team: true },
+    take: 200,
+  });
+
+  const sortBy = (key: 'goals' | 'assists' | 'cleanSheets' | 'motm') =>
+    [...stats].sort((a, b) => (b[key] as number) - (a[key] as number)).slice(0, 10);
+
+  return {
+    topScorers:     sortBy('goals'),
+    topAssists:     sortBy('assists'),
+    topCleanSheets: sortBy('cleanSheets'),
+    topMotm:        sortBy('motm'),
+  };
+}
+
+export async function getCurrentSeason() {
+  return prisma.season.findFirst({ where: { current: true } });
+}
+
+export async function upsertPlayerStatRecord(data: {
+  playerId: string;
+  playerTag: string;
+  seasonId: string;
+  teamId?: string | null;
+  goals?: number;
+  assists?: number;
+  cleanSheets?: number;
+  motm?: number;
+}) {
+  const { playerId, playerTag, seasonId, teamId = null, goals = 0, assists = 0, cleanSheets = 0, motm = 0 } = data;
+  return prisma.playerStat.upsert({
+    where: { playerId_seasonId: { playerId, seasonId } },
+    create: { playerId, playerTag, seasonId, teamId, goals, assists, cleanSheets, motm },
+    update: { playerTag, teamId, goals, assists, cleanSheets, motm },
+  });
+}
