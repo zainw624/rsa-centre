@@ -2,19 +2,19 @@
   "version": 1,
   "functions": {
     "/api/administration/backup": {},
-    "/api/fixtures": {},
-    "/api/notifications": {},
-    "/api/playerinfo": {},
+    "/api/activity": {},
     "/api/bot/sign": {},
-    "/api/discipline/eligibility": {},
+    "/api/playerinfo": {},
+    "/api/fixtures": {},
     "/api/realtime": {},
     "/api/roles/webhook": {},
-    "/api/teams": {},
-    "/api/transfers": {},
+    "/api/discipline/eligibility": {},
     "/api/results": {},
-    "/api/activity": {},
+    "/api/transfers": {},
     "/api/search": {},
+    "/api/teams": {},
+    "/api/roles/sync": {},
     "/api/roles-sync": {},
-    "/api/roles/sync": {}
+    "/api/notifications": {}
   }
 }
