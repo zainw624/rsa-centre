@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "functions": {
+    "/api/bot/sign": {},
+    "/api/activity": {},
+    "/api/discipline/eligibility": {},
+    "/api/results": {},
+    "/api/playerinfo": {},
+    "/api/realtime": {},
+    "/api/notifications": {},
+    "/api/roles-sync": {},
+    "/api/fixtures": {},
+    "/api/transfers": {},
+    "/api/roles/webhook": {},
+    "/api/teams": {},
+    "/api/administration/backup": {},
+    "/api/search": {},
+    "/api/roles/sync": {}
+  }
+}

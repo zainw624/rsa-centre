@@ -1,5 +1,4 @@
 import DiscordProvider from 'next-auth/providers/discord';
-import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { NextAuthOptions } from 'next-auth';
 import { prisma } from '@/lib/prisma';
 import { fetchGuildMember, fetchGuildRoles, mapDiscordRoles, resolvePermission } from '@/lib/discord';
@@ -7,7 +6,6 @@ import { fetchGuildMember, fetchGuildRoles, mapDiscordRoles, resolvePermission }
 const botOwnerId = process.env.BOT_OWNER_ID;
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
   providers: [
     DiscordProvider({
       clientId: process.env.DISCORD_CLIENT_ID ?? '',
@@ -20,7 +18,7 @@ export const authOptions: NextAuthOptions = {
     })
   ],
   session: {
-    strategy: 'database'
+    strategy: 'jwt'
   },
   pages: {
     signIn: '/login',
