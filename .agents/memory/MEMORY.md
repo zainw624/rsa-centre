@@ -1,9 +1,2 @@
-- [RSA Ops page error pattern](rsa-ops-page-error-pattern.md) — all shell pages use try/catch + amber banner; never crash on missing DB
-- [RSA Ops session fields](rsa-ops-session-fields.md) — session.user has id/discordId/permission/roles/name/image; permission drives access
-- [RSA roles-sync endpoint](rsa-roles-sync-endpoint.md) — POST /api/roles-sync; bot push endpoint; secret + guild validation; upserts user, roster, manager, audit
-- [RSA logo file](rsa-logo.md) — rsa1.png was a 1×1 stub; replaced with proper 512×512 PNG using ImageMagick
-- [RSA schema additions](rsa-schema-additions.md) — PlayerStat model + group field on Team/LeagueTable added in Season 2026 build
-- [RSA group seeding](rsa-group-seeding.md) — POST /api/admin/seed-groups must be called once after DB push to seed 16 teams across A-D
-- [Prisma generate in deploy build](prisma-deploy-generate.md) — Next.js+Prisma monorepo builds must run prisma generate explicitly (build script + postinstall).
-- [NextAuth GET sign-in error](nextauth-get-signin-error.md) — never link `/api/auth/signin/:provider` via GET; v4 needs CSRF POST. GET → ?error=<provider>. Use client signIn().
-- [RSA jwt permission load](rsa-jwt-permission-load.md) — jwt callback must load roles/permission from DB by discordId; OAuth user obj lacks them → everyone 'viewer'. Re-login needed after fix.
+- [Discord sync architecture](discord-sync-architecture.md) — autoscale can't host a gateway; bot pushes, website pulls, both share one helper; team role IDs are source of truth.
+- [Team role IDs are internal-only](team-role-ids-internal.md) — strip roleId/coachDiscordId at the db-function source, not just the API route (Next serializes server-component props to the browser).

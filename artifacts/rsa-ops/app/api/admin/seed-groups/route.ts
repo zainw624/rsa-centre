@@ -2,37 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prismaClient';
+import { TEAMS, ensureTeams, removeMorocco, teamIdForCode } from '@/lib/teamRoles';
 
 export const dynamic = 'force-dynamic';
 
-const GROUPS: Record<string, { name: string; code: string; isHost?: boolean }[]> = {
-  A: [
-    { name: 'United States', code: 'USA', isHost: true },
-    { name: 'Norway',        code: 'NOR' },
-    { name: 'Croatia',       code: 'CRO' },
-    { name: 'Japan',         code: 'JPN' },
-  ],
-  B: [
-    { name: 'Ghana',   code: 'GHA' },
-    { name: 'Turkiye', code: 'TUR' },
-    { name: 'Brazil',  code: 'BRA' },
-    { name: 'Belgium', code: 'BEL' },
-  ],
-  C: [
-    { name: 'Portugal',    code: 'POR' },
-    { name: 'England',     code: 'ENG' },
-    { name: 'France',      code: 'FRA' },
-    { name: 'Spain',       code: 'ESP' },
-  ],
-  D: [
-    { name: 'Netherlands', code: 'NED' },
-    { name: 'Germany',     code: 'GER' },
-    { name: 'Senegal',     code: 'SEN' },
-    { name: 'Sweden',      code: 'SWE' },
-  ],
-};
-
-export async function POST(req: NextRequest) {
+export async function POST(_req: NextRequest) {
   const session = await getServerSession(authOptions);
   const perm = (session?.user as any)?.permission ?? '';
   if (!session || !['owner', 'administrator', 'league'].includes(perm)) {
@@ -49,50 +23,39 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    // 2. Ensure all 16 canonical teams exist (with role IDs/logos) and purge Morocco.
+    await ensureTeams(prisma);
+    await removeMorocco(prisma);
+
     const created: string[] = [];
     const skipped: string[] = [];
+    const groupPosition: Record<string, number> = { A: 0, B: 0, C: 0, D: 0 };
 
-    for (const [groupKey, teams] of Object.entries(GROUPS)) {
-      for (let i = 0; i < teams.length; i++) {
-        const t = teams[i];
-        const teamId = t.code.toLowerCase();
+    for (const t of TEAMS) {
+      const teamId = teamIdForCode(t.code);
+      const team = await prisma.team.findUnique({ where: { teamId } });
+      if (!team) continue;
 
-        // Upsert Team
-        const team = await prisma.team.upsert({
-          where: { teamId },
-          create: {
-            teamId,
-            teamName: t.name,
-            teamCode: t.code,
-            group: groupKey,
-            logo: `/assets/${teamId}.png`,
-          },
-          update: {
-            group: groupKey,
-            teamName: t.name,
+      const position = ++groupPosition[t.group];
+
+      const existing = await prisma.leagueTable.findFirst({
+        where: { teamId: team.id, seasonId: season.id, group: t.group },
+      });
+
+      if (!existing) {
+        await prisma.leagueTable.create({
+          data: {
+            teamId: team.id,
+            seasonId: season.id,
+            group: t.group,
+            position,
+            played: 0, won: 0, drew: 0, lost: 0,
+            goalsFor: 0, goalsAgainst: 0, goalDifference: 0, points: 0,
           },
         });
-
-        // Check for existing LeagueTable entry in this season+group
-        const existing = await prisma.leagueTable.findFirst({
-          where: { teamId: team.id, seasonId: season.id, group: groupKey },
-        });
-
-        if (!existing) {
-          await prisma.leagueTable.create({
-            data: {
-              teamId: team.id,
-              seasonId: season.id,
-              group: groupKey,
-              position: i + 1,
-              played: 0, won: 0, drew: 0, lost: 0,
-              goalsFor: 0, goalsAgainst: 0, goalDifference: 0, points: 0,
-            },
-          });
-          created.push(`${groupKey}: ${t.name}`);
-        } else {
-          skipped.push(`${groupKey}: ${t.name}`);
-        }
+        created.push(`${t.group}: ${t.name}`);
+      } else {
+        skipped.push(`${t.group}: ${t.name}`);
       }
     }
 

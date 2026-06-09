@@ -66,6 +66,49 @@ export async function fetchGuildMember(discordId: string): Promise<Record<string
   return response.json();
 }
 
+/**
+ * Fetch every member of the guild via the Discord REST API (paginated).
+ * Requires the bot to have the SERVER MEMBERS INTENT enabled in the Discord
+ * Developer Portal. Returns null when Discord is not configured or the first
+ * page request fails outright.
+ */
+export async function fetchAllGuildMembers(): Promise<any[] | null> {
+  if (!botToken || !guildId) {
+    console.warn('[discord] DISCORD_BOT_TOKEN or DISCORD_GUILD_ID not set — cannot fetch guild members');
+    return null;
+  }
+
+  const all: any[] = [];
+  let after = '0';
+
+  // Discord returns up to 1000 members per page, ordered by ascending user id.
+  for (let page = 0; page < 100; page++) {
+    const url = `${DISCORD_API_BASE}/guilds/${guildId}/members?limit=1000&after=${after}`;
+    const response = await fetch(url, { headers: { Authorization: `Bot ${botToken}` } });
+
+    if (response.status === 429) {
+      const retry = Number(response.headers.get('retry-after') ?? '1');
+      await new Promise((r) => setTimeout(r, (retry + 0.5) * 1000));
+      page--; // retry the same page
+      continue;
+    }
+
+    if (!response.ok) {
+      console.error('[discord] Unable to fetch guild members, status:', response.status);
+      return all.length ? all : null;
+    }
+
+    const batch = (await response.json()) as any[];
+    if (!Array.isArray(batch) || batch.length === 0) break;
+
+    all.push(...batch);
+    after = batch[batch.length - 1]?.user?.id ?? after;
+    if (batch.length < 1000) break;
+  }
+
+  return all;
+}
+
 export function mapDiscordRoles(roleIds: string[], roleMap: Record<string, string>) {
   return roleIds
     .map((roleId: string) => roleMap[roleId])

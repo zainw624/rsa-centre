@@ -178,7 +178,7 @@ export async function getComplianceSummary() {
 }
 
 export async function getAllTeams() {
-  return prisma.team.findMany({
+  const teams = await prisma.team.findMany({
     orderBy: { teamName: 'asc' },
     include: {
       rosterPlayers: { where: { active: true } },
@@ -187,10 +187,12 @@ export async function getAllTeams() {
       results: { orderBy: { matchDate: 'desc' }, take: 5 },
     },
   });
+  // Strip internal-only fields — Discord role IDs must never reach the client.
+  return teams.map(({ roleId, coachDiscordId, ...rest }) => rest);
 }
 
 export async function getTeamByCodeOrName(value: string) {
-  return prisma.team.findFirst({
+  const team = await prisma.team.findFirst({
     where: {
       OR: [
         { teamName: value },
@@ -205,6 +207,10 @@ export async function getTeamByCodeOrName(value: string) {
       results: { orderBy: { matchDate: 'desc' }, take: 20 },
     },
   });
+  if (!team) return null;
+  // Strip internal-only fields — Discord role IDs must never reach the client.
+  const { roleId, coachDiscordId, ...rest } = team;
+  return rest;
 }
 
 export async function getAllPlayers() {
