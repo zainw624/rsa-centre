@@ -1,1 +1,2 @@
 - [Team payload sanitization](team-payload-sanitization.md) — strip Discord/role IDs + teamId from team objects before the client; keep cuid `id` for keys; pick latest league-table entry for record.
+- [Secrets storage](secrets-storage.md) — app secrets belong in the encrypted Secrets tab, never plaintext in .replit; pending: strip plaintext tokens from .replit once user re-adds them as Secrets.
