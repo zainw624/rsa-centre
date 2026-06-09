@@ -21,17 +21,20 @@ export default function TeamCard({ team }: { team: any }) {
           <Image src={logoPath(team)} alt={team.teamName} fill sizes="56px" className="object-contain" />
         </div>
         <div className="flex-1">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-2">
             <h3 className="text-lg font-semibold text-white">{team.teamName}</h3>
             <div className="text-xs text-slate-400">{status}</div>
           </div>
+          {team.group ? (
+            <div className="mt-0.5 text-xs font-medium uppercase tracking-wide text-rsa-gold">Group {team.group}</div>
+          ) : null}
           <div className="mt-2 text-sm text-slate-300">Manager: {manager?.name ?? '—'}</div>
           <div className="text-sm text-slate-300">Assistant: {assistant?.name ?? '—'}</div>
         </div>
       </div>
       <div className="mt-3 flex items-center justify-between text-sm text-slate-400">
-        <div>Roster: <span className="text-white">{rosterSize}/{team.rosterLimit}</span></div>
-        <div>{team.results?.length ?? 0} recent results</div>
+        <div>Players: <span className="text-white">{rosterSize}/{team.rosterLimit}</span></div>
+        <div>{team.results?.length ?? 0} matches played</div>
       </div>
     </Link>
   );

@@ -37,9 +37,9 @@ export default async function StaffPage() {
   return (
     <div className="mx-auto w-full max-w-7xl">
       <header className="mb-6">
-        <p className="text-xs font-bold uppercase tracking-widest text-rsa-gold">Staff Centre</p>
-        <h1 className="mt-1 text-2xl font-semibold text-white">RSA Staff Directory</h1>
-        <p className="mt-1 text-sm text-slate-500">Staff detected automatically from Discord roles</p>
+        <p className="text-xs font-bold uppercase tracking-widest text-rsa-gold">League Operations</p>
+        <h1 className="mt-1 text-2xl font-semibold text-white">RSA Leadership</h1>
+        <p className="mt-1 text-sm text-slate-500">The people who run the league, organised by department</p>
       </header>
 
       {dbError ? (
@@ -49,8 +49,8 @@ export default async function StaffPage() {
         </div>
       ) : sortedGroups.length === 0 ? (
         <div className="rounded-2xl border border-rsa-border bg-white/3 px-5 py-12 text-center">
-          <p className="text-sm text-slate-400">No staff found in the database</p>
-          <p className="mt-1 text-xs text-slate-600">Staff are detected from Discord roles when they log in</p>
+          <p className="text-sm text-slate-400">No staff to display yet</p>
+          <p className="mt-1 text-xs text-slate-600">Staff members appear here once they sign in</p>
         </div>
       ) : (
         <div className="space-y-8">

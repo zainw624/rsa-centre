@@ -177,18 +177,38 @@ export async function getComplianceSummary() {
   }
 }
 
+// Strip internal/external identifiers before a team object reaches the browser:
+// Discord role IDs (roleId/coachDiscordId), the unique business teamId, nested
+// manager Discord IDs, and roster player Discord IDs. The random cuid `id` is kept
+// because it is needed only as a React key / selector and is never rendered.
+// Only public fields (names, tags, team, role, image, group, counts) survive.
+function sanitizeTeam(team: any) {
+  const { roleId, coachDiscordId, teamId, rosterPlayers, managerAssignments, ...rest } = team;
+  return {
+    ...rest,
+    rosterPlayers: (rosterPlayers ?? []).map(({ playerId, userId, ...r }: any) => r),
+    managerAssignments: (managerAssignments ?? []).map((m: any) => ({
+      id: m.id,
+      role: m.role,
+      active: m.active,
+      teamId: m.teamId,
+      user: m.user ? { id: m.user.id, name: m.user.name, image: m.user.image } : null,
+    })),
+  };
+}
+
 export async function getAllTeams() {
   const teams = await prisma.team.findMany({
     orderBy: { teamName: 'asc' },
     include: {
       rosterPlayers: { where: { active: true } },
-      managerAssignments: { where: { active: true } },
+      managerAssignments: { where: { active: true }, include: { user: true } },
       fixtures: { where: { archived: false }, orderBy: { kickoff: 'asc' }, take: 5 },
       results: { orderBy: { matchDate: 'desc' }, take: 5 },
+      leagueTableEntries: true,
     },
   });
-  // Strip internal-only fields — Discord role IDs must never reach the client.
-  return teams.map(({ roleId, coachDiscordId, ...rest }) => rest);
+  return teams.map(sanitizeTeam);
 }
 
 export async function getTeamByCodeOrName(value: string) {
@@ -205,12 +225,12 @@ export async function getTeamByCodeOrName(value: string) {
       managerAssignments: { where: { active: true }, include: { user: true } },
       fixtures: { where: { archived: false }, orderBy: { kickoff: 'asc' }, take: 20 },
       results: { orderBy: { matchDate: 'desc' }, take: 20 },
+      leagueTableEntries: { orderBy: { updatedAt: 'desc' } },
+      staffRoles: true,
     },
   });
   if (!team) return null;
-  // Strip internal-only fields — Discord role IDs must never reach the client.
-  const { roleId, coachDiscordId, ...rest } = team;
-  return rest;
+  return sanitizeTeam(team);
 }
 
 export async function getAllPlayers() {
