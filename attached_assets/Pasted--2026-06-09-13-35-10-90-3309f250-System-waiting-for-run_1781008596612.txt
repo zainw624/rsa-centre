@@ -1,0 +1,146 @@
+
+2026-06-09 13:35:10.90
+3309f250
+System
+waiting for runnable artifact ports ports=[8080 26138]
+
+2026-06-09 13:35:10.90
+3309f250
+System
+starting artifact processes for monorepo deployment
+
+2026-06-09 13:35:10.90
+3309f250
+System
+forwarding local port 0 to external port 80 (mapped as 1104)
+
+2026-06-09 13:35:10.90
+3309f250
+System
+metasidecar: loaded enterprise status from environment is_enterprise=false
+
+2026-06-09 13:35:10.91
+3309f250
+System
+baseline ports snapshot before artifact start ports=[1104]
+
+2026-06-09 13:35:10.91
+3309f250
+System
+healthcheck failed error=healthcheck /scaffold-api returned status 500
+
+2026-06-09 13:35:10.91
+3309f250
+System
+starting artifact processes count=2
+
+2026-06-09 13:35:10.92
+3309f250
+System
+starting artifact process artifact=artifacts/rsa-ops args=[pnpm --filter @workspace/rsa-ops run start] port=26138
+
+2026-06-09 13:35:10.92
+3309f250
+System
+starting artifact process artifact=artifacts/api-server args=[node --enable-source-maps artifacts/api-server/dist/index.mjs] port=8080
+
+2026-06-09 13:35:10.92
+3309f250
+System
+healthcheck failed error=healthcheck / returned status 500
+
+2026-06-09 13:35:10.94
+3309f250
+System
+healthcheck failed error=healthcheck /scaffold-api returned status 500
+
+2026-06-09 13:35:10.95
+3309f250
+System
+artifact process started artifact=artifacts/rsa-ops pid=21
+
+2026-06-09 13:35:10.97
+3309f250
+System
+artifact process started pid=20 artifact=artifacts/api-server
+
+2026-06-09 13:35:10.98
+3309f250
+System
+healthcheck failed error=healthcheck /scaffold-api returned status 500
+
+2026-06-09 13:35:11.05
+3309f250
+System
+healthcheck failed error=healthcheck /scaffold-api returned status 500
+
+2026-06-09 13:35:11.08
+3309f250
+System
+healthcheck failed error=healthcheck /scaffold-api returned status 500
+
+2026-06-09 13:35:11.38
+3309f250
+System
+healthcheck failed error=healthcheck / returned status 500
+
+2026-06-09 13:35:11.67
+3309f250
+System
+healthcheck failed error=healthcheck /scaffold-api returned status 500
+
+2026-06-09 13:35:12.82
+3309f250
+System
+healthcheck failed error=healthcheck / returned status 500
+
+2026-06-09 13:35:16.32
+3309f250
+User
+✓ Ready in 1665ms
+
+2026-06-09 13:35:17.02
+3309f250
+System
+healthcheck failed error=healthcheck /: Get "http://127.0.0.1:1104/login": context deadline exceeded
+
+2026-06-09 13:35:17.90
+3309f250
+User
+{"level":30,"time":1781008517902,"pid":20,"hostname":"localhost","req":{"id":3,"method":"GET","url":"/scaffold-api/healthz"},"res":{"statusCode":404},"responseTime":1,"msg":"request completed"}
+
+2026-06-09 13:35:22.34
+1df8909d
+System
+received signal, shutting down artifact processes signal=terminated
+
+2026-06-09 13:35:22.34
+1df8909d
+System
+sending SIGTERM to artifact process artifact=artifacts/rsa-ops
+
+2026-06-09 13:35:22.34
+1df8909d
+System
+sending SIGTERM to artifact process artifact=artifacts/api-server
+
+2026-06-09 13:35:22.35
+1df8909d
+System
+artifact process exited with error error=signal: terminated artifact=artifacts/api-server
+
+2026-06-09 13:35:22.37
+1df8909d
+User
+Command failed with signal "SIGTERM"
+
+2026-06-09 13:35:22.37
+1df8909d
+User
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workspace/rsa-ops@0.1.0 start: `next start -p ${PORT:-26138} -H 0.0.0.0`
+
+
+2026-06-09 13:35:22.37
+1df8909d
+User
+/home/runner/workspace/artifacts/rsa-ops:
