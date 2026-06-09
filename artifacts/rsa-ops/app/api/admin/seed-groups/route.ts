@@ -28,7 +28,7 @@ const GROUPS: Record<string, { name: string; code: string; isHost?: boolean }[]>
     { name: 'Netherlands', code: 'NED' },
     { name: 'Germany',     code: 'GER' },
     { name: 'Senegal',     code: 'SEN' },
-    { name: 'Morocco',     code: 'MAR' },
+    { name: 'Sweden',      code: 'SWE' },
   ],
 };
 

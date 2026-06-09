@@ -6,3 +6,4 @@
 - [RSA group seeding](rsa-group-seeding.md) — POST /api/admin/seed-groups must be called once after DB push to seed 16 teams across A-D
 - [Prisma generate in deploy build](prisma-deploy-generate.md) — Next.js+Prisma monorepo builds must run prisma generate explicitly (build script + postinstall).
 - [NextAuth GET sign-in error](nextauth-get-signin-error.md) — never link `/api/auth/signin/:provider` via GET; v4 needs CSRF POST. GET → ?error=<provider>. Use client signIn().
+- [RSA jwt permission load](rsa-jwt-permission-load.md) — jwt callback must load roles/permission from DB by discordId; OAuth user obj lacks them → everyone 'viewer'. Re-login needed after fix.

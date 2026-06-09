@@ -66,12 +66,19 @@ export const authOptions: NextAuthOptions = {
       return true;
     },
 
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.discordId = (user as any).discordId ?? token.discordId;
-        token.roles = (user as any).roles ?? [];
-        token.permission = (user as any).permission ?? 'viewer';
+    async jwt({ token, profile }) {
+      // On initial sign-in the Discord profile is present. Roles + permission were
+      // resolved from Discord and persisted in the signIn callback above, so load
+      // them from the DB here (the OAuth `user` object does NOT carry these fields).
+      if (profile) {
+        const discordId = (profile as any).id as string;
+        const dbUser = await prisma.user.findUnique({ where: { discordId } });
+        if (dbUser) {
+          token.id = dbUser.id;
+          token.discordId = dbUser.discordId;
+          token.roles = dbUser.roles;
+          token.permission = dbUser.permission;
+        }
       }
       return token;
     },
