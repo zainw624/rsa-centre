@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-export default function AdminControls() {
+export default function AdminControls({ canBackup = false, canSync = false }: { canBackup?: boolean; canSync?: boolean }) {
   const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(false);
   const [syncStatus, setSyncStatus] = useState('');
@@ -38,8 +38,11 @@ export default function AdminControls() {
     }
   };
 
+  if (!canSync && !canBackup) return null;
+
   return (
     <div className="space-y-5">
+      {canSync && (
       <div className="rounded-3xl border border-rsa-border bg-slate-950/80 p-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -60,7 +63,9 @@ export default function AdminControls() {
           Pulls every member from Discord and updates teams, rosters, managers and staff to match current roles. Players are placed on a single team by their team role; Free Agents are never rostered.
         </p>
       </div>
+      )}
 
+      {canBackup && (
       <div className="rounded-3xl border border-rsa-border bg-slate-950/80 p-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -79,6 +84,7 @@ export default function AdminControls() {
         {status ? <p className="mt-4 text-sm text-slate-300">{status}</p> : null}
         <p className="mt-3 text-sm text-slate-400">Backups are recorded in the audit log and stored by the platform backup service.</p>
       </div>
+      )}
     </div>
   );
 }

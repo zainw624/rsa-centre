@@ -1,43 +1,8 @@
 import { prisma } from '@/lib/prismaClient';
 import StaffCard from '@/components/StaffCard';
+import { HIERARCHY, getHighestRole, roleRank, ROLE_DEPARTMENT, DEPARTMENT_ORDER } from '@/lib/permissions';
 
 export const dynamic = 'force-dynamic';
-
-const STAFF_ROLES = [
-  'RSA | Founders',
-  'RSA | Co Founders',
-  'RSA | Executive',
-  'RSA | Chairman',
-  'RSA | Vice Chairman',
-  'RSA | Board of Directors',
-  'RSA | Director',
-  'RSA | Head of Development',
-  'RSA | Head Of Staff',
-  'RSA | Developer',
-  'RSA | Senior Staff',
-  'RSA | Staff',
-  'RSA | Media',
-  'RSA | Panel',
-  'RSA | Officials',
-];
-
-const DEPARTMENTS: Record<string, string> = {
-  'RSA | Founders':            'Executive Leadership',
-  'RSA | Co Founders':         'Executive Leadership',
-  'RSA | Executive':           'Executive Leadership',
-  'RSA | Chairman':            'Board Leadership',
-  'RSA | Vice Chairman':       'Board Leadership',
-  'RSA | Board of Directors':  'Board Leadership',
-  'RSA | Director':            'Administration',
-  'RSA | Head of Development': 'Operations',
-  'RSA | Head Of Staff':       'Operations',
-  'RSA | Developer':           'Operations',
-  'RSA | Senior Staff':        'Administration',
-  'RSA | Staff':               'Administration',
-  'RSA | Media':               'Operations',
-  'RSA | Panel':               'Administration',
-  'RSA | Officials':           'League Operations',
-};
 
 export default async function StaffPage() {
   let users: any[] = [];
@@ -45,24 +10,29 @@ export default async function StaffPage() {
 
   try {
     users = await prisma.user.findMany({
-      where: { OR: STAFF_ROLES.map((r: string) => ({ roles: { has: r } })) },
+      where: { OR: HIERARCHY.map((r) => ({ roles: { has: r } })) },
     });
   } catch {
     dbError = true;
   }
 
-  const groups: Record<string, any[]> = {};
+  const groups: Record<string, { user: any; role: string }[]> = {};
   users.forEach((u: any) => {
-    const role = (u.roles || []).find((r: string) => STAFF_ROLES.includes(r)) || 'RSA | Staff';
-    const dept = DEPARTMENTS[role] || 'Administration';
+    const role = getHighestRole(u.roles || []);
+    if (!role) return;
+    const dept = ROLE_DEPARTMENT[role] || 'Staff';
     if (!groups[dept]) groups[dept] = [];
     groups[dept].push({ user: u, role });
   });
 
-  const deptOrder = ['Executive Leadership', 'Board Leadership', 'Administration', 'Operations', 'League Operations'];
-  const sortedGroups = deptOrder
-    .filter((d) => groups[d])
-    .map((d) => [d, groups[d]] as [string, any[]]);
+  // Within each department, show the most senior roles first.
+  Object.values(groups).forEach((members) =>
+    members.sort((a, b) => roleRank(b.role) - roleRank(a.role)),
+  );
+
+  const sortedGroups = DEPARTMENT_ORDER
+    .filter((d) => groups[d]?.length)
+    .map((d) => [d, groups[d]] as [string, { user: any; role: string }[]]);
 
   return (
     <div className="mx-auto w-full max-w-7xl">
@@ -88,7 +58,7 @@ export default async function StaffPage() {
             <section key={dept}>
               <h2 className="mb-4 text-sm font-bold uppercase tracking-widest text-slate-400">{dept}</h2>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {members.map((m: any) => (
+                {members.map((m) => (
                   <StaffCard key={m.user.id} user={m.user} role={m.role} />
                 ))}
               </div>

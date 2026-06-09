@@ -3,14 +3,13 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { getAdministrationSummary } from '@/lib/db';
 import AdminControls from '@/components/AdminControls';
+import { can } from '@/lib/permissions';
 
 export const dynamic = 'force-dynamic';
 
 function isAdmin(session: any): boolean {
-  const perm  = session?.user?.permission ?? '';
-  const roles = session?.user?.roles ?? [];
-  return perm === 'owner' || perm === 'administrator'
-    || ['RSA | Founders', 'RSA | Co Founders', 'RSA | Executive'].some((r) => roles.includes(r))
+  const perm = session?.user?.permission ?? '';
+  return can(perm, 'viewAdmin')
     || process.env.BOT_OWNER_ID === session?.user?.discordId;
 }
 
@@ -33,7 +32,7 @@ export default async function AdministrationPage() {
             <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
           </svg>
           <h1 className="text-xl font-semibold text-white">Access Denied</h1>
-          <p className="mt-3 text-sm text-slate-400">You need Administrator or Owner permission to view this page.</p>
+          <p className="mt-3 text-sm text-slate-400">You need League Staff or higher permission to view this page.</p>
         </div>
       </div>
     );
@@ -49,6 +48,11 @@ export default async function AdministrationPage() {
   }
 
   const settings = summary.settings;
+
+  const perm = session.user?.permission ?? '';
+  const isOwner = process.env.BOT_OWNER_ID === (session.user as any)?.discordId;
+  const canBackup = can(perm, 'backup') || isOwner;
+  const canSync = can(perm, 'syncDiscord') || isOwner;
 
   return (
     <div className="mx-auto w-full max-w-7xl space-y-6">
@@ -168,7 +172,7 @@ export default async function AdministrationPage() {
         </div>
 
         <div className="space-y-5">
-          <AdminControls />
+          <AdminControls canBackup={canBackup} canSync={canSync} />
           <section className="rounded-2xl border border-rsa-border bg-white/3 p-5">
             <p className="text-xs font-bold uppercase tracking-widest text-rsa-gold">Quick Summary</p>
             <div className="mt-5 space-y-2.5 text-sm">

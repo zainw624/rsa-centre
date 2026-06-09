@@ -425,24 +425,6 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
-// Validate ../../app/api/roles/sync/route.ts
-{
-  type __IsExpected<Specific extends RouteHandlerConfig<"/api/roles/sync">> = Specific
-  const handler = {} as typeof import("../../app/api/roles/sync/route.js")
-  type __Check = __IsExpected<typeof handler>
-  // @ts-ignore
-  type __Unused = __Check
-}
-
-// Validate ../../app/api/roles/webhook/route.ts
-{
-  type __IsExpected<Specific extends RouteHandlerConfig<"/api/roles/webhook">> = Specific
-  const handler = {} as typeof import("../../app/api/roles/webhook/route.js")
-  type __Check = __IsExpected<typeof handler>
-  // @ts-ignore
-  type __Unused = __Check
-}
-
 // Validate ../../app/api/search/route.ts
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/search">> = Specific

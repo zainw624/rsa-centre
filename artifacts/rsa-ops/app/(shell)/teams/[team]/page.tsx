@@ -19,8 +19,8 @@ export default async function TeamDetail({ params }: { params: Promise<{ team: s
         </div>
         <div>
           <h1 className="text-2xl font-semibold text-white">{team.teamName}</h1>
-          <div className="mt-2 text-sm text-slate-300">Manager: {manager ? manager.name ?? manager.discordId : '—'}</div>
-          <div className="text-sm text-slate-300">Assistant: {assistant ? assistant.name ?? assistant.discordId : '—'}</div>
+          <div className="mt-2 text-sm text-slate-300">Manager: {manager?.name ?? '—'}</div>
+          <div className="text-sm text-slate-300">Assistant: {assistant?.name ?? '—'}</div>
           <div className="mt-2 text-sm text-slate-300">Roster: {team.rosterPlayers?.length ?? 0}/{team.rosterLimit}</div>
         </div>
       </div>
@@ -31,7 +31,7 @@ export default async function TeamDetail({ params }: { params: Promise<{ team: s
             <h2 className="text-white">Full roster</h2>
             <ul className="mt-3 space-y-2 text-sm text-slate-300">
               {team.rosterPlayers.map((r: any) => (
-                <li key={r.id}>{r.playerTag} ({r.playerId})</li>
+                <li key={r.id}>{r.playerTag}</li>
               ))}
             </ul>
           </section>

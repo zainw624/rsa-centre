@@ -32,7 +32,7 @@ const NAV: { label: string; href: string; min: Perm; group: string }[] = [
   { label: 'Discipline',      href: '/discipline',      min: 'results',       group: 'manage' },
   { label: 'Compliance',      href: '/compliance',      min: 'league',        group: 'manage' },
   { label: 'Activity',        href: '/activity',        min: 'league',        group: 'manage' },
-  { label: 'Administration',  href: '/administration',  min: 'administrator', group: 'manage' },
+  { label: 'Administration',  href: '/administration',  min: 'league',        group: 'manage' },
 ];
 
 const GROUPS: { key: string; label: string }[] = [
@@ -44,12 +44,12 @@ const GROUPS: { key: string; label: string }[] = [
 ];
 
 const PERM_LABEL: Record<string, string> = {
-  owner:         'Bot Owner',
-  administrator: 'Administrator',
+  owner:         'Owner',
+  administrator: 'League Admin',
   league:        'League Staff',
-  results:       'Match Official',
+  results:       'Official',
   manager:       'Manager',
-  viewer:        'RSA Member',
+  viewer:        'Member',
 };
 const PERM_COLOR: Record<string, string> = {
   owner:         '#f59e0b',

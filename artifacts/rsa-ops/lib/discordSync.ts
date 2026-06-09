@@ -12,18 +12,10 @@
 import { prisma } from '@/lib/prismaClient';
 import { resolvePermission } from '@/lib/discord';
 import { TEAMS } from '@/lib/teamRoles';
+import { TRACKED_ROLES } from '@/lib/permissions';
 
 const MANAGER_ROLE_NAMES   = ['RSA | Managers'];
 const ASSISTANT_ROLE_NAMES = ['RSA | Assistant Managers'];
-
-const STAFF_ROLE_NAMES = [
-  'RSA | Founders', 'RSA | Co Founders', 'RSA | Executive',
-  'RSA | Chairman', 'RSA | Vice Chairman', 'RSA | Board of Directors',
-  'RSA | Director', 'RSA | Head of Development', 'RSA | Head Of Staff',
-  'RSA | Developer', 'RSA | Senior Staff', 'RSA | Staff',
-  'RSA | Media', 'RSA | Panel', 'RSA | Officials',
-  'RSA | Managers', 'RSA | Assistant Managers',
-];
 
 const TEAM_ROLE_ID_SET = new Set(TEAMS.map((t) => t.roleId));
 
@@ -49,7 +41,7 @@ export interface SyncMemberResult {
  */
 export function isTrackedMember(roleIds: string[], roleNames: string[]): boolean {
   if (roleIds.some((id) => TEAM_ROLE_ID_SET.has(id))) return true;
-  if (roleNames.some((n) => STAFF_ROLE_NAMES.includes(n))) return true;
+  if (roleNames.some((n) => TRACKED_ROLES.includes(n))) return true;
   return false;
 }
 

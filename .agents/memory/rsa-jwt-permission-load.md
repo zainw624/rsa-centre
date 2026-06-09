@@ -15,13 +15,15 @@ argument passed to the `jwt` callback on sign-in is the OAuth-derived user
 into the `User` table, but the `jwt` callback was reading them off `user` →
 always `undefined` → fell back to `viewer`.
 
-**Fix:** In the `jwt` callback, when `profile` is present (initial sign-in), look up
-the persisted user by `discordId` via Prisma and copy `roles`/`permission`/`id`
-onto the token. `signIn` runs before `jwt`, so the upserted row exists.
+**Fix:** In the `jwt` callback, look up the persisted user by `discordId` via Prisma
+and copy `roles`/`permission`/`id` onto the token. `signIn` runs before `jwt`, so the
+upserted row exists.
 
-**Gotcha:** JWTs are immutable until refreshed. Anyone who logged in before this fix
-keeps `permission: viewer` baked into their token — they must sign out and back in
-(or the JWT must expire) to pick up the correct permission.
+**Security fix (do NOT revert):** the `jwt` callback now reloads from the DB on EVERY
+request (keyed on `profile?.id ?? token.discordId`), not just at initial sign-in. If it
+only refreshed when `profile` was present, a user demoted in the DB/Discord sync would
+keep their old elevated `permission` baked into the JWT until it expired → privilege
+escalation. Reloading each request means demotions take effect on the next request.
 
 **Why:** Permission is derived from live Discord roles and stored in the DB as the
 source of truth; the token is just a cache of that DB state at login time.

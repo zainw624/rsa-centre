@@ -2,6 +2,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prismaClient';
 import ResultsClient from '@/components/ResultsClient';
+import { can } from '@/lib/permissions';
 
 export const dynamic = 'force-dynamic';
 
@@ -18,7 +19,7 @@ export default async function ResultsPage() {
   }
 
   const perm = session?.user?.permission ?? '';
-  const isAdmin = perm === 'owner' || perm === 'administrator' || perm === 'results';
+  const isAdmin = can(perm, 'submitResults');
 
   return (
     <div className="mx-auto w-full max-w-7xl">

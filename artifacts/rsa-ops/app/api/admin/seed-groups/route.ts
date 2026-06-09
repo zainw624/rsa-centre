@@ -3,13 +3,14 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prismaClient';
 import { TEAMS, ensureTeams, removeMorocco, teamIdForCode } from '@/lib/teamRoles';
+import { can } from '@/lib/permissions';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(_req: NextRequest) {
   const session = await getServerSession(authOptions);
   const perm = (session?.user as any)?.permission ?? '';
-  if (!session || !['owner', 'administrator', 'league'].includes(perm)) {
+  if (!session || !can(perm, 'manageCompetitions')) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 

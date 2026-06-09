@@ -25,8 +25,8 @@ export default function TeamCard({ team }: { team: any }) {
             <h3 className="text-lg font-semibold text-white">{team.teamName}</h3>
             <div className="text-xs text-slate-400">{status}</div>
           </div>
-          <div className="mt-2 text-sm text-slate-300">Manager: {manager ? manager.name ?? manager.discordId : '—'}</div>
-          <div className="text-sm text-slate-300">Assistant: {assistant ? assistant.name ?? assistant.discordId : '—'}</div>
+          <div className="mt-2 text-sm text-slate-300">Manager: {manager?.name ?? '—'}</div>
+          <div className="text-sm text-slate-300">Assistant: {assistant?.name ?? '—'}</div>
         </div>
       </div>
       <div className="mt-3 flex items-center justify-between text-sm text-slate-400">

@@ -67,11 +67,13 @@ export const authOptions: NextAuthOptions = {
     },
 
     async jwt({ token, profile }) {
-      // On initial sign-in the Discord profile is present. Roles + permission were
-      // resolved from Discord and persisted in the signIn callback above, so load
-      // them from the DB here (the OAuth `user` object does NOT carry these fields).
-      if (profile) {
-        const discordId = (profile as any).id as string;
+      // On initial sign-in the Discord profile is present; afterwards reload the
+      // user's roles + permission from the DB on every request so that demotions
+      // (via Discord sync) take effect promptly instead of persisting in a stale
+      // JWT until it expires. This prevents privilege escalation after a role is
+      // removed. The OAuth `user` object does NOT carry these fields.
+      const discordId = (profile as any)?.id ?? (token.discordId as string | undefined);
+      if (discordId) {
         const dbUser = await prisma.user.findUnique({ where: { discordId } });
         if (dbUser) {
           token.id = dbUser.id;

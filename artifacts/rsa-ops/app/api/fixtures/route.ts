@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prismaClient';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { createNotification } from '@/lib/db';
+import { can } from '@/lib/permissions';
 
 export const runtime = 'nodejs';
 
@@ -24,9 +25,8 @@ export async function POST(request: Request) {
   const session: any = await getServerSession(authOptions as any);
   if (!session || !session.user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
 
-  const roles = session.user.roles || [];
   const permission = session.user.permission || 'viewer';
-  if (!(permission === 'administrator' || permission === 'league' || roles.includes('RSA | Officials') || process.env.BOT_OWNER_ID === session.user.discordId)) {
+  if (!(can(permission, 'manageFixtures') || process.env.BOT_OWNER_ID === session.user.discordId)) {
     return NextResponse.json({ error: 'forbidden' }, { status: 403 });
   }
 

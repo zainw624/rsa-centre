@@ -15,6 +15,7 @@ import { prisma } from '@/lib/prismaClient';
 import { fetchGuildRoles, fetchAllGuildMembers } from '@/lib/discord';
 import { ensureTeams, removeMorocco } from '@/lib/teamRoles';
 import { syncMemberRoles, isTrackedMember } from '@/lib/discordSync';
+import { can } from '@/lib/permissions';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -22,7 +23,7 @@ export const dynamic = 'force-dynamic';
 export async function POST() {
   const session = await getServerSession(authOptions);
   const perm = (session?.user as any)?.permission ?? '';
-  if (!session || !['owner', 'administrator', 'league'].includes(perm)) {
+  if (!session || !can(perm, 'syncDiscord')) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 

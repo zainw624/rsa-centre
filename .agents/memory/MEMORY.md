@@ -1,2 +1,3 @@
 - [Discord sync architecture](discord-sync-architecture.md) — autoscale can't host a gateway; bot pushes, website pulls, both share one helper; team role IDs are source of truth.
 - [Team role IDs are internal-only](team-role-ids-internal.md) — strip roleId/coachDiscordId at the db-function source, not just the API route (Next serializes server-component props to the browser).
+- [RSA permissions model](rsa-permissions-model.md) — lib/permissions.ts is the single source of truth: 11-role hierarchy, ignore `*`/`kov`, show highest role only, capability-based `can()`; no role may touch source/branding/env/secrets.

@@ -28,6 +28,11 @@ Response: `{ ok, event, permission, rolesStored, teamsJoined, teamsLeft }`
 Bot env vars needed: WEBSITE_URL, ROLES_SYNC_SECRET, BOT_OWNER_ID
 Website secrets needed: ROLES_SYNC_SECRET (Tools → Secrets)
 
+**This is the ONLY role-push endpoint.** The legacy `POST /api/roles/sync` and
+`POST /api/roles/webhook` were REMOVED — they wrote `roles[]` without recomputing
+`permission` and skipped ignored-role filtering, leaving stale/escalated permissions.
+Any bot must use `/api/roles-sync` so `syncMemberRoles` recomputes permission.
+
 **Why:** Bot needs to push role changes into the DB so the website reflects live Discord state without polling.
 
 **How to apply:** Any new role-detection logic should be added to `lib/discord.ts#resolvePermission` so both login (auth.ts) and the push endpoint stay in sync.
