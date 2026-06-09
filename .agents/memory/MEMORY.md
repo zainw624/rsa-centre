@@ -4,3 +4,4 @@
 - [RSA logo file](rsa-logo.md) — rsa1.png was a 1×1 stub; replaced with proper 512×512 PNG using ImageMagick
 - [RSA schema additions](rsa-schema-additions.md) — PlayerStat model + group field on Team/LeagueTable added in Season 2026 build
 - [RSA group seeding](rsa-group-seeding.md) — POST /api/admin/seed-groups must be called once after DB push to seed 16 teams across A-D
+- [Prisma generate in deploy build](prisma-deploy-generate.md) — Next.js+Prisma monorepo builds must run prisma generate explicitly; missing it surfaced as NextAuth ?error=discord on login.

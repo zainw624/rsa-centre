@@ -1,4 +1,4 @@
-modules = ["nodejs-24"]
+modules = ["nodejs-24", "postgresql-16"]
 
 [deployment]
 router = "application"
@@ -41,3 +41,6 @@ DISCORD_CLIENT_SECRET = "o8TSESGY-ruSjfKxjGk9lFf3nlD3HJGr"
 DISCORD_CLIENT_ID = "1512487796403605725"
 DISCORD_GUILD_ID = "1469086162344874037"
 DISCORD_BOT_TOKEN = "MTUxMjQ4Nzc5NjQwMzYwNTcyNQ.Gk31Dg.SrMlPHhRctI0pqxTWDom2xlYVYMs1ExI6vAKDM"
+
+[nix]
+channel = "stable-25_05"
