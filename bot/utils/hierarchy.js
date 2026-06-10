@@ -20,12 +20,14 @@ const HIERARCHY = [
   'RSA | Co Founder',
   'RSA | Owner',
   'RSA | Head Director',
+  'Leadership',
   'RSA | Executive',
   'RSA | Head Management',
   'RSA | Management',
   'RSA | Head of Developement',
   'RSA | Staff Overseer',
   'RSA | Developer',
+  'RSA | Bot Manager',
   'RSA | Staff advisor',
   'RSA | Staff',
   'RSA | Officials',
@@ -40,14 +42,16 @@ const ADMIN_ROLES = [
   'RSA | Head Director',
 ];
 
-/** League staff (Executive … Staff). */
+/** League staff (Leadership … Staff). */
 const LEAGUE_ROLES = [
+  'Leadership',
   'RSA | Executive',
   'RSA | Head Management',
   'RSA | Management',
   'RSA | Head of Developement',
   'RSA | Staff Overseer',
   'RSA | Developer',
+  'RSA | Bot Manager',
   'RSA | Staff advisor',
   'RSA | Staff',
 ];
@@ -74,12 +78,14 @@ const DEPARTMENT_MAP = {
   'RSA | Co Founder': 'Leadership',
   'RSA | Owner': 'Leadership',
   'RSA | Head Director': 'Leadership',
+  'Leadership': 'Leadership',
   'RSA | Executive': 'Executive Board',
   'RSA | Head Management': 'Executive Board',
   'RSA | Management': 'Executive Board',
   'RSA | Head of Developement': 'Development',
   'RSA | Staff Overseer': 'Development',
   'RSA | Developer': 'Development',
+  'RSA | Bot Manager': 'Development',
   'RSA | Staff advisor': 'Staff',
   'RSA | Staff': 'Staff',
   'RSA | Officials': 'League Operations',
