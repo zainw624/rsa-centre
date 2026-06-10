@@ -3,7 +3,16 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { getAdministrationSummary } from '@/lib/db';
 import AdminControls from '@/components/AdminControls';
-import { can } from '@/lib/permissions';
+import {
+  can,
+  rolesByTier,
+  capabilitiesForTier,
+  shortRole,
+  PERMISSION_COLOR,
+  PERMISSION_LABEL,
+  CAPABILITY_LABEL,
+  RESTRICTED_ACTIONS,
+} from '@/lib/permissions';
 
 export const dynamic = 'force-dynamic';
 
@@ -124,6 +133,57 @@ export default async function AdministrationPage() {
           </div>
         </div>
       </div>
+
+      <section className="rounded-2xl border border-rsa-border bg-white/3 p-5">
+        <p className="text-xs font-bold uppercase tracking-widest text-rsa-gold">Staff Hierarchy & Permissions</p>
+        <h2 className="mt-1 text-base font-semibold text-white">Discord role hierarchy and what each tier can do</h2>
+        <p className="mt-1 text-sm text-slate-500">Synced from the Discord server, most senior first. A member&apos;s access is derived from their highest role.</p>
+
+        <div className="mt-5 grid gap-4 lg:grid-cols-2">
+          {rolesByTier().map(({ tier, roles }) => {
+            const caps = capabilitiesForTier(tier);
+            return (
+              <div key={tier} className="rounded-xl border border-rsa-border bg-black/20 p-4">
+                <div className="flex items-center gap-2">
+                  <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: PERMISSION_COLOR[tier] }} />
+                  <span className="text-sm font-semibold text-white">{PERMISSION_LABEL[tier]}</span>
+                </div>
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  {roles.map((r) => (
+                    <span key={r} className="rounded-md border border-rsa-border bg-white/5 px-2 py-0.5 text-xs text-slate-300">{shortRole(r)}</span>
+                  ))}
+                </div>
+                <ul className="mt-3 space-y-1">
+                  {caps.length === 0 ? (
+                    <li className="text-xs text-slate-500">View-only access</li>
+                  ) : (
+                    caps.map((c) => (
+                      <li key={c} className="flex items-center gap-2 text-xs text-slate-400">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#34d399" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className="h-3 w-3 shrink-0"><polyline points="20 6 9 17 4 12"/></svg>
+                        {CAPABILITY_LABEL[c]}
+                      </li>
+                    ))
+                  )}
+                </ul>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="mt-5 rounded-xl border border-red-500/30 bg-red-500/05 p-4">
+          <div className="flex items-center gap-2">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 shrink-0"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+            <span className="text-sm font-semibold text-red-300">Restricted — no role can do these</span>
+          </div>
+          <ul className="mt-3 grid gap-1.5 sm:grid-cols-2">
+            {RESTRICTED_ACTIONS.map((a) => (
+              <li key={a} className="flex items-center gap-2 text-xs text-slate-400">
+                <span className="text-red-400">✕</span> {a}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
 
       <div className="grid gap-5 xl:grid-cols-[2fr_1fr]">
         <div className="space-y-5">

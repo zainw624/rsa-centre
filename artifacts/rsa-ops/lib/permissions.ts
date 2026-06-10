@@ -16,15 +16,18 @@ export const IGNORED_ROLES = ['*', 'kov'];
  * seniority — index 0 is the most senior.
  */
 export const HIERARCHY = [
-  'RSA | Commissioners',
-  'RSA | Vice Commissioners',
+  'CEO',
+  'RSA | Founder',
+  'RSA | Co Founder',
+  'RSA | Owner',
+  'RSA | Head Director',
   'RSA | Executive',
-  'RSA | Chairman',
-  'RSA | Vice Chairman',
-  'RSA | Head Of Development',
-  'RSA | Head Of Staff',
+  'RSA | Head Management',
+  'RSA | Management',
+  'RSA | Head of Development',
+  'RSA | Staff Overseer',
   'RSA | Developer',
-  'RSA | Senior Staff',
+  'RSA | Staff advisor',
   'RSA | Staff',
   'RSA | Officials',
 ] as const;
@@ -51,7 +54,7 @@ export function isIgnoredRole(role: string): boolean {
 }
 
 /**
- * Seniority rank for a role. Higher = more senior. Commissioners = 11,
+ * Seniority rank for a role. Higher = more senior. CEO = 14,
  * Officials = 1, anything outside the hierarchy = 0.
  */
 export function roleRank(role: string): number {
@@ -62,7 +65,7 @@ export function roleRank(role: string): number {
 /**
  * The single highest hierarchy role a member holds (ignoring `*`/`kov` and any
  * non-hierarchy role), or null. This is what should always be displayed —
- * e.g. Commissioner + Officials → "RSA | Commissioners".
+ * e.g. CEO + Officials → "CEO".
  */
 export function getHighestRole(roleNames: string[] = []): string | null {
   let best: string | null = null;
@@ -99,7 +102,7 @@ export type Permission =
 /**
  * Map a member's Discord roles to a coarse permission tier.
  *
- * - administrator: Commissioners, Vice Commissioners (league administrators)
+ * - administrator: CEO, Founder, Co Founder, Owner, Head Director (leadership)
  * - league:        Executive … Staff (league staff)
  * - results:       Officials
  * - manager:       RSA | Managers / Assistant Managers (NON-admin)
@@ -113,7 +116,7 @@ export function permissionForRoles(roleNames: string[] = [], isOwner = false): P
   const top = getHighestRole(roleNames);
   if (top) {
     const rank = roleRank(top);
-    if (rank >= roleRank('RSA | Vice Commissioners')) return 'administrator';
+    if (rank >= roleRank('RSA | Head Director')) return 'administrator';
     if (rank >= roleRank('RSA | Staff')) return 'league';
     if (top === 'RSA | Officials') return 'results';
   }
@@ -192,26 +195,79 @@ export const PERMISSION_COLOR: Record<Permission, string> = {
   viewer: '#64748b',
 };
 
+/** Human-readable label for each capability, for the admin permission matrix. */
+export const CAPABILITY_LABEL: Record<Capability, string> = {
+  submitResults: 'Submit & edit match results',
+  recalcStandings: 'Recalculate standings',
+  manageFixtures: 'Schedule & create fixtures',
+  manageTransfers: 'Manage transfers',
+  manageDiscipline: 'Manage discipline & sanctions',
+  manageCompetitions: 'Manage competitions (World Cup, league)',
+  syncDiscord: 'Sync Discord roles & members',
+  viewAdmin: 'Open the administration panel',
+  managePermissions: 'Manage permissions',
+  manageStaffHierarchy: 'Manage staff hierarchy',
+  manageSettings: 'Change platform settings',
+  backup: 'Create data backups',
+};
+
+/** Every capability a permission tier is allowed to perform, in declared order. */
+export function capabilitiesForTier(tier: Permission): Capability[] {
+  return (Object.keys(CAPABILITIES) as Capability[]).filter((c) => CAPABILITIES[c].has(tier));
+}
+
+/**
+ * Group the tracked Discord roles by the permission tier they map to, ordered
+ * from most to least privileged. Drives the admin panel hierarchy view.
+ */
+export function rolesByTier(): { tier: Permission; roles: string[] }[] {
+  const order: Permission[] = ['owner', 'administrator', 'league', 'results', 'manager', 'viewer'];
+  const grouped = new Map<Permission, string[]>();
+  for (const role of [...HIERARCHY, ...MANAGER_ROLES]) {
+    const tier = permissionForRoles([role]);
+    if (!grouped.has(tier)) grouped.set(tier, []);
+    grouped.get(tier)!.push(role);
+  }
+  return order.filter((t) => grouped.has(t)).map((t) => ({ tier: t, roles: grouped.get(t)! }));
+}
+
+/**
+ * Actions that are deliberately unavailable to EVERY role — no permission tier,
+ * not even the owner, can do these through the website. Surfaced in the admin
+ * panel so the boundary is explicit.
+ */
+export const RESTRICTED_ACTIONS: string[] = [
+  'Edit the website source code',
+  'Change branding, themes, or layout',
+  'View or change environment variables & secrets',
+  'View the Discord bot token',
+  'Change deployment settings',
+  'Access database credentials',
+];
+
 /** Department grouping for the staff directory, keyed by highest role. */
 export const ROLE_DEPARTMENT: Record<string, string> = {
-  'RSA | Commissioners': 'Commission',
-  'RSA | Vice Commissioners': 'Commission',
+  'CEO': 'Leadership',
+  'RSA | Founder': 'Leadership',
+  'RSA | Co Founder': 'Leadership',
+  'RSA | Owner': 'Leadership',
+  'RSA | Head Director': 'Leadership',
   'RSA | Executive': 'Executive Board',
-  'RSA | Chairman': 'Executive Board',
-  'RSA | Vice Chairman': 'Executive Board',
-  'RSA | Head Of Development': 'Operations',
-  'RSA | Head Of Staff': 'Operations',
-  'RSA | Developer': 'Operations',
-  'RSA | Senior Staff': 'Staff',
+  'RSA | Head Management': 'Executive Board',
+  'RSA | Management': 'Executive Board',
+  'RSA | Head of Development': 'Development',
+  'RSA | Staff Overseer': 'Development',
+  'RSA | Developer': 'Development',
+  'RSA | Staff advisor': 'Staff',
   'RSA | Staff': 'Staff',
   'RSA | Officials': 'League Operations',
 };
 
 /** Order departments are displayed in (most senior first). */
 export const DEPARTMENT_ORDER = [
-  'Commission',
+  'Leadership',
   'Executive Board',
-  'Operations',
+  'Development',
   'Staff',
   'League Operations',
 ];

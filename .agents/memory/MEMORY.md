@@ -1,3 +1,4 @@
 - [Bot ↔ website sync](bot-website-sync.md) — bot writes to web via `/api/bot/*` guarded by `x-sync-secret`==ROLES_SYNC_SECRET; non-fatal; needs WEBSITE_URL too.
 - [Standings auto-heal](standings-auto-heal.md) — updateStandingsFromResult creates missing LeagueTable rows from team.group+current season; returns standingsUpdated.
 - [Morocco replaced](morocco-replacement.md) — Morocco gone everywhere (Portugal/Sweden replace it); bot team lists duplicated across 5 files + teamRoles.ts, keep in sync.
+- [Staff hierarchy & permissions](staff-hierarchy-permissions.md) — lib/permissions.ts is the single source of truth; role strings must match Discord exactly; no role can edit source/secrets/deploy.
