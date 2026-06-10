@@ -2144,6 +2144,9 @@ video {
 .disabled\:opacity-50:disabled {
   opacity: 0.5;
 }
+.disabled\:opacity-60:disabled {
+  opacity: 0.6;
+}
 .group:focus-within .group-focus-within\:text-primary {
   color: hsl(var(--primary));
 }
@@ -2174,6 +2177,10 @@ video {
   opacity: 1;
 }
 @media (min-width: 640px) {
+
+  .sm\:col-span-2 {
+    grid-column: span 2 / span 2;
+  }
 
   .sm\:block {
     display: block;
