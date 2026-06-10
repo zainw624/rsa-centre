@@ -308,6 +308,15 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
+// Validate ../../app/api/admin/sync-discord/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/admin/sync-discord">> = Specific
+  const handler = {} as typeof import("../../app/api/admin/sync-discord/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../app/api/administration/backup/route.ts
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/administration/backup">> = Specific
@@ -326,10 +335,28 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
+// Validate ../../app/api/bot/fixture/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/bot/fixture">> = Specific
+  const handler = {} as typeof import("../../app/api/bot/fixture/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../app/api/bot/result/route.ts
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/bot/result">> = Specific
   const handler = {} as typeof import("../../app/api/bot/result/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../app/api/bot/sign/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/bot/sign">> = Specific
+  const handler = {} as typeof import("../../app/api/bot/sign/route.js")
   type __Check = __IsExpected<typeof handler>
   // @ts-ignore
   type __Unused = __Check
@@ -402,24 +429,6 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/roles-sync">> = Specific
   const handler = {} as typeof import("../../app/api/roles-sync/route.js")
-  type __Check = __IsExpected<typeof handler>
-  // @ts-ignore
-  type __Unused = __Check
-}
-
-// Validate ../../app/api/roles/sync/route.ts
-{
-  type __IsExpected<Specific extends RouteHandlerConfig<"/api/roles/sync">> = Specific
-  const handler = {} as typeof import("../../app/api/roles/sync/route.js")
-  type __Check = __IsExpected<typeof handler>
-  // @ts-ignore
-  type __Unused = __Check
-}
-
-// Validate ../../app/api/roles/webhook/route.ts
-{
-  type __IsExpected<Specific extends RouteHandlerConfig<"/api/roles/webhook">> = Specific
-  const handler = {} as typeof import("../../app/api/roles/webhook/route.js")
   type __Check = __IsExpected<typeof handler>
   // @ts-ignore
   type __Unused = __Check

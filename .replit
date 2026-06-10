@@ -1,4 +1,4 @@
-modules = ["nodejs-24"]
+modules = ["nodejs-24", "postgresql-16", "python-3.11"]
 
 [deployment]
 router = "application"
@@ -34,4 +34,9 @@ externalPort = 3000
 [userenv]
 
 [userenv.shared]
-ROLES_SYNC_SECRET = "ujTtRCtVOeiGRCdfPYxA3NsLNXnjrLizPHs73xskaRw="
+NEXTAUTH_URL = "https://rsa-centre.com"
+DISCORD_CLIENT_ID = "1512487796403605725"
+DISCORD_GUILD_ID = "1469086162344874037"
+
+[nix]
+channel = "stable-25_05"

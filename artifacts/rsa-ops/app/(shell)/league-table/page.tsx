@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { getLeagueTableGroups, getGroupStandings } from '@/lib/db';
 import GroupTabsClient from '@/components/GroupTabsClient';
+import { can } from '@/lib/permissions';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,7 +25,7 @@ export default async function LeagueTablePage() {
   }
 
   const perm = (session.user as any)?.permission ?? '';
-  const canManage = perm === 'owner' || perm === 'administrator' || perm === 'league';
+  const canManage = can(perm, 'recalcStandings');
 
   return (
     <div className="mx-auto w-full max-w-7xl">

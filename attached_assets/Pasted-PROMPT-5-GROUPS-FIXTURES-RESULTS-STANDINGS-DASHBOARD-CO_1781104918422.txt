@@ -1,0 +1,201 @@
+PROMPT 5 — GROUPS, FIXTURES, RESULTS, STANDINGS, DASHBOARD & COMPETITIONS
+
+Implement the RSA competition system.
+
+==================================================
+ACTIVE GROUPS
+=============
+
+GROUP A
+
+* United States
+* Norway
+* Croatia
+* Japan
+
+GROUP B
+
+* Ghana
+* Türkiye
+* Brazil
+* Belgium
+
+GROUP C
+
+* Portugal
+* England
+* France
+* Spain
+
+GROUP D
+
+* Netherlands
+* Germany
+* Senegal
+* Sweden
+
+Morocco must not exist anywhere.
+
+Sweden fully replaces Morocco.
+
+Use sweden.png.
+
+==================================================
+GROUP TABLES
+============
+
+Display group tables throughout the website.
+
+Each group table should show:
+
+* Position
+* Team
+* GP
+* W
+* D
+* L
+* GF
+* GA
+* GD
+* PTS
+
+Standings must be calculated automatically.
+
+Do NOT hardcode standings.
+
+==================================================
+FIXTURES PAGE
+=============
+
+Display:
+
+* Upcoming Fixtures
+* Competition
+* Group
+* Match Date
+* Match Time
+* Team Logos
+
+Fixtures should come from:
+
+Database
+and/or
+Bot submissions
+
+==================================================
+RESULTS PAGE
+============
+
+Display:
+
+* Completed Fixtures
+* Final Scores
+* Competition
+* Group
+
+Results must automatically update statistics.
+
+==================================================
+RSA OFFICIALS RESULT ENTRY
+==========================
+
+RSA | Officials should be able to submit results through Discord.
+
+The bot should detect:
+
+* Home Team
+* Away Team
+* Score
+* Competition
+* Group
+
+Then automatically:
+
+* Save result
+* Update website
+* Update standings
+* Update statistics
+* Update dashboard
+
+No manual website editing required.
+
+==================================================
+LEAGUE TABLES
+=============
+
+Automatically calculate:
+
+* GP
+* W
+* D
+* L
+* GF
+* GA
+* GD
+* PTS
+
+Update instantly after results are entered.
+
+==================================================
+DASHBOARD
+=========
+
+Display:
+
+* Active Season
+* Total Teams
+* Total Players
+* Total Managers
+* Upcoming Fixtures
+* Recent Results
+* League Leaders
+
+The dashboard must use real data.
+
+==================================================
+WORLD CUP PAGE
+==============
+
+Display:
+
+* Groups
+* Fixtures
+* Results
+* Standings
+
+Using the same competition system.
+
+==================================================
+FINAL OBJECTIVE
+===============
+
+✓ Groups populated
+
+✓ Fixtures populated
+
+✓ Results populated
+
+✓ League tables populated
+
+✓ Dashboard populated
+
+✓ World Cup populated
+
+✓ Sweden replaces Morocco everywhere
+
+✓ Statistics update automatically
+
+✓ Results entered through Discord update the website
+
+✓ No placeholders remain
+
+Provide:
+
+* Files modified
+* Systems created
+* Testing instructions
+* Confirmation that standings, fixtures, results, groups, and dashboard are fully connected
+
+IMPORTANT ADDITION:
+
+If any of these systems already exist in the codebase, reuse and repair them rather than creating duplicate systems. Ensure Discord result submissions, website standings, team statistics, fixtures, groups, dashboards, and competition data are all connected to the same underlying data source so that a result entered once updates every relevant page automatically.

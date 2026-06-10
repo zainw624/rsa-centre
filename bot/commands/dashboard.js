@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { SlashCommandBuilder, PermissionFlagsBits, ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelType } = require('discord.js');
 const { memberHasRoleNames } = require('../utils/permissions');
+const { LEAGUE_AND_ADMIN, BOT_OWNER_ROLE } = require('../utils/hierarchy');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -17,7 +18,7 @@ module.exports = {
       const guild = interaction.guild;
 
       // Permission check
-      const hasPermission = memberHasRoleNames(interaction.member, ['RSA | Officials', 'Bot Owner', 'Guild Owner']);
+      const hasPermission = memberHasRoleNames(interaction.member, [...LEAGUE_AND_ADMIN, BOT_OWNER_ROLE, 'Guild Owner']);
       const isGuildOwner = interaction.user.id === guild.ownerId;
 
       if (!hasPermission && !isGuildOwner) {

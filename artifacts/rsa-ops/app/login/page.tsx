@@ -1,8 +1,8 @@
 import Image from 'next/image';
-import Link from 'next/link';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { redirect } from 'next/navigation';
+import LoginButton from './LoginButton';
 
 export default async function LoginPage() {
   const session = await getServerSession(authOptions);
@@ -33,10 +33,10 @@ export default async function LoginPage() {
           </div>
           <div className="login-header-right">
             <span className="login-not-signed">Not signed in</span>
-            <Link href="/api/auth/signin/discord?callbackUrl=/dashboard" className="login-header-btn">
+            <LoginButton className="login-header-btn">
               <DiscordIcon />
               Login with Discord
-            </Link>
+            </LoginButton>
           </div>
         </div>
       </header>
@@ -96,10 +96,10 @@ export default async function LoginPage() {
           </div>
 
           {/* CTA */}
-          <Link href="/api/auth/signin/discord?callbackUrl=/dashboard" className="login-cta-btn">
+          <LoginButton className="login-cta-btn">
             <DiscordIcon size={22} />
             Sign in with Discord
-          </Link>
+          </LoginButton>
 
           <p className="login-redirect-note">
             You will be redirected to Discord to confirm your identity. No password required.
@@ -186,6 +186,9 @@ export default async function LoginPage() {
           font-weight: 600;
           padding: 0.45rem 1rem;
           border-radius: 8px;
+          border: none;
+          cursor: pointer;
+          font-family: inherit;
           text-decoration: none;
           transition: background 0.15s, opacity 0.15s;
           white-space: nowrap;
@@ -339,6 +342,9 @@ export default async function LoginPage() {
           font-weight: 700;
           padding: 1rem 2.5rem;
           border-radius: 14px;
+          border: none;
+          cursor: pointer;
+          font-family: inherit;
           text-decoration: none;
           transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
           box-shadow: 0 4px 24px rgba(88,101,242,0.35);

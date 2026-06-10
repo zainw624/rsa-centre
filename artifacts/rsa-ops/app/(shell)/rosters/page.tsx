@@ -1,5 +1,5 @@
 import { getAllTeams } from '@/lib/db';
-import RosterList from '@/components/RosterList';
+import RostersExplorer from '@/components/RostersExplorer';
 
 export const dynamic = 'force-dynamic';
 
@@ -18,7 +18,7 @@ export default async function RostersPage() {
       <header className="mb-6">
         <p className="text-xs font-bold uppercase tracking-widest text-rsa-gold">Rosters</p>
         <h1 className="mt-1 text-2xl font-semibold text-white">Team Rosters</h1>
-        <p className="mt-1 text-sm text-slate-500">Player assignments detected from Discord roles and database</p>
+        <p className="mt-1 text-sm text-slate-500">Browse each team&apos;s players, managers and staff</p>
       </header>
 
       {dbError ? (
@@ -28,15 +28,11 @@ export default async function RostersPage() {
         </div>
       ) : teams.length === 0 ? (
         <div className="rounded-2xl border border-rsa-border bg-white/3 px-5 py-12 text-center">
-          <p className="text-sm text-slate-400">No teams found in the database</p>
-          <p className="mt-1 text-xs text-slate-600">Sync Discord roles or add teams to populate rosters</p>
+          <p className="text-sm text-slate-400">No teams to display yet</p>
+          <p className="mt-1 text-xs text-slate-600">Teams appear here once they are added to the league</p>
         </div>
       ) : (
-        <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {teams.map((team: any) => (
-            <RosterList key={team.id} team={team} />
-          ))}
-        </section>
+        <RostersExplorer teams={teams} />
       )}
     </div>
   );

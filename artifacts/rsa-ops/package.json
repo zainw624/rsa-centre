@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p ${PORT:-26138} -H 0.0.0.0",
-    "build": "next build",
+    "build": "prisma generate --schema ./prisma/schema.prisma && next build",
+    "postinstall": "prisma generate --schema ./prisma/schema.prisma",
     "start": "next start -p ${PORT:-26138} -H 0.0.0.0",
     "typecheck": "tsc --noEmit",
     "prisma:generate": "prisma generate --schema ./prisma/schema.prisma"

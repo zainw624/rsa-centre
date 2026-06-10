@@ -5,5 +5,7 @@ export const runtime = 'nodejs';
 
 export async function GET() {
   const teams = await getAllTeams();
-  return NextResponse.json(teams);
+  // Strip internal-only fields — Discord role IDs must never reach the client.
+  const safe = teams.map(({ roleId, coachDiscordId, ...rest }: any) => rest);
+  return NextResponse.json(safe);
 }

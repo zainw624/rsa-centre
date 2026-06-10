@@ -126,14 +126,14 @@ export default function SearchClient() {
                     <div className="font-medium text-white">{item.teamName || item.name || item.playerTag || item.role || item.homeTeam || item.title || item.type || item.action || 'Result'}</div>
                     <div className="mt-1 text-slate-400">
                       {group.category === 'Players' && `${item.user?.name || 'Discord user'} · ${item.team?.teamName || 'Unassigned'}`}
-                      {group.category === 'Teams' && `Code: ${item.teamCode || item.teamId}`}
-                      {group.category === 'Managers' && `${item.user?.name || item.user?.discordId} · ${item.team?.teamName || item.role}`}
-                      {group.category === 'Staff' && `${item.name || item.discordId} · ${item.roles?.join(', ')}`}
+                      {group.category === 'Teams' && (item.teamCode ? `Code: ${item.teamCode}` : '')}
+                      {group.category === 'Managers' && `${item.user?.name || 'Unknown'} · ${item.team?.teamName || item.role}`}
+                      {group.category === 'Staff' && `${item.name || 'Unknown'} · ${item.roles?.join(', ')}`}
                       {group.category === 'Fixtures' && `${item.homeTeam} vs ${item.awayTeam} · ${new Date(item.kickoff).toLocaleDateString()}`}
                       {group.category === 'Results' && `${item.homeTeam} ${item.homeScore} - ${item.awayScore} ${item.awayTeam} · ${new Date(item.matchDate).toLocaleDateString()}`}
-                      {group.category === 'Transfers' && `${item.playerTag || item.playerId} · ${item.fromTeam || 'N/A'} → ${item.toTeam || 'N/A'}`}
+                      {group.category === 'Transfers' && `${item.playerTag || 'Unknown'} · ${item.fromTeam || 'N/A'} → ${item.toTeam || 'N/A'}`}
                       {group.category === 'Competitions' && item.name}
-                      {group.category === 'Awards' && `${item.name} · ${item.team?.teamName || item.recipientId || item.achievement}`}
+                      {group.category === 'Awards' && `${item.name} · ${item.team?.teamName || item.achievement || '—'}`}
                     </div>
                   </div>
                 ))}

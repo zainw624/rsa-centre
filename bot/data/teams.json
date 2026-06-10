@@ -2,7 +2,7 @@
   "teams": [
     {
       "teamId": "usa",
-      "teamName": "USA",
+      "teamName": "United States",
       "teamCode": "USA",
       "roleId": "1512921192527565044",
       "coachDiscordId": "",
@@ -398,12 +398,12 @@
       ]
     },
     {
-      "teamId": "morocco",
-      "teamName": "Morocco",
-      "teamCode": "MAR",
-      "roleId": "1512921195107061890",
+      "teamId": "portugal",
+      "teamName": "Portugal",
+      "teamCode": "POR",
+      "roleId": "1512180497701273641",
       "coachDiscordId": "",
-      "logo": "assets/morocco.png",
+      "logo": "assets/portugal.png",
       "rosterLimit": 16,
       "rosterPlayers": []
     },

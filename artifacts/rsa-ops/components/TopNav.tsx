@@ -4,10 +4,11 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSession, signOut } from 'next-auth/react';
+import { getHighestRole, shortRole } from '@/lib/permissions';
 
 const PERM_BADGE: Record<string, { label: string; color: string }> = {
-  owner:         { label: 'Bot Owner',     color: '#f59e0b' },
-  administrator: { label: 'Administrator', color: '#c9a55a' },
+  owner:         { label: 'Owner',        color: '#f59e0b' },
+  administrator: { label: 'League Admin',  color: '#c9a55a' },
   league:        { label: 'League Staff',  color: '#60a5fa' },
   results:       { label: 'Official',      color: '#34d399' },
   manager:       { label: 'Manager',       color: '#a78bfa' },
@@ -118,13 +119,14 @@ export default function TopNav() {
                     <p className="tn-dd-role" style={{ color: badge.color }}>{badge.label}</p>
                   </div>
                 </div>
-                {session.user.roles?.length > 0 && (
-                  <div className="tn-dd-roles">
-                    {session.user.roles.slice(0, 4).map((r: string) => (
-                      <span key={r} className="tn-dd-role-pill">{r.replace('RSA | ', '')}</span>
-                    ))}
-                  </div>
-                )}
+                {(() => {
+                  const top = getHighestRole(session.user.roles ?? []);
+                  return top ? (
+                    <div className="tn-dd-roles">
+                      <span className="tn-dd-role-pill">{shortRole(top)}</span>
+                    </div>
+                  ) : null;
+                })()}
                 <div className="tn-dd-divider" />
                 <Link href="/notifications" className="tn-dd-item" onClick={() => setUserOpen(false)}>
                   Notifications {unread > 0 && <span className="tn-dd-count">{unread}</span>}

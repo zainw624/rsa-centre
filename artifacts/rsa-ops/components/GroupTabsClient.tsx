@@ -40,7 +40,7 @@ const FLAG_MAP: Record<string, string> = {
   'Netherlands': 'netherlands',
   'Germany': 'germany',
   'Senegal': 'senegal',
-  'Morocco': 'morocco',
+  'Sweden': 'sweden',
 };
 
 function getFlag(teamName: string): string | null {

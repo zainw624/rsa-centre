@@ -6,8 +6,9 @@ const { getProcessedLogoAttachment } = require('../utils/logo');
 const { addFixture, parseKickoffDate, getUpcomingFixtures } = require('../utils/fixtures');
 const { addActivityEvent } = require('../utils/dashboardStorage');
 const { scheduleDashboardUpdate } = require('../events/dashboardAutoUpdate');
+const { LEAGUE_AND_ADMIN, BOT_OWNER_ROLE } = require('../utils/hierarchy');
 
-const FIXTURE_ANNOUNCE_ROLES = ['RSA | Founders', 'RSA | Co Founders', 'RSA | Executive'];
+const FIXTURE_ANNOUNCE_ROLES = [...LEAGUE_AND_ADMIN, BOT_OWNER_ROLE];
 const DEFAULT_FIXTURE_CHANNEL_ID = '1509978110647336990';
 
 module.exports = {
@@ -131,6 +132,42 @@ module.exports = {
       creatorId: interaction.user.id,
       creatorName: interaction.user.tag,
     });
+
+    // Sync to the website so the fixture appears on the schedule/world cup pages.
+    // Non-fatal: a sync failure must not block the Discord announcement.
+    try {
+      const websiteUrl = process.env.WEBSITE_URL;
+      const syncSecret = process.env.ROLES_SYNC_SECRET;
+      if (websiteUrl && syncSecret) {
+        const syncResponse = await fetch(`${websiteUrl}/api/bot/fixture`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-sync-secret': syncSecret,
+          },
+          body: JSON.stringify({
+            homeTeam: homeTeam.teamName,
+            awayTeam: awayTeam.teamName,
+            homeTeamCode: homeTeam.teamCode,
+            awayTeamCode: awayTeam.teamCode,
+            kickoff: kickoffDate.toISOString(),
+            competition,
+            venue,
+            notes,
+            creatorId: interaction.user.id,
+            creatorName: interaction.user.tag,
+          }),
+        });
+        if (!syncResponse.ok) {
+          const errorData = await syncResponse.json().catch(() => ({}));
+          console.error('Fixture website sync failed:', errorData.error || syncResponse.status);
+        }
+      } else {
+        console.warn('Fixture website sync skipped: WEBSITE_URL or ROLES_SYNC_SECRET not configured.');
+      }
+    } catch (syncError) {
+      console.error('Fixture website sync failed:', syncError);
+    }
 
     const fixtureEmbed = new EmbedBuilder()
       .setTitle(`📅 Fixture Announcement: ${homeTeam.teamName} vs ${awayTeam.teamName}`)

@@ -16,9 +16,9 @@ export default async function ManagersPage() {
   return (
     <div className="mx-auto w-full max-w-7xl">
       <header className="mb-6">
-        <p className="text-xs font-bold uppercase tracking-widest text-rsa-gold">Managers</p>
+        <p className="text-xs font-bold uppercase tracking-widest text-rsa-gold">Management Team</p>
         <h1 className="mt-1 text-2xl font-semibold text-white">Team Managers & Assistants</h1>
-        <p className="mt-1 text-sm text-slate-500">Assignments detected from Discord roles and database</p>
+        <p className="mt-1 text-sm text-slate-500">The managers and assistant managers currently leading each team</p>
       </header>
 
       {dbError ? (
@@ -28,8 +28,8 @@ export default async function ManagersPage() {
         </div>
       ) : derived.length === 0 ? (
         <div className="rounded-2xl border border-rsa-border bg-white/3 px-5 py-12 text-center">
-          <p className="text-sm text-slate-400">No manager assignments found</p>
-          <p className="mt-1 text-xs text-slate-600">Managers are detected from Discord roles when they log in</p>
+          <p className="text-sm text-slate-400">No active managers to display yet</p>
+          <p className="mt-1 text-xs text-slate-600">Managers appear here once they are assigned to a team</p>
         </div>
       ) : (
         <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

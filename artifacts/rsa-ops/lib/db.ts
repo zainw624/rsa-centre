@@ -177,20 +177,42 @@ export async function getComplianceSummary() {
   }
 }
 
+// Strip internal/external identifiers before a team object reaches the browser:
+// Discord role IDs (roleId/coachDiscordId), the unique business teamId, nested
+// manager Discord IDs, and roster player Discord IDs. The random cuid `id` is kept
+// because it is needed only as a React key / selector and is never rendered.
+// Only public fields (names, tags, team, role, image, group, counts) survive.
+function sanitizeTeam(team: any) {
+  const { roleId, coachDiscordId, teamId, rosterPlayers, managerAssignments, ...rest } = team;
+  return {
+    ...rest,
+    rosterPlayers: (rosterPlayers ?? []).map(({ playerId, userId, ...r }: any) => r),
+    managerAssignments: (managerAssignments ?? []).map((m: any) => ({
+      id: m.id,
+      role: m.role,
+      active: m.active,
+      teamId: m.teamId,
+      user: m.user ? { id: m.user.id, name: m.user.name, image: m.user.image } : null,
+    })),
+  };
+}
+
 export async function getAllTeams() {
-  return prisma.team.findMany({
+  const teams = await prisma.team.findMany({
     orderBy: { teamName: 'asc' },
     include: {
       rosterPlayers: { where: { active: true } },
-      managerAssignments: { where: { active: true } },
+      managerAssignments: { where: { active: true }, include: { user: true } },
       fixtures: { where: { archived: false }, orderBy: { kickoff: 'asc' }, take: 5 },
       results: { orderBy: { matchDate: 'desc' }, take: 5 },
+      leagueTableEntries: true,
     },
   });
+  return teams.map(sanitizeTeam);
 }
 
 export async function getTeamByCodeOrName(value: string) {
-  return prisma.team.findFirst({
+  const team = await prisma.team.findFirst({
     where: {
       OR: [
         { teamName: value },
@@ -203,8 +225,12 @@ export async function getTeamByCodeOrName(value: string) {
       managerAssignments: { where: { active: true }, include: { user: true } },
       fixtures: { where: { archived: false }, orderBy: { kickoff: 'asc' }, take: 20 },
       results: { orderBy: { matchDate: 'desc' }, take: 20 },
+      leagueTableEntries: { orderBy: { updatedAt: 'desc' } },
+      staffRoles: true,
     },
   });
+  if (!team) return null;
+  return sanitizeTeam(team);
 }
 
 export async function getAllPlayers() {
@@ -793,10 +819,28 @@ export async function updateStandingsFromResult(data: {
   const awayWin  = awayScore > homeScore;
   const draw     = homeScore === awayScore;
 
-  const findEntry = (teamId: string) =>
-    prisma.leagueTable.findFirst({ where: { teamId, ...(seasonId ? { seasonId } : {}) } });
+  // Find the team's standings row — or create it on the fly so a result always
+  // moves the table (as long as we have a season and the team has a group).
+  const ensureEntry = async (team: { id: string; group: string | null }) => {
+    let entry = await prisma.leagueTable.findFirst({
+      where: { teamId: team.id, ...(seasonId ? { seasonId } : {}) },
+    });
+    if (!entry && seasonId && team.group) {
+      entry = await prisma.leagueTable.create({
+        data: {
+          teamId: team.id,
+          seasonId,
+          group: team.group,
+          position: 0,
+          played: 0, won: 0, drew: 0, lost: 0,
+          goalsFor: 0, goalsAgainst: 0, goalDifference: 0, points: 0,
+        },
+      });
+    }
+    return entry;
+  };
 
-  const [homeEntry, awayEntry] = await Promise.all([findEntry(homeTeam.id), findEntry(awayTeam.id)]);
+  const [homeEntry, awayEntry] = await Promise.all([ensureEntry(homeTeam), ensureEntry(awayTeam)]);
 
   const updates: Promise<any>[] = [];
 
@@ -882,5 +926,6 @@ export async function updateStandingsFromResult(data: {
     awayScore,
     homeEntry: Boolean(homeEntry),
     awayEntry: Boolean(awayEntry),
+    standingsUpdated: Boolean(homeEntry) && Boolean(awayEntry),
   };
 }

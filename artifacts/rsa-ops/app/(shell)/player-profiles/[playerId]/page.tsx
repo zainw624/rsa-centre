@@ -29,7 +29,6 @@ export default async function PlayerProfilePage({ params }: { params: Promise<{ 
           <p className="text-sm uppercase tracking-widest text-rsa-gold">Player profile</p>
           <h1 className="text-3xl font-semibold text-white">{profile.playerTag}</h1>
           <div className="mt-2 space-y-1 text-sm text-slate-300">
-            <div>Discord ID: <span className="text-white">{profile.playerId}</span></div>
             <div>Username: <span className="text-white">{profile.user?.name || 'Unknown'}</span></div>
             <div>Current team: <span className="text-white">{profile.currentTeam?.teamName || 'Free Agent'}</span></div>
             <div>Current status: <span className="text-white">{profile.currentStatus}</span></div>
@@ -114,7 +113,7 @@ export default async function PlayerProfilePage({ params }: { params: Promise<{ 
           <section className="card rounded-3xl border border-rsa-border p-6">
             <p className="text-sm uppercase tracking-widest text-rsa-gold">Profile summary</p>
             <div className="mt-4 space-y-3 text-sm text-slate-300">
-              <div>Discord ID: <span className="text-white">{profile.playerId}</span></div>
+              <div>Current team: <span className="text-white">{profile.currentTeam?.teamName || 'Free Agent'}</span></div>
               <div>Active membership: <span className="text-white">{profile.currentStatus}</span></div>
               <div>Eligibility: <span className="text-white">{profile.eligible ? 'Eligible' : 'Ineligible'}</span></div>
               <div>Cup tied: <span className="text-white">{profile.cupTied ? 'Yes' : 'No'}</span></div>

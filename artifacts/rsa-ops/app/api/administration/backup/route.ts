@@ -2,15 +2,12 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prismaClient';
+import { can } from '@/lib/permissions';
 
 export const runtime = 'nodejs';
 
 function isAdminUser(session: any) {
-  const roles = session.user?.roles || [];
-  return session.user?.permission === 'owner'
-    || roles.includes('RSA | Founders')
-    || roles.includes('RSA | Co Founders')
-    || roles.includes('RSA | Executive')
+  return can(session.user?.permission, 'backup')
     || process.env.BOT_OWNER_ID === session.user?.discordId;
 }
 

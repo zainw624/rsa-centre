@@ -21,6 +21,8 @@ import {
   getActiveSanctions,
   getCupTiedPlayers,
   getLeagueHealth,
+  getCurrentSeason,
+  getPlayerLeaderboard,
 } from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
@@ -42,10 +44,13 @@ export default async function DashboardPage() {
   let sanctions: any[]  = [];
   let cupTied: any[]   = [];
   let leagueHealth     = EMPTY_HEALTH;
+  let season: any      = null;
+  let topScorers: any[] = [];
   let dbError          = false;
 
   try {
-    [totals, settings, fixtures, results, transfers, activity, leagueRows, sanctions, cupTied, leagueHealth] =
+    let leaderboard: any;
+    [totals, settings, fixtures, results, transfers, activity, leagueRows, sanctions, cupTied, leagueHealth, season, leaderboard] =
       await Promise.all([
         getTotals(),
         getSettings(),
@@ -57,7 +62,10 @@ export default async function DashboardPage() {
         getActiveSanctions(6),
         getCupTiedPlayers(),
         getLeagueHealth(),
+        getCurrentSeason(),
+        getPlayerLeaderboard(),
       ]);
+    topScorers = leaderboard?.topScorers ?? [];
   } catch {
     dbError = true;
   }
@@ -94,7 +102,12 @@ export default async function DashboardPage() {
         <StatCard title="Total Staff"         value={totals.staffCount} />
       </section>
 
-      <section className="mt-4 grid gap-4 sm:grid-cols-3">
+      <section className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatusCard
+          title="Active Season"
+          status={season?.name ?? 'None'}
+          hint={season?.name ? 'Current competition season' : 'No active season set'}
+        />
         <StatusCard
           title="Transfer Window"
           status={settings?.transferWindowOpen ? 'Open' : 'Closed'}
@@ -122,6 +135,24 @@ export default async function DashboardPage() {
           <ActivityCard items={activity.map((a: any) => ({ id: a.id, text: a.text, createdAt: a.createdAt }))} />
         </div>
         <div className="flex flex-col gap-4">
+          <div className="rounded-2xl border border-rsa-border bg-white/3 p-4">
+            <p className="text-xs font-semibold uppercase tracking-widest text-rsa-gold">League Leaders</p>
+            {topScorers.length === 0 ? (
+              <p className="mt-3 text-xs text-slate-500">No goals recorded yet</p>
+            ) : (
+              <ul className="mt-3 space-y-2">
+                {topScorers.slice(0, 5).map((p: any, i: number) => (
+                  <li key={p.playerId ?? p.id ?? i} className="flex items-center justify-between gap-3 text-sm">
+                    <span className="flex items-center gap-2 truncate">
+                      <span className="w-4 shrink-0 text-xs font-bold text-slate-600">{i + 1}</span>
+                      <span className="truncate text-white">{p.playerTag || p.playerName || p.playerId}</span>
+                    </span>
+                    <span className="shrink-0 font-bold text-rsa-gold">{p.goals ?? p.total ?? 0}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
           <LeagueTablePreview rows={leagueRows} />
           <ComplianceCard issues={sanctions} />
           <div className="rounded-2xl border border-rsa-border bg-white/3 p-4">

@@ -19,7 +19,7 @@ export default async function PlayerProfilesPage() {
       <header className="mb-6">
         <p className="text-xs font-bold uppercase tracking-widest text-rsa-gold">Player Profiles</p>
         <h1 className="mt-1 text-2xl font-semibold text-white">All Registered Players</h1>
-        <p className="mt-1 text-sm text-slate-500">Profiles populated automatically from Discord roles and database</p>
+        <p className="mt-1 text-sm text-slate-500">Every player across the league and their current team</p>
       </header>
 
       {dbError ? (
@@ -29,8 +29,8 @@ export default async function PlayerProfilesPage() {
         </div>
       ) : players.length === 0 ? (
         <div className="rounded-2xl border border-rsa-border bg-white/3 px-5 py-12 text-center">
-          <p className="text-sm text-slate-400">No player profiles found</p>
-          <p className="mt-1 text-xs text-slate-600">Players are registered automatically when they log in with Discord</p>
+          <p className="text-sm text-slate-400">No player profiles yet</p>
+          <p className="mt-1 text-xs text-slate-600">Players appear here once they sign in</p>
         </div>
       ) : (
         <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

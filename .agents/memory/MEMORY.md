@@ -1,6 +1,4 @@
-- [RSA Ops page error pattern](rsa-ops-page-error-pattern.md) — all shell pages use try/catch + amber banner; never crash on missing DB
-- [RSA Ops session fields](rsa-ops-session-fields.md) — session.user has id/discordId/permission/roles/name/image; permission drives access
-- [RSA roles-sync endpoint](rsa-roles-sync-endpoint.md) — POST /api/roles-sync; bot push endpoint; secret + guild validation; upserts user, roster, manager, audit
-- [RSA logo file](rsa-logo.md) — rsa1.png was a 1×1 stub; replaced with proper 512×512 PNG using ImageMagick
-- [RSA schema additions](rsa-schema-additions.md) — PlayerStat model + group field on Team/LeagueTable added in Season 2026 build
-- [RSA group seeding](rsa-group-seeding.md) — POST /api/admin/seed-groups must be called once after DB push to seed 16 teams across A-D
+- [Bot ↔ website sync](bot-website-sync.md) — bot writes to web via `/api/bot/*` guarded by `x-sync-secret`==ROLES_SYNC_SECRET; non-fatal; needs WEBSITE_URL too.
+- [Standings auto-heal](standings-auto-heal.md) — updateStandingsFromResult creates missing LeagueTable rows from team.group+current season; returns standingsUpdated.
+- [Morocco replaced](morocco-replacement.md) — Morocco gone everywhere (Portugal/Sweden replace it); bot team lists duplicated across 5 files + teamRoles.ts, keep in sync.
+- [Staff hierarchy & permissions](staff-hierarchy-permissions.md) — lib/permissions.ts is the single source of truth; role strings must match Discord exactly; no role can edit source/secrets/deploy.

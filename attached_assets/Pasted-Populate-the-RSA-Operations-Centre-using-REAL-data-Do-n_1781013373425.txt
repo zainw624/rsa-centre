@@ -1,0 +1,169 @@
+Populate the RSA Operations Centre using REAL data.
+
+Do not use placeholder content.
+
+Do not use fake data.
+
+Do not use hardcoded demo data.
+
+Everything should be powered by:
+
+* Discord roles
+* Discord members
+* Database records
+* Website APIs
+
+==================================================
+TEAMS PAGE
+==========
+
+The Teams page should display:
+
+* Team Logo
+* Team Name
+* Group
+* Manager
+* Player Count
+* Team Statistics
+
+When a user clicks a team:
+
+Open a dedicated Team Page.
+
+==================================================
+TEAM PAGE
+=========
+
+Display:
+
+* Team Logo
+* Team Name
+* Group
+* Manager
+* Assistant Manager
+* Staff
+* Full Roster
+* Team Statistics
+* Team Record
+
+==================================================
+ROSTER PAGE
+===========
+
+Display:
+
+* Team Selector
+* Search Bar
+* Filters
+
+Selecting a team should instantly show:
+
+* Players
+* Managers
+* Staff
+
+Data must come from:
+
+Discord Role Sync
+and/or
+Database Records
+
+NOT hardcoded data.
+
+==================================================
+MANAGERS PAGE
+=============
+
+Automatically populate from Discord roles.
+
+Display:
+
+* Team
+* Manager
+* Assistant Manager
+
+Only display active managers.
+
+==================================================
+STAFF PAGE
+==========
+
+Populate automatically using the RSA hierarchy.
+
+Do not show Discord IDs.
+
+Do not show Role IDs.
+
+Display:
+
+* Username
+* Display Name
+* Highest Role
+
+==================================================
+REMOVE AI-LOOKING TEXT
+======================
+
+Remove wording such as:
+
+* Staff detected automatically
+* Generated automatically
+* Synced automatically
+* Premium clarity
+* Developer placeholder text
+
+Examples:
+
+BAD:
+"RSA Staff Directory"
+"Staff detected automatically from Discord roles"
+
+GOOD:
+"League Operations"
+"Management Team"
+"RSA Leadership"
+"Competition Administration"
+
+The website should feel professionally built.
+
+==================================================
+DISPLAY RULES
+=============
+
+Publicly display:
+
+* Username
+* Display Name
+* Team
+* Position
+* Role
+
+Never display:
+
+* Discord IDs
+* Role IDs
+* Internal identifiers
+
+==================================================
+FINAL OBJECTIVE
+===============
+
+When complete:
+
+✓ Teams page populated
+
+✓ Team pages populated
+
+✓ Rosters populated
+
+✓ Managers populated
+
+✓ Staff populated
+
+✓ Real Discord data displayed
+
+✓ Real database data displayed
+
+✓ No placeholders remaining
+
+Provide testing instructions and list modified files.

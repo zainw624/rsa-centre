@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prismaClient';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { createNotification } from '@/lib/db';
+import { can } from '@/lib/permissions';
 
 export const runtime = 'nodejs';
 
@@ -21,9 +22,8 @@ export async function GET() {
 export async function POST(request: Request) {
   const session: any = await getServerSession(authOptions as any);
   if (!session || !session.user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
-  const roles = session.user.roles || [];
   const permission = session.user.permission || 'viewer';
-  if (!(permission === 'owner' || roles.includes('RSA | Officials') || process.env.BOT_OWNER_ID === session.user.discordId)) {
+  if (!(can(permission, 'submitResults') || process.env.BOT_OWNER_ID === session.user.discordId)) {
     return NextResponse.json({ error: 'forbidden' }, { status: 403 });
   }
 
@@ -54,9 +54,8 @@ export async function POST(request: Request) {
 export async function PUT(request: Request) {
   const session = (await getServerSession(authOptions as any)) as any;
   if (!session || !session.user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
-  const roles = session.user.roles || [];
   const permission = session.user.permission || 'viewer';
-  if (!(permission === 'owner' || roles.includes('RSA | Officials') || process.env.BOT_OWNER_ID === session.user.discordId)) {
+  if (!(can(permission, 'submitResults') || process.env.BOT_OWNER_ID === session.user.discordId)) {
     return NextResponse.json({ error: 'forbidden' }, { status: 403 });
   }
 
@@ -75,9 +74,8 @@ export async function PUT(request: Request) {
 export async function DELETE(request: Request) {
   const session: any = await getServerSession(authOptions as any);
   if (!session || !session.user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
-  const roles = session.user.roles || [];
   const permission = session.user.permission || 'viewer';
-  if (!(permission === 'owner' || roles.includes('RSA | Officials') || process.env.BOT_OWNER_ID === session.user.discordId)) {
+  if (!(can(permission, 'submitResults') || process.env.BOT_OWNER_ID === session.user.discordId)) {
     return NextResponse.json({ error: 'forbidden' }, { status: 403 });
   }
 

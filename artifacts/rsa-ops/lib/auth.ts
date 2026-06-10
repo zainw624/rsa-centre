@@ -1,5 +1,4 @@
 import DiscordProvider from 'next-auth/providers/discord';
-import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { NextAuthOptions } from 'next-auth';
 import { prisma } from '@/lib/prisma';
 import { fetchGuildMember, fetchGuildRoles, mapDiscordRoles, resolvePermission } from '@/lib/discord';
@@ -7,7 +6,6 @@ import { fetchGuildMember, fetchGuildRoles, mapDiscordRoles, resolvePermission }
 const botOwnerId = process.env.BOT_OWNER_ID;
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
   providers: [
     DiscordProvider({
       clientId: process.env.DISCORD_CLIENT_ID ?? '',
@@ -20,7 +18,7 @@ export const authOptions: NextAuthOptions = {
     })
   ],
   session: {
-    strategy: 'database'
+    strategy: 'jwt'
   },
   pages: {
     signIn: '/login',
@@ -68,12 +66,21 @@ export const authOptions: NextAuthOptions = {
       return true;
     },
 
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.discordId = (user as any).discordId ?? token.discordId;
-        token.roles = (user as any).roles ?? [];
-        token.permission = (user as any).permission ?? 'viewer';
+    async jwt({ token, profile }) {
+      // On initial sign-in the Discord profile is present; afterwards reload the
+      // user's roles + permission from the DB on every request so that demotions
+      // (via Discord sync) take effect promptly instead of persisting in a stale
+      // JWT until it expires. This prevents privilege escalation after a role is
+      // removed. The OAuth `user` object does NOT carry these fields.
+      const discordId = (profile as any)?.id ?? (token.discordId as string | undefined);
+      if (discordId) {
+        const dbUser = await prisma.user.findUnique({ where: { discordId } });
+        if (dbUser) {
+          token.id = dbUser.id;
+          token.discordId = dbUser.discordId;
+          token.roles = dbUser.roles;
+          token.permission = dbUser.permission;
+        }
       }
       return token;
     },
