@@ -10,8 +10,8 @@
  * and Free Agents (no team role) are never added to any roster.
  */
 import { prisma } from '@/lib/prismaClient';
-import { resolvePermission } from '@/lib/discord';
-import { TEAMS } from '@/lib/teamRoles';
+import { resolvePermission, fetchGuildRoles, fetchAllGuildMembers } from '@/lib/discord';
+import { TEAMS, ensureTeams, removeMorocco } from '@/lib/teamRoles';
 import { TRACKED_ROLES } from '@/lib/permissions';
 
 const MANAGER_ROLE_NAMES   = ['RSA | Managers'];
@@ -166,6 +166,143 @@ export async function syncMemberRoles(input: SyncMemberInput): Promise<SyncMembe
   }
 
   return { user, permission, teamsJoined, teamDeactivated: deact.count };
+}
+
+export interface FullSyncResult {
+  ok: boolean;
+  error?: string;
+  message?: string;
+  membersFetched?: number;
+  tracked?: number;
+  rostered?: number;
+  rosterDeactivated?: number;
+  managerDeactivated?: number;
+  staffCleared?: number;
+}
+
+/**
+ * Full pull sync: fetches every guild member from the Discord REST API (using
+ * DISCORD_BOT_TOKEN / DISCORD_GUILD_ID) and reconciles the database so teams,
+ * rosters, managers and staff exactly reflect current Discord role membership.
+ *
+ * Requires NO user login — it authenticates to Discord with the bot token. This
+ * is the single source of truth used by both the admin button and the automatic
+ * background sync. Safe to call repeatedly.
+ */
+export async function syncAllFromDiscord(opts?: { actorUserId?: string | null; syncedAt?: Date }): Promise<FullSyncResult> {
+  const syncedAt = opts?.syncedAt ?? new Date();
+
+  // 1. Ensure canonical teams exist with correct role IDs, and purge Morocco.
+  await ensureTeams(prisma);
+  await removeMorocco(prisma);
+
+  // 2. Load Discord role map + all members.
+  const roleMap = await fetchGuildRoles();
+  if (!roleMap || Object.keys(roleMap).length === 0) {
+    return { ok: false, error: 'discord_unavailable' };
+  }
+
+  const members = await fetchAllGuildMembers();
+  if (members === null) {
+    return { ok: false, error: 'members_unavailable' };
+  }
+
+  // 3. Sync each tracked member.
+  const processed = new Set<string>();
+  let rostered = 0;
+
+  for (const m of members) {
+    const u = m.user;
+    if (!u || u.bot) continue;
+
+    const roleIds: string[]   = Array.isArray(m.roles) ? m.roles : [];
+    const roleNames: string[] = roleIds.map((id: string) => roleMap[id]).filter(Boolean) as string[];
+
+    if (!isTrackedMember(roleIds, roleNames)) continue;
+
+    const name  = m.nick || u.global_name || u.username || u.id;
+    const image = u.avatar
+      ? `https://cdn.discordapp.com/avatars/${u.id}/${u.avatar}.png`
+      : null;
+
+    const result = await syncMemberRoles({ discordId: u.id, name, image, roleIds, roleNames, syncedAt });
+    processed.add(u.id);
+    if (result.teamsJoined.length) rostered++;
+  }
+
+  // 4. Reconcile — anyone with active roster/manager rows who is no longer a
+  //    tracked guild member (left the server / lost all roles) is deactivated.
+  const activeRoster = await prisma.rosterPlayer.findMany({
+    where: { active: true },
+    select: { id: true, user: { select: { discordId: true } } },
+  });
+  const staleRosterIds = activeRoster
+    .filter((r) => !r.user || !processed.has(r.user.discordId))
+    .map((r) => r.id);
+  if (staleRosterIds.length) {
+    await prisma.rosterPlayer.updateMany({ where: { id: { in: staleRosterIds } }, data: { active: false } });
+  }
+
+  const activeMgr = await prisma.managerAssignment.findMany({
+    where: { active: true },
+    select: { id: true, user: { select: { discordId: true } } },
+  });
+  const staleMgrIds = activeMgr
+    .filter((a) => !a.user || !processed.has(a.user.discordId))
+    .map((a) => a.id);
+  if (staleMgrIds.length) {
+    await prisma.managerAssignment.updateMany({ where: { id: { in: staleMgrIds } }, data: { active: false, removedAt: syncedAt } });
+  }
+
+  // 4b. Reconcile stale staff roles. Members who still carry roles in the DB
+  //     but are no longer tracked (left the guild or lost all tracked roles)
+  //     have their roles/permission cleared so the Staff/Leadership pages
+  //     always reflect current Discord membership.
+  const botOwnerId = process.env.BOT_OWNER_ID;
+  const roledUsers = await prisma.user.findMany({
+    where: { roles: { isEmpty: false } },
+    select: { id: true, discordId: true },
+  });
+  let staffCleared = 0;
+  for (const u of roledUsers) {
+    if (processed.has(u.discordId)) continue;
+    await prisma.user.update({
+      where: { id: u.id },
+      data: { roles: [], permission: resolvePermission([], botOwnerId, u.discordId), updatedAt: syncedAt },
+    });
+    staffCleared++;
+  }
+
+  // 5. Audit.
+  try {
+    await prisma.auditLog.create({
+      data: {
+        actionType:    'DISCORD_FULL_SYNC',
+        sourceCommand: 'sync-all-from-discord',
+        userId:        opts?.actorUserId ?? null,
+        details: {
+          membersFetched:     members.length,
+          tracked:            processed.size,
+          rostered,
+          rosterDeactivated:  staleRosterIds.length,
+          managerDeactivated: staleMgrIds.length,
+          staffCleared,
+          syncedAt,
+        },
+      },
+    });
+  } catch { /* non-fatal */ }
+
+  return {
+    ok: true,
+    membersFetched:     members.length,
+    tracked:            processed.size,
+    rostered,
+    rosterDeactivated:  staleRosterIds.length,
+    managerDeactivated: staleMgrIds.length,
+    staffCleared,
+    message: `Synced ${processed.size} members from Discord — ${rostered} on rosters. Deactivated ${staleRosterIds.length} stale roster entr${staleRosterIds.length === 1 ? 'y' : 'ies'}.`,
+  };
 }
 
 /** Deactivate all roster + manager rows for a member who left the guild. */
