@@ -45,7 +45,23 @@ export async function getTotals() {
 }
 
 export async function getSettings() {
-  return prisma.settings.findFirst();
+  const existing = await prisma.settings.findFirst();
+  if (existing) return existing;
+  try {
+    return await prisma.settings.create({
+      data: {
+        guildId: process.env.DISCORD_GUILD_ID || 'default',
+        managerRoleNames: [],
+        sanctionRoleNames: [],
+        auditRoleNames: [],
+        worldCupLockRoleNames: [],
+        worldCupUnlockRoleNames: [],
+        staffCentreRoleNames: [],
+      },
+    });
+  } catch {
+    return prisma.settings.findFirst();
+  }
 }
 
 export async function getLatestResults(limit = 5) {
