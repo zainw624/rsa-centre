@@ -24,6 +24,7 @@ import {
   getCurrentSeason,
   getPlayerLeaderboard,
 } from '@/lib/db';
+import { Users, ShieldAlert, AlertTriangle } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -74,27 +75,26 @@ export default async function DashboardPage() {
   const permission = session.user?.permission ?? 'viewer';
 
   return (
-    <div className="mx-auto w-full max-w-7xl">
+    <div className="space-y-6">
       <BrandHeader
         title={`Welcome back, ${userName.split('#')[0]}`}
         subtitle={`Signed in as ${permission.charAt(0).toUpperCase() + permission.slice(1)}`}
       />
 
       {dbError && (
-        <div className="mt-5 flex items-center gap-3 rounded-2xl border border-amber-500/20 bg-amber-500/05 px-5 py-4 text-sm text-amber-300">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 shrink-0">
-            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-            <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
-          </svg>
-          <span>
-            <strong className="font-semibold text-amber-200">Database not connected.</strong>{' '}
-            Set <code className="rounded bg-black/30 px-1 text-xs">DATABASE_URL</code> in Replit Secrets and run{' '}
-            <code className="rounded bg-black/30 px-1 text-xs">npx prisma db push</code> to activate live data.
-          </span>
+        <div className="card-panel border-amber-500/20 bg-amber-500/5 p-5">
+          <div className="flex items-center gap-3 text-amber-500">
+            <AlertTriangle className="w-5 h-5 shrink-0" />
+            <span className="text-sm">
+              <strong className="font-semibold text-amber-400">Database not connected.</strong>{' '}
+              Set <code className="rounded bg-background/50 px-1.5 py-0.5 text-xs font-mono text-amber-200">DATABASE_URL</code> in Replit Secrets and run{' '}
+              <code className="rounded bg-background/50 px-1.5 py-0.5 text-xs font-mono text-amber-200">npx prisma db push</code> to activate live data.
+            </span>
+          </div>
         </div>
       )}
 
-      <section className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         <StatCard title="Total Players"       value={totals.playersCount} />
         <StatCard title="Total Teams"         value={totals.teamsCount} />
         <StatCard title="Managers"            value={totals.managersCount} />
@@ -102,7 +102,7 @@ export default async function DashboardPage() {
         <StatCard title="Total Staff"         value={totals.staffCount} />
       </section>
 
-      <section className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatusCard
           title="Active Season"
           status={season?.name ?? 'None'}
@@ -119,35 +119,35 @@ export default async function DashboardPage() {
         />
         <StatusCard
           title="League Health"
-          status={`${leagueHealth.percentCompleted}% Complete`}
+          status={`${leagueHealth.percentCompleted}%`}
           hint={`Played ${leagueHealth.played} of ${leagueHealth.totalFixtures} fixtures`}
         />
       </section>
 
-      <section className="mt-4 grid gap-4 lg:grid-cols-3">
+      <section className="grid gap-4 lg:grid-cols-3">
         <FixtureCard fixtures={fixtures} />
         <ResultCard  results={results} />
         <TransferCard transfers={transfers} />
       </section>
 
-      <section className="mt-4 grid gap-4 lg:grid-cols-3">
+      <section className="grid gap-4 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <ActivityCard items={activity.map((a: any) => ({ id: a.id, text: a.text, createdAt: a.createdAt }))} />
         </div>
         <div className="flex flex-col gap-4">
-          <div className="rounded-2xl border border-rsa-border bg-white/3 p-4">
-            <p className="text-xs font-semibold uppercase tracking-widest text-rsa-gold">League Leaders</p>
+          <div className="card-panel p-5">
+            <p className="text-[0.65rem] font-bold uppercase tracking-wider text-primary mb-4">League Leaders</p>
             {topScorers.length === 0 ? (
-              <p className="mt-3 text-xs text-slate-500">No goals recorded yet</p>
+              <div className="py-6 text-center text-sm text-muted-foreground">No goals recorded yet</div>
             ) : (
-              <ul className="mt-3 space-y-2">
+              <ul className="space-y-3">
                 {topScorers.slice(0, 5).map((p: any, i: number) => (
                   <li key={p.playerId ?? p.id ?? i} className="flex items-center justify-between gap-3 text-sm">
-                    <span className="flex items-center gap-2 truncate">
-                      <span className="w-4 shrink-0 text-xs font-bold text-slate-600">{i + 1}</span>
-                      <span className="truncate text-white">{p.playerTag || p.playerName || p.playerId}</span>
+                    <span className="flex items-center gap-3 min-w-0">
+                      <span className="w-5 text-center shrink-0 text-xs font-bold text-muted-foreground">{i + 1}</span>
+                      <span className="truncate text-foreground font-medium">{p.playerTag || p.playerName || p.playerId}</span>
                     </span>
-                    <span className="shrink-0 font-bold text-rsa-gold">{p.goals ?? p.total ?? 0}</span>
+                    <span className="shrink-0 font-bold text-primary px-2 py-0.5 rounded bg-primary/10">{p.goals ?? p.total ?? 0}</span>
                   </li>
                 ))}
               </ul>
@@ -155,10 +155,16 @@ export default async function DashboardPage() {
           </div>
           <LeagueTablePreview rows={leagueRows} />
           <ComplianceCard issues={sanctions} />
-          <div className="rounded-2xl border border-rsa-border bg-white/3 p-4">
-            <p className="text-xs font-semibold uppercase tracking-widest text-rsa-gold">Sanctions</p>
-            <p className="mt-2 text-2xl font-bold text-white">{sanctions.length}</p>
-            <p className="mt-1 text-xs text-slate-500">Active · {cupTied.length} cup-tied</p>
+          <div className="card-panel p-5">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-[0.65rem] font-bold uppercase tracking-wider text-destructive">Sanctions</p>
+              <ShieldAlert className="w-4 h-4 text-destructive/50" />
+            </div>
+            <div className="flex items-baseline gap-2">
+              <p className="text-3xl font-bold text-destructive font-display">{sanctions.length}</p>
+              <p className="text-sm font-medium text-destructive/80">active</p>
+            </div>
+            <p className="mt-2 text-xs text-muted-foreground font-medium">Including {cupTied.length} cup-tied players</p>
           </div>
         </div>
       </section>

@@ -1,6 +1,8 @@
 import { prisma } from '@/lib/prismaClient';
 import StaffCard from '@/components/StaffCard';
 import { HIERARCHY, getHighestRole, roleRank, ROLE_DEPARTMENT, DEPARTMENT_ORDER } from '@/lib/permissions';
+import { BrandHeader } from '@/components/BrandHeader';
+import { ShieldAlert } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -35,29 +37,36 @@ export default async function StaffPage() {
     .map((d) => [d, groups[d]] as [string, { user: any; role: string }[]]);
 
   return (
-    <div className="mx-auto w-full max-w-7xl">
-      <header className="mb-6">
-        <p className="text-xs font-bold uppercase tracking-widest text-rsa-gold">League Operations</p>
-        <h1 className="mt-1 text-2xl font-semibold text-white">RSA Leadership</h1>
-        <p className="mt-1 text-sm text-slate-500">The people who run the league, organised by department</p>
-      </header>
+    <div className="space-y-6">
+      <BrandHeader
+        title="League Operations Staff"
+        subtitle="The people who run the league, organised by department"
+      />
 
       {dbError ? (
-        <div className="rounded-2xl border border-amber-500/20 bg-amber-500/05 px-5 py-8 text-center">
-          <p className="text-sm font-semibold text-amber-300">Database not connected</p>
-          <p className="mt-1 text-xs text-slate-500">Set DATABASE_URL in Replit Secrets to view the staff directory</p>
+        <div className="card-panel border-amber-500/20 bg-amber-500/5 p-8 text-center">
+          <p className="text-base font-bold text-amber-500 font-display">Database not connected</p>
+          <p className="mt-1 text-sm text-amber-500/80 font-medium">Set DATABASE_URL in Replit Secrets to view the staff directory</p>
         </div>
       ) : sortedGroups.length === 0 ? (
-        <div className="rounded-2xl border border-rsa-border bg-white/3 px-5 py-12 text-center">
-          <p className="text-sm text-slate-400">No staff to display yet</p>
-          <p className="mt-1 text-xs text-slate-600">Staff members appear here once they sign in</p>
+        <div className="card-panel p-12 text-center flex flex-col items-center">
+          <div className="w-16 h-16 rounded-2xl bg-muted border border-border flex items-center justify-center mb-4">
+            <ShieldAlert className="w-8 h-8 text-muted-foreground/50" />
+          </div>
+          <p className="text-lg font-bold text-foreground font-display">No staff members found</p>
+          <p className="mt-1 text-sm text-muted-foreground font-medium">Staff members will appear here once they log in</p>
         </div>
       ) : (
-        <div className="space-y-8">
+        <div className="space-y-10">
           {sortedGroups.map(([dept, members]) => (
             <section key={dept}>
-              <h2 className="mb-4 text-sm font-bold uppercase tracking-widest text-slate-400">{dept}</h2>
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="flex items-center gap-3 mb-5 border-b border-border/50 pb-2">
+                <h2 className="text-base font-bold text-foreground font-display tracking-tight">{dept}</h2>
+                <span className="text-[0.65rem] font-bold uppercase tracking-wider text-muted-foreground bg-muted border border-border px-2 py-0.5 rounded">
+                  {members.length} members
+                </span>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {members.map((m) => (
                   <StaffCard key={m.user.id} user={m.user} role={m.role} />
                 ))}

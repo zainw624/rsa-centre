@@ -43,7 +43,7 @@ catalogs:
       specifier: ^12.23.24
       version: 12.38.0
     lucide-react:
-      specifier: ^0.545.0
+      specifier: 0.545.0
       version: 0.545.0
     react:
       specifier: 19.1.0
@@ -404,6 +404,9 @@ importers:
       '@prisma/client':
         specifier: ^5.18.0
         version: 5.22.0(prisma@5.22.0)
+      lucide-react:
+        specifier: 'catalog:'
+        version: 0.545.0(react@18.3.1)
       next:
         specifier: ^15.1.7
         version: 15.5.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -7572,6 +7575,10 @@ snapshots:
   lru-cache@6.0.0:
     dependencies:
       yallist: 4.0.0
+
+  lucide-react@0.545.0(react@18.3.1):
+    dependencies:
+      react: 18.3.1
 
   lucide-react@0.545.0(react@19.1.0):
     dependencies:

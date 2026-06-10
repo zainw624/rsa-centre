@@ -4,17 +4,19 @@ import TopNav from './TopNav';
 
 export default function LayoutShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-[#060810]">
+    <div className="flex h-[100dvh] w-full overflow-hidden bg-background">
       {/* Sidebar — fixed height, scrolls internally */}
-      <aside className="hidden w-60 shrink-0 md:flex flex-col h-full">
+      <aside className="hidden w-64 shrink-0 lg:flex flex-col h-full z-20">
         <Sidebar />
       </aside>
 
       {/* Main column */}
-      <div className="flex flex-1 flex-col min-w-0 h-full overflow-hidden">
+      <div className="flex flex-1 flex-col min-w-0 h-full overflow-hidden relative z-10">
         <TopNav />
-        <main className="flex-1 overflow-y-auto">
-          <div className="px-5 py-6 md:px-8 md:py-8">{children}</div>
+        <main className="flex-1 overflow-y-auto custom-scrollbar">
+          <div className="p-4 sm:p-6 md:p-8 max-w-[1600px] mx-auto w-full">
+            {children}
+          </div>
         </main>
       </div>
     </div>

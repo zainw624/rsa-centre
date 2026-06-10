@@ -1,0 +1,84 @@
+I want to upgrade the RSA Operations Centre visual design so it no longer looks generic, AI-generated, or template-made.
+
+Do NOT copy another website exactly, but use the reference style as inspiration:
+- dark premium sports-management dashboard
+- polished panels
+- unique RSA identity
+- cleaner typography
+- better spacing
+- professional football operations feel
+
+Current issues:
+- panels look too basic
+- fonts feel generic
+- layout looks AI-generated
+- emoji/icon usage feels cheap
+- cards feel repetitive
+- dashboard does not feel unique enough
+
+Redesign the website appearance while preserving all existing functionality and data connections.
+
+Important:
+DO NOT break:
+- Discord login
+- role permissions
+- teams
+- rosters
+- managers
+- staff
+- fixtures
+- results
+- standings
+- world cup
+- admin tools
+- bot sync
+- API routes
+- database logic
+
+Design goals:
+1. Create a unique RSA Operations Centre visual identity.
+2. Replace generic fonts with a cleaner professional font stack.
+3. Improve dashboard cards so they look modern and custom.
+4. Improve spacing, alignment, and hierarchy.
+5. Replace emoji-style icons with high-quality consistent icons.
+6. Make panels feel premium, not like generated placeholders.
+7. Improve sidebar, topbar, stat cards, tables, team cards, roster cards, fixture cards, and admin panels.
+8. Keep the dark theme, but make it more polished with RSA gold/blue accents.
+9. Make the site feel like an upcoming serious football league platform.
+
+Do not use wording that sounds AI-generated, such as:
+- detected automatically
+- generated automatically
+- premium clarity
+- powered by AI
+- synced automatically
+
+Use professional wording instead.
+
+Pages to improve:
+- Dashboard
+- Teams
+- Team Detail
+- Rosters
+- Managers
+- Staff
+- Fixtures
+- Results
+- League Table
+- World Cup
+- Admin Panels
+
+Before changing code:
+- identify current shared layout/components
+- identify reusable card/table/sidebar components
+- update shared design system first
+- avoid duplicating styles everywhere
+
+After changes:
+- confirm all data still loads
+- confirm permissions still work
+- confirm no APIs were broken
+- confirm mobile/responsive layout still works
+- provide list of modified files
+
+The final result should look custom-built for RSA Centre, not copied, not generic, and not AI-generated.

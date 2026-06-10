@@ -2,7 +2,10 @@ import { redirect } from 'next/navigation';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import StatCard from '@/components/widgets/StatCard';
+import { BrandHeader } from '@/components/BrandHeader';
 import { getStatisticsSummary, getPlayerLeaderboard, getCurrentSeason } from '@/lib/db';
+import type { ReactNode } from 'react';
+import { AlertTriangle, Activity, Users, FileText, ArrowRightLeft, ShieldAlert, Goal, Target, ShieldCheck, Trophy } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,42 +20,59 @@ const EMPTY_LB: { topScorers: any[]; topAssists: any[]; topCleanSheets: any[]; t
 
 type StatRow = { playerId: string; playerTag: string; team?: { teamName?: string } | null; goals: number; assists: number; cleanSheets: number; motm: number };
 
-function LeaderboardTable({ rows, col, label }: { rows: StatRow[]; col: keyof StatRow; label: string }) {
-  if (!rows.length) {
-    return (
-      <div className="flex items-center justify-center py-8 text-sm text-slate-600">No data — submit stats via bot</div>
-    );
-  }
+function LeaderboardTable({ rows, col, label, icon }: { rows: StatRow[]; col: keyof StatRow; label: string; icon: ReactNode }) {
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full text-sm">
-        <thead>
-          <tr style={{ borderBottom: '1px solid rgba(201,165,90,0.12)', background: 'rgba(0,0,0,0.25)' }}>
-            <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-widest text-rsa-gold">#</th>
-            <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-widest text-rsa-gold">Player</th>
-            <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-widest text-rsa-gold">Team</th>
-            <th className="px-4 py-3 text-right text-xs font-bold uppercase tracking-widest text-rsa-gold">{label}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row, i) => (
-            <tr
-              key={row.playerId}
-              style={{
-                borderTop: '1px solid rgba(201,165,90,0.07)',
-                background: i % 2 === 0 ? 'rgba(201,165,90,0.02)' : 'rgba(0,0,0,0.14)',
-              }}
-            >
-              <td className="px-4 py-3" style={{ color: i === 0 ? '#c9a55a' : i === 1 ? '#94a3b8' : i === 2 ? '#b45309' : '#475569', fontWeight: i < 3 ? 700 : 400 }}>
-                {i + 1}
-              </td>
-              <td className="px-4 py-3 font-medium text-white">{row.playerTag}</td>
-              <td className="px-4 py-3 text-slate-400">{row.team?.teamName ?? '—'}</td>
-              <td className="px-4 py-3 text-right font-bold text-white">{String(row[col])}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="card-panel overflow-hidden flex flex-col">
+      <div className="px-5 py-4 border-b border-border bg-muted/30 flex items-center gap-3">
+        <span className="text-primary">{icon}</span>
+        <div>
+          <p className="text-sm font-bold text-foreground tracking-tight">{label}</p>
+        </div>
+      </div>
+      
+      {rows.length === 0 ? (
+        <div className="flex-1 flex flex-col items-center justify-center p-8 text-center bg-background">
+          <p className="text-sm font-medium text-muted-foreground">No data recorded</p>
+        </div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-left whitespace-nowrap">
+            <thead className="bg-card border-b border-border text-[0.65rem] font-bold uppercase tracking-wider text-muted-foreground">
+              <tr>
+                <th className="px-5 py-3 w-10">#</th>
+                <th className="px-5 py-3 w-1/2">Player</th>
+                <th className="px-5 py-3 text-right">Count</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border/50 bg-background">
+              {rows.slice(0, 10).map((row, i) => {
+                const isTop3 = i < 3;
+                const posColor = i === 0 ? 'text-primary bg-primary/10 border-primary/20' : 
+                                 i === 1 ? 'text-slate-300 bg-slate-300/10 border-slate-300/20' : 
+                                 i === 2 ? 'text-amber-600 bg-amber-600/10 border-amber-600/20' : 
+                                 'text-muted-foreground border-transparent';
+                
+                return (
+                  <tr key={row.playerId} className="hover:bg-muted/30 transition-colors">
+                    <td className="px-5 py-3">
+                      <span className={`inline-flex items-center justify-center w-6 h-6 rounded border text-xs font-bold ${posColor}`}>
+                        {i + 1}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3">
+                      <div className="font-bold text-foreground truncate">{row.playerTag}</div>
+                      <div className="text-[0.65rem] font-bold uppercase tracking-wider text-muted-foreground truncate">{row.team?.teamName ?? '—'}</div>
+                    </td>
+                    <td className="px-5 py-3 text-right font-mono font-bold text-lg text-foreground">
+                      {String(row[col])}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }
@@ -64,9 +84,10 @@ export default async function StatisticsPage() {
   let stats = EMPTY_STATS;
   let leaderboard = EMPTY_LB;
   let dbError = false;
+  let season = null;
 
   try {
-    const season = await getCurrentSeason();
+    season = await getCurrentSeason();
     [stats, leaderboard] = await Promise.all([
       getStatisticsSummary(),
       getPlayerLeaderboard(season?.id),
@@ -76,122 +97,84 @@ export default async function StatisticsPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-7xl">
-      <header className="mb-6">
-        <p className="text-xs font-bold uppercase tracking-widest text-rsa-gold">Statistics</p>
-        <h1 className="mt-1 text-2xl font-semibold text-white">League Statistics</h1>
-        <p className="mt-1 text-sm text-slate-500">Player performance and RSA league metrics</p>
-      </header>
+    <div className="space-y-6">
+      <BrandHeader
+        title="League Statistics"
+        subtitle="Player performance and RSA league metrics"
+      />
 
       {dbError && (
-        <div className="mb-5 flex items-center gap-3 rounded-2xl border border-amber-500/20 bg-amber-500/05 px-5 py-4 text-sm text-amber-300">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 shrink-0">
-            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-            <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
-          </svg>
-          <span>Database not connected — showing empty state. Set <code className="rounded bg-black/30 px-1 text-xs">DATABASE_URL</code> to activate live data.</span>
+        <div className="card-panel border-amber-500/20 bg-amber-500/5 p-5 mb-6">
+          <div className="flex items-center gap-3 text-amber-500">
+            <AlertTriangle className="w-5 h-5 shrink-0" />
+            <span className="text-sm font-medium">Database not connected — showing empty state. Set DATABASE_URL to activate live data.</span>
+          </div>
         </div>
       )}
 
       {/* System overview */}
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        <StatCard title="Active Players"      value={stats.playersCount} />
+      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+        <StatCard title="Active Players"      value={stats.playersCount} icon={<Users className="w-5 h-5" />} />
         <StatCard title="Registered Teams"    value={stats.teamsCount} />
-        <StatCard title="Assigned Managers"   value={stats.managersCount} />
-        <StatCard title="Assistant Managers"  value={stats.assistantManagersCount} />
-        <StatCard title="Active Sanctions"    value={stats.activeSanctionsCount} />
+        <StatCard title="Managers"            value={stats.managersCount} />
+        <StatCard title="Asst. Managers"      value={stats.assistantManagersCount} />
+        <StatCard title="Active Sanctions"    value={stats.activeSanctionsCount} icon={<ShieldAlert className="w-5 h-5" />} />
         <StatCard title="Cup-Tied Players"    value={stats.cupTiedCount} />
       </section>
 
       {/* Player Leaderboards */}
       <section className="mt-8">
-        <div className="mb-4">
-          <p className="text-xs font-bold uppercase tracking-widest text-rsa-gold">Player Performance</p>
-          <h2 className="mt-1 text-lg font-semibold text-white">Leaderboards</h2>
-          <p className="text-xs text-slate-500 mt-0.5">Season 2026 · Updated automatically from bot submissions</p>
+        <div className="flex items-center gap-3 border-b border-border/50 pb-2 mb-6">
+          <h2 className="text-xl font-bold text-foreground font-display tracking-tight">Player Performance</h2>
+          <span className="text-[0.65rem] font-bold uppercase tracking-wider text-primary bg-primary/10 border border-primary/20 px-2 py-0.5 rounded">
+            Season {season?.name ?? '2026'}
+          </span>
         </div>
 
-        <div className="grid gap-5 lg:grid-cols-2">
-          {/* Top Scorers */}
-          <div className="overflow-hidden rounded-2xl border border-rsa-border" style={{ background: 'rgba(14,10,3,0.88)' }}>
-            <div className="border-b border-rsa-border bg-black/25 px-5 py-4 flex items-center gap-2">
-              <span style={{ fontSize: '1.1rem' }}>⚽</span>
-              <div>
-                <p className="text-sm font-semibold text-white">Top Scorers</p>
-                <p className="text-xs text-slate-500">Most goals scored</p>
-              </div>
-            </div>
-            <LeaderboardTable rows={leaderboard.topScorers as StatRow[]} col="goals" label="Goals" />
-          </div>
-
-          {/* Top Assists */}
-          <div className="overflow-hidden rounded-2xl border border-rsa-border" style={{ background: 'rgba(14,10,3,0.88)' }}>
-            <div className="border-b border-rsa-border bg-black/25 px-5 py-4 flex items-center gap-2">
-              <span style={{ fontSize: '1.1rem' }}>🎯</span>
-              <div>
-                <p className="text-sm font-semibold text-white">Top Assists</p>
-                <p className="text-xs text-slate-500">Most assists provided</p>
-              </div>
-            </div>
-            <LeaderboardTable rows={leaderboard.topAssists as StatRow[]} col="assists" label="Assists" />
-          </div>
-
-          {/* Clean Sheets */}
-          <div className="overflow-hidden rounded-2xl border border-rsa-border" style={{ background: 'rgba(14,10,3,0.88)' }}>
-            <div className="border-b border-rsa-border bg-black/25 px-5 py-4 flex items-center gap-2">
-              <span style={{ fontSize: '1.1rem' }}>🧤</span>
-              <div>
-                <p className="text-sm font-semibold text-white">Clean Sheets</p>
-                <p className="text-xs text-slate-500">Games without conceding</p>
-              </div>
-            </div>
-            <LeaderboardTable rows={leaderboard.topCleanSheets as StatRow[]} col="cleanSheets" label="CS" />
-          </div>
-
-          {/* Man of the Match */}
-          <div className="overflow-hidden rounded-2xl border border-rsa-border" style={{ background: 'rgba(14,10,3,0.88)' }}>
-            <div className="border-b border-rsa-border bg-black/25 px-5 py-4 flex items-center gap-2">
-              <span style={{ fontSize: '1.1rem' }}>🏆</span>
-              <div>
-                <p className="text-sm font-semibold text-white">Man of the Match</p>
-                <p className="text-xs text-slate-500">MOTM awards this season</p>
-              </div>
-            </div>
-            <LeaderboardTable rows={leaderboard.topMotm as StatRow[]} col="motm" label="MOTM" />
-          </div>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <LeaderboardTable rows={leaderboard.topScorers as StatRow[]} col="goals" label="Top Scorers" icon={<Goal className="w-5 h-5" />} />
+          <LeaderboardTable rows={leaderboard.topAssists as StatRow[]} col="assists" label="Top Assists" icon={<Target className="w-5 h-5" />} />
+          <LeaderboardTable rows={leaderboard.topCleanSheets as StatRow[]} col="cleanSheets" label="Clean Sheets" icon={<ShieldCheck className="w-5 h-5" />} />
+          <LeaderboardTable rows={leaderboard.topMotm as StatRow[]} col="motm" label="Man of the Match" icon={<Trophy className="w-5 h-5" />} />
         </div>
       </section>
 
       {/* Transfer & League activity */}
-      <section className="mt-6 grid gap-6 xl:grid-cols-2">
-        <div className="rounded-2xl border border-rsa-border bg-white/3 p-6">
-          <h2 className="text-base font-semibold text-white">Transfer Activity</h2>
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
+      <section className="mt-8 grid gap-6 lg:grid-cols-2">
+        <div className="card-panel p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <ArrowRightLeft className="w-5 h-5 text-primary" />
+            <h2 className="text-lg font-bold text-foreground font-display">Transfer Activity</h2>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-3">
             {[
-              { label: 'Completed', value: stats.completedTransfersCount, color: '#34d399' },
-              { label: 'Pending',   value: stats.pendingTransfersCount,   color: '#f59e0b' },
-              { label: 'Declined',  value: stats.declinedTransfersCount,  color: '#ef4444' },
+              { label: 'Completed', value: stats.completedTransfersCount, color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
+              { label: 'Pending',   value: stats.pendingTransfersCount,   color: 'text-amber-500', bg: 'bg-amber-500/10', border: 'border-amber-500/20' },
+              { label: 'Declined',  value: stats.declinedTransfersCount,  color: 'text-destructive', bg: 'bg-destructive/10', border: 'border-destructive/20' },
             ].map((item) => (
-              <div key={item.label} className="rounded-xl border border-rsa-border bg-black/20 p-4">
-                <p className="text-xs font-bold uppercase tracking-widest" style={{ color: item.color }}>{item.label}</p>
-                <p className="mt-2 text-2xl font-bold text-white">{item.value}</p>
+              <div key={item.label} className={`p-4 rounded-xl border ${item.border} ${item.bg} flex flex-col justify-between`}>
+                <p className={`text-[0.65rem] font-bold uppercase tracking-wider ${item.color}`}>{item.label}</p>
+                <p className={`mt-3 text-3xl font-bold font-display ${item.color}`}>{item.value}</p>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="rounded-2xl border border-rsa-border bg-white/3 p-6">
-          <h2 className="text-base font-semibold text-white">League Tracking</h2>
-          <div className="mt-5 space-y-3">
+        <div className="card-panel p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <Activity className="w-5 h-5 text-primary" />
+            <h2 className="text-lg font-bold text-foreground font-display">League Tracking</h2>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
             {[
-              { label: 'Seasons',             value: stats.seasonsCount },
+              { label: 'Seasons Tracked',         value: stats.seasonsCount },
               { label: 'League Entries',      value: stats.leagueTableEntriesCount },
               { label: 'Fixtures Scheduled',  value: stats.fixturesCount },
               { label: 'Results Recorded',    value: stats.resultsCount },
             ].map((item) => (
-              <div key={item.label} className="flex items-center justify-between rounded-xl border border-rsa-border bg-black/20 px-4 py-3">
-                <span className="text-sm text-slate-400">{item.label}</span>
-                <span className="text-sm font-bold text-white">{item.value}</span>
+              <div key={item.label} className="p-4 rounded-xl border border-border bg-background shadow-sm flex items-center justify-between">
+                <span className="text-sm font-bold text-muted-foreground">{item.label}</span>
+                <span className="text-lg font-bold font-mono text-foreground">{item.value}</span>
               </div>
             ))}
           </div>

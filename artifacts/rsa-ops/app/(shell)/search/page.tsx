@@ -1,12 +1,13 @@
 import SearchClient from '@/components/SearchClient';
+import { BrandHeader } from '@/components/BrandHeader';
 
 export default function SearchPage() {
   return (
-    <div className="mx-auto w-full max-w-7xl">
-      <header className="mb-6">
-        <p className="text-sm uppercase tracking-widest text-rsa-gold">Global Search</p>
-        <h1 className="text-2xl font-semibold text-white">Search across players, teams, staff, fixtures and awards</h1>
-      </header>
+    <div className="space-y-6">
+      <BrandHeader
+        title="Global Search"
+        subtitle="Search across players, teams, staff, fixtures and awards"
+      />
       <SearchClient />
     </div>
   );

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Home } from 'lucide-react';
 
 type TableRow = {
   id: string;
@@ -53,73 +54,71 @@ function getFlag(teamName: string): string | null {
 function GroupTable({ rows }: { rows: TableRow[] }) {
   if (!rows.length) {
     return (
-      <div className="px-5 py-10 text-center">
-        <p className="text-sm text-slate-500">No data yet — seed teams or push results via bot.</p>
+      <div className="p-8 text-center bg-card rounded-b-2xl border-t border-border/50">
+        <p className="text-sm text-muted-foreground">No data yet — seed teams or push results via bot.</p>
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full text-sm">
+    <div className="overflow-x-auto rounded-b-2xl">
+      <table className="w-full text-sm text-left border-collapse">
         <thead>
-          <tr style={{ borderBottom: '1px solid rgba(201,165,90,0.14)', background: 'rgba(0,0,0,0.28)' }}>
-            {['#', 'Team', 'GP', 'W', 'D', 'L', 'GF', 'GA', 'GD', 'Pts'].map((h) => (
+          <tr className="bg-muted border-y border-border">
+            {['#', 'Team', 'GP', 'W', 'D', 'L', 'GF', 'GA', 'GD', 'Pts'].map((h, i) => (
               <th
                 key={h}
-                className={`px-4 py-3 text-xs font-bold uppercase tracking-widest`}
-                style={{
-                  color: '#c9a55a',
-                  textAlign: ['GP','W','D','L','GF','GA','GD','Pts'].includes(h) ? 'right' : 'left',
-                }}
+                className={`px-4 py-3 text-[0.65rem] font-bold uppercase tracking-wider text-muted-foreground ${
+                  ['GP','W','D','L','GF','GA','GD','Pts'].includes(h) ? 'text-right' : ''
+                } ${h === '#' ? 'w-10' : ''}`}
               >
                 {h}
               </th>
             ))}
           </tr>
         </thead>
-        <tbody>
+        <tbody className="divide-y divide-border/50 bg-card">
           {rows.map((row, i) => {
             const name = row.team?.teamName ?? 'Unknown';
             const flag = getFlag(name);
             const isTop2 = i < 2;
+            const isHost = name.toLowerCase().includes('united states') || name.toLowerCase() === 'usa';
             return (
               <tr
                 key={row.id}
-                style={{
-                  borderTop: '1px solid rgba(201,165,90,0.08)',
-                  background: i % 2 === 0 ? 'rgba(201,165,90,0.025)' : 'rgba(0,0,0,0.15)',
-                  borderLeft: isTop2 ? '2px solid rgba(201,165,90,0.45)' : '2px solid transparent',
-                  transition: 'background 0.12s',
-                }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = 'rgba(201,165,90,0.06)'; }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = i % 2 === 0 ? 'rgba(201,165,90,0.025)' : 'rgba(0,0,0,0.15)'; }}
+                className={`hover:bg-muted/50 transition-colors ${i % 2 === 0 ? 'bg-card' : 'bg-muted/10'} relative`}
               >
-                <td className="px-4 py-3" style={{ color: isTop2 ? '#c9a55a' : '#64748b', fontWeight: isTop2 ? 700 : 400 }}>
-                  {row.position}
+                <td className="px-4 py-3 font-mono relative">
+                  {isTop2 && <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary" />}
+                  <span className={isTop2 ? 'text-primary font-bold' : 'text-muted-foreground'}>{row.position}</span>
                 </td>
                 <td className="px-4 py-3">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <div className="flex items-center gap-2.5">
                     {flag ? (
-                      <img src={flag} alt={name} style={{ width: 20, height: 14, objectFit: 'cover', borderRadius: 2, flexShrink: 0 }} />
+                      <div className="relative w-5 h-[14px] rounded-[2px] overflow-hidden border border-border/50 shadow-sm shrink-0">
+                        <img src={flag} alt={name} className="w-full h-full object-cover" />
+                      </div>
                     ) : (
-                      <div style={{ width: 20, height: 14, borderRadius: 2, background: 'rgba(201,165,90,0.18)', flexShrink: 0 }} />
+                      <div className="w-5 h-[14px] rounded-[2px] bg-muted border border-border/50 shrink-0" />
                     )}
-                    <span style={{ color: '#f8f8f4', fontWeight: 500 }}>
-                      {name}{name.toLowerCase().includes('united states') ? ' 🏠' : ''}
+                    <span className="font-semibold text-foreground truncate flex items-center gap-1.5">
+                      {name}
+                      {isHost && <Home className="w-3 h-3 text-primary" aria-label="Host Nation" />}
                     </span>
                   </div>
                 </td>
-                <td className="px-4 py-3 text-right" style={{ color: '#94a3b8' }}>{row.played}</td>
-                <td className="px-4 py-3 text-right" style={{ color: '#94a3b8' }}>{row.won}</td>
-                <td className="px-4 py-3 text-right" style={{ color: '#94a3b8' }}>{row.drew}</td>
-                <td className="px-4 py-3 text-right" style={{ color: '#94a3b8' }}>{row.lost}</td>
-                <td className="px-4 py-3 text-right" style={{ color: '#94a3b8' }}>{row.goalsFor}</td>
-                <td className="px-4 py-3 text-right" style={{ color: '#94a3b8' }}>{row.goalsAgainst}</td>
-                <td className="px-4 py-3 text-right" style={{ color: row.goalDifference > 0 ? '#34d399' : row.goalDifference < 0 ? '#f87171' : '#94a3b8' }}>
-                  {row.goalDifference > 0 ? '+' : ''}{row.goalDifference}
+                <td className="px-4 py-3 text-right text-muted-foreground font-mono">{row.played}</td>
+                <td className="px-4 py-3 text-right text-muted-foreground font-mono">{row.won}</td>
+                <td className="px-4 py-3 text-right text-muted-foreground font-mono">{row.drew}</td>
+                <td className="px-4 py-3 text-right text-muted-foreground font-mono">{row.lost}</td>
+                <td className="px-4 py-3 text-right text-muted-foreground font-mono">{row.goalsFor}</td>
+                <td className="px-4 py-3 text-right text-muted-foreground font-mono">{row.goalsAgainst}</td>
+                <td className="px-4 py-3 text-right font-mono font-medium">
+                  <span className={row.goalDifference > 0 ? 'text-emerald-400' : row.goalDifference < 0 ? 'text-destructive' : 'text-muted-foreground'}>
+                    {row.goalDifference > 0 ? '+' : ''}{row.goalDifference}
+                  </span>
                 </td>
-                <td className="px-4 py-3 text-right" style={{ color: '#f8f8f4', fontWeight: 700 }}>{row.points}</td>
+                <td className="px-4 py-3 text-right font-bold text-foreground font-mono">{row.points}</td>
               </tr>
             );
           })}
@@ -135,83 +134,50 @@ export default function GroupTabsClient({ groups }: Props) {
   const hasAny = Object.values(groups).some((g) => g.length > 0);
 
   return (
-    <div>
+    <div className="space-y-4">
       {/* Tab bar */}
-      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.25rem', flexWrap: 'wrap' }}>
-        {GROUP_LABELS.map((g) => {
-          const active = activeTab === g;
-          return (
-            <button
-              key={g}
-              onClick={() => setActiveTab(g)}
-              style={{
-                padding: '0.45rem 1.2rem',
-                borderRadius: '8px',
-                border: active ? '1px solid rgba(201,165,90,0.40)' : '1px solid rgba(255,255,255,0.07)',
-                background: active ? 'rgba(201,165,90,0.14)' : 'rgba(255,255,255,0.03)',
-                color: active ? '#e0b96a' : '#64748b',
-                fontWeight: active ? 700 : 500,
-                fontSize: '0.82rem',
-                cursor: 'pointer',
-                letterSpacing: '0.06em',
-                transition: 'all 0.12s',
-              }}
-              onMouseEnter={(e) => { if (!active) (e.currentTarget as HTMLElement).style.color = '#cbd5e1'; }}
-              onMouseLeave={(e) => { if (!active) (e.currentTarget as HTMLElement).style.color = '#64748b'; }}
-            >
-              Group {g}
-            </button>
-          );
-        })}
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-          <span style={{ fontSize: '0.72rem', color: '#334155', letterSpacing: '0.08em' }}>
-            ★ Top 2 qualify
-          </span>
+      <div className="flex flex-wrap items-center gap-2">
+        <div className="flex items-center p-1 rounded-xl bg-card border border-border/80 shadow-sm">
+          {GROUP_LABELS.map((g) => {
+            const active = activeTab === g;
+            return (
+              <button
+                key={g}
+                onClick={() => setActiveTab(g)}
+                className={`px-4 py-1.5 rounded-lg text-sm font-bold transition-all ${
+                  active 
+                    ? 'bg-primary text-primary-foreground shadow-sm' 
+                    : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
+                }`}
+              >
+                Group {g}
+              </button>
+            );
+          })}
+        </div>
+        <div className="ml-auto hidden sm:flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+          <span className="text-[0.65rem] font-bold uppercase tracking-wider text-muted-foreground">Top 2 Qualify</span>
         </div>
       </div>
 
-      {!hasAny && (
-        <div
-          style={{
-            borderRadius: '16px',
-            border: '1px dashed rgba(201,165,90,0.18)',
-            background: 'rgba(14,10,3,0.6)',
-            padding: '3rem 1.5rem',
-            textAlign: 'center',
-          }}
-        >
-          <p style={{ color: '#c9a55a', fontSize: '0.85rem', fontWeight: 600 }}>Groups not seeded yet</p>
-          <p style={{ color: '#475569', fontSize: '0.78rem', marginTop: '0.4rem' }}>
-            Run <code style={{ background: 'rgba(0,0,0,0.3)', padding: '0 4px', borderRadius: 4 }}>POST /api/admin/seed-groups</code> to initialise Season 2026 groups.
+      {!hasAny ? (
+        <div className="card-panel border-dashed p-10 flex flex-col items-center justify-center text-center">
+          <p className="text-sm font-bold text-primary mb-2">Groups not seeded yet</p>
+          <p className="text-sm text-muted-foreground font-medium">
+            Run <code className="bg-muted px-1.5 py-0.5 rounded text-xs font-mono text-foreground mx-1">POST /api/admin/seed-groups</code> to initialise Season 2026 groups.
           </p>
         </div>
-      )}
-
-      {hasAny && (
-        <div
-          style={{
-            borderRadius: '16px',
-            border: '1px solid rgba(201,165,90,0.14)',
-            background: 'rgba(14,10,3,0.88)',
-            overflow: 'hidden',
-            boxShadow: '0 12px 32px rgba(0,0,0,0.28)',
-          }}
-        >
-          <div
-            style={{
-              borderBottom: '1px solid rgba(201,165,90,0.10)',
-              background: 'rgba(0,0,0,0.25)',
-              padding: '0.85rem 1.25rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
+      ) : (
+        <div className="card-panel rounded-2xl overflow-hidden">
+          <div className="px-5 py-4 bg-muted/30 border-b border-border flex items-center justify-between">
             <div>
-              <p style={{ fontSize: '0.62rem', fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#c9a55a', margin: 0 }}>Group {activeTab}</p>
-              <p style={{ fontSize: '0.75rem', color: '#475569', margin: '0.1rem 0 0' }}>{groups[activeTab]?.length ?? 0} teams</p>
+              <h3 className="text-lg font-bold text-foreground font-display tracking-tight">Group {activeTab}</h3>
+              <p className="text-xs font-medium text-muted-foreground mt-0.5">{groups[activeTab]?.length ?? 0} teams</p>
             </div>
-            <span style={{ fontSize: '0.7rem', color: '#334155' }}>RSA Season 2026</span>
+            <div className="text-[0.65rem] font-bold uppercase tracking-wider text-primary bg-primary/10 border border-primary/20 px-2 py-1 rounded">
+              RSA Season 2026
+            </div>
           </div>
           <GroupTable rows={groups[activeTab] ?? []} />
         </div>

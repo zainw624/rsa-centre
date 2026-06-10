@@ -5,14 +5,15 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useSession, signOut } from 'next-auth/react';
 import { getHighestRole, shortRole } from '@/lib/permissions';
+import { Bell, Search, Menu, ChevronDown, User, Shield, LogOut } from 'lucide-react';
 
 const PERM_BADGE: Record<string, { label: string; color: string }> = {
-  owner:         { label: 'Owner',        color: '#f59e0b' },
-  administrator: { label: 'League Admin',  color: '#c9a55a' },
-  league:        { label: 'League Staff',  color: '#60a5fa' },
-  results:       { label: 'Official',      color: '#34d399' },
-  manager:       { label: 'Manager',       color: '#a78bfa' },
-  viewer:        { label: 'Member',        color: '#64748b' },
+  owner:         { label: 'Owner',        color: 'text-amber-500' },
+  administrator: { label: 'League Admin',  color: 'text-primary' },
+  league:        { label: 'League Staff',  color: 'text-blue-400' },
+  results:       { label: 'Official',      color: 'text-emerald-400' },
+  manager:       { label: 'Manager',       color: 'text-purple-400' },
+  viewer:        { label: 'Member',        color: 'text-slate-400' },
 };
 
 export default function TopNav() {
@@ -40,367 +41,137 @@ export default function TopNav() {
   const avatar = session?.user?.image ?? null;
 
   return (
-    <div className="tn-bar">
+    <div className="flex items-center justify-between h-16 px-4 border-b border-border/60 bg-card/80 backdrop-blur-xl shrink-0 z-30 sticky top-0">
+      {/* Mobile Menu Toggle (placeholder for future implementation) */}
+      <div className="lg:hidden flex items-center">
+        <button className="p-2 text-muted-foreground hover:text-foreground">
+          <Menu className="w-5 h-5" />
+        </button>
+      </div>
+
       {/* Left: search */}
-      <div className="tn-left">
-        <form action="/search" method="get" className="tn-search-form">
+      <div className="flex-1 min-w-0 flex justify-center lg:justify-start px-4 lg:px-0">
+        <form action="/search" method="get" className="flex items-center w-full max-w-md relative group">
           <label htmlFor="tn-q" className="sr-only">Search</label>
+          <Search className="w-4 h-4 text-muted-foreground absolute left-3 transition-colors group-focus-within:text-primary" />
           <input
             id="tn-q"
             name="q"
             placeholder="Search players, teams, fixtures…"
-            className="tn-search-input"
+            className="w-full bg-background/50 border border-border/80 rounded-xl pl-9 pr-4 py-2 text-sm text-foreground outline-none transition-all focus:border-primary/50 focus:ring-1 focus:ring-primary/20 placeholder:text-muted-foreground"
           />
-          <button type="submit" className="tn-search-btn">Search</button>
         </form>
       </div>
 
       {/* Right: notifications + user */}
-      <div className="tn-right">
+      <div className="flex items-center gap-2 sm:gap-4 shrink-0">
         {/* Notifications */}
-        <Link href="/notifications" className="tn-notif-btn" aria-label="Notifications">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" width="18" height="18">
-            <path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0 1 18 14.158V11a6 6 0 0 0-5-5.917V4a1 1 0 0 0-2 0v1.083A6 6 0 0 0 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0a3 3 0 1 1-6 0h6Z" />
-          </svg>
+        <Link 
+          href="/notifications" 
+          className="relative p-2 rounded-xl text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-colors border border-transparent hover:border-border/60" 
+          aria-label="Notifications"
+        >
+          <Bell className="w-5 h-5" />
           {unread > 0 && (
-            <span className="tn-notif-badge">{unread > 9 ? '9+' : unread}</span>
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary animate-pulse" />
           )}
         </Link>
 
         {/* User dropdown */}
         {status === 'loading' ? (
-          <div className="tn-user-skeleton" />
+          <div className="w-32 h-10 rounded-xl bg-muted animate-pulse" />
         ) : session?.user ? (
-          <div className="tn-user-wrap">
+          <div className="relative">
             <button
-              className="tn-user-btn"
+              className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl border border-border/60 bg-background/50 hover:bg-muted/50 hover:border-border transition-all group"
               onClick={() => setUserOpen((v) => !v)}
               aria-label="User menu"
             >
-              <div className="tn-user-avatar">
+              <div className="relative w-7 h-7 rounded-full overflow-hidden border border-primary/20 flex items-center justify-center bg-card">
                 {avatar ? (
                   <Image
                     src={avatar}
                     alt={name}
-                    fill sizes="32px"
+                    fill sizes="28px"
                     className="object-cover"
                     referrerPolicy="no-referrer"
                     unoptimized
                   />
                 ) : (
-                  <span className="tn-user-initial">
+                  <span className="text-xs font-bold text-primary">
                     {name.charAt(0).toUpperCase()}
                   </span>
                 )}
               </div>
-              <div className="tn-user-info">
-                <span className="tn-user-name">{name}</span>
-                <span className="tn-user-role" style={{ color: badge.color }}>
+              <div className="hidden sm:flex flex-col items-start min-w-[80px]">
+                <span className="text-xs font-semibold text-foreground truncate max-w-[100px] leading-tight">{name}</span>
+                <span className={`text-[0.6rem] font-medium uppercase tracking-wider ${badge.color} leading-tight`}>
                   {badge.label}
                 </span>
               </div>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="12" height="12" className="tn-chevron" style={{ opacity: 0.4 }}>
-                <polyline points="6 9 12 15 18 9" />
-              </svg>
+              <ChevronDown className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors hidden sm:block" />
             </button>
 
             {userOpen && (
-              <div className="tn-dropdown">
-                <div className="tn-dropdown-header">
-                  <div className="tn-dd-avatar">
-                    {avatar ? (
-                      <Image src={avatar} alt={name} fill sizes="40px" className="object-cover" referrerPolicy="no-referrer" unoptimized />
-                    ) : (
-                      <span className="tn-dd-initial">{name.charAt(0).toUpperCase()}</span>
-                    )}
+              <>
+                <div className="fixed inset-0 z-40" onClick={() => setUserOpen(false)} />
+                <div className="absolute right-0 top-full mt-2 w-56 rounded-2xl bg-popover border border-border shadow-xl shadow-black/50 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                  <div className="p-4 border-b border-border/50 bg-muted/20">
+                    <div className="flex items-center gap-3">
+                      <div className="relative w-10 h-10 rounded-full overflow-hidden border border-primary/30 flex items-center justify-center bg-background">
+                        {avatar ? (
+                          <Image src={avatar} alt={name} fill sizes="40px" className="object-cover" referrerPolicy="no-referrer" unoptimized />
+                        ) : (
+                          <span className="text-sm font-bold text-primary">{name.charAt(0).toUpperCase()}</span>
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold text-foreground truncate">{name}</p>
+                        <p className={`text-xs font-medium ${badge.color} truncate`}>{badge.label}</p>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <p className="tn-dd-name">{name}</p>
-                    <p className="tn-dd-role" style={{ color: badge.color }}>{badge.label}</p>
+                  
+                  <div className="p-2">
+                    {(() => {
+                      const top = getHighestRole(session.user.roles ?? []);
+                      return top ? (
+                        <div className="px-2 mb-2 flex items-center gap-2">
+                          <Shield className="w-3 h-3 text-muted-foreground" />
+                          <span className="text-[0.65rem] font-medium uppercase tracking-wider text-muted-foreground">{shortRole(top)}</span>
+                        </div>
+                      ) : null;
+                    })()}
+                    
+                    <Link 
+                      href="/notifications" 
+                      className="flex items-center justify-between w-full px-3 py-2 text-sm text-muted-foreground rounded-lg hover:bg-muted/50 hover:text-foreground transition-colors"
+                      onClick={() => setUserOpen(false)}
+                    >
+                      <span className="flex items-center gap-2"><Bell className="w-4 h-4" /> Notifications</span>
+                      {unread > 0 && <span className="bg-primary text-primary-foreground text-[0.65rem] font-bold px-1.5 py-0.5 rounded-full">{unread}</span>}
+                    </Link>
+                  </div>
+                  
+                  <div className="p-2 border-t border-border/50">
+                    <button
+                      onClick={() => signOut({ callbackUrl: '/login' })}
+                      className="flex items-center gap-2 w-full px-3 py-2 text-sm text-muted-foreground rounded-lg hover:bg-destructive/10 hover:text-destructive transition-colors"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      Sign out
+                    </button>
                   </div>
                 </div>
-                {(() => {
-                  const top = getHighestRole(session.user.roles ?? []);
-                  return top ? (
-                    <div className="tn-dd-roles">
-                      <span className="tn-dd-role-pill">{shortRole(top)}</span>
-                    </div>
-                  ) : null;
-                })()}
-                <div className="tn-dd-divider" />
-                <Link href="/notifications" className="tn-dd-item" onClick={() => setUserOpen(false)}>
-                  Notifications {unread > 0 && <span className="tn-dd-count">{unread}</span>}
-                </Link>
-                <button
-                  onClick={() => signOut({ callbackUrl: '/login' })}
-                  className="tn-dd-item tn-dd-signout"
-                >
-                  Sign out
-                </button>
-              </div>
+              </>
             )}
           </div>
         ) : (
-          <Link href="/login" className="tn-signin-btn">Sign in</Link>
+          <Link href="/login" className="px-4 py-2 text-sm font-semibold text-primary bg-primary/10 hover:bg-primary/20 border border-primary/20 rounded-xl transition-colors">
+            Sign in
+          </Link>
         )}
       </div>
-
-      <style>{`
-        .tn-bar {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          border-bottom: 1px solid rgba(201,165,90,0.08);
-          background: rgba(5,7,13,0.70);
-          backdrop-filter: blur(8px);
-          padding: 0 1rem;
-          height: 52px;
-          gap: 1rem;
-          flex-shrink: 0;
-        }
-        .tn-left { flex: 1; min-width: 0; }
-        .tn-search-form {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          max-width: 420px;
-        }
-        .tn-search-input {
-          flex: 1;
-          background: rgba(255,255,255,0.04);
-          border: 1px solid rgba(255,255,255,0.07);
-          border-radius: 8px;
-          padding: 0.35rem 0.75rem;
-          font-size: 0.8rem;
-          color: #e2e8f0;
-          outline: none;
-          transition: border-color 0.15s;
-        }
-        .tn-search-input::placeholder { color: #334155; }
-        .tn-search-input:focus { border-color: rgba(201,165,90,0.35); }
-        .tn-search-btn {
-          background: rgba(201,165,90,0.10);
-          border: 1px solid rgba(201,165,90,0.22);
-          border-radius: 7px;
-          padding: 0.35rem 0.75rem;
-          font-size: 0.75rem;
-          font-weight: 600;
-          color: #c9a55a;
-          cursor: pointer;
-          transition: background 0.12s;
-          white-space: nowrap;
-        }
-        .tn-search-btn:hover { background: rgba(201,165,90,0.18); }
-        .tn-right {
-          display: flex;
-          align-items: center;
-          gap: 0.625rem;
-          flex-shrink: 0;
-        }
-        .tn-notif-btn {
-          position: relative;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 34px;
-          height: 34px;
-          border-radius: 8px;
-          color: #64748b;
-          text-decoration: none;
-          transition: background 0.12s, color 0.12s;
-          background: rgba(255,255,255,0.03);
-          border: 1px solid rgba(255,255,255,0.06);
-        }
-        .tn-notif-btn:hover { background: rgba(255,255,255,0.07); color: #e2e8f0; }
-        .tn-notif-badge {
-          position: absolute;
-          top: -4px;
-          right: -4px;
-          min-width: 16px;
-          height: 16px;
-          background: #c9a55a;
-          color: #0a0c10;
-          font-size: 0.58rem;
-          font-weight: 700;
-          border-radius: 999px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 0 3px;
-        }
-        .tn-user-skeleton {
-          width: 120px;
-          height: 34px;
-          border-radius: 8px;
-          background: rgba(255,255,255,0.04);
-          animation: tn-pulse 1.4s ease-in-out infinite;
-        }
-        @keyframes tn-pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-        .tn-user-wrap { position: relative; }
-        .tn-user-btn {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          background: rgba(255,255,255,0.03);
-          border: 1px solid rgba(255,255,255,0.06);
-          border-radius: 9px;
-          padding: 0.3rem 0.625rem 0.3rem 0.3rem;
-          cursor: pointer;
-          transition: background 0.12s, border-color 0.12s;
-        }
-        .tn-user-btn:hover {
-          background: rgba(255,255,255,0.06);
-          border-color: rgba(201,165,90,0.18);
-        }
-        .tn-user-avatar {
-          position: relative;
-          width: 28px;
-          height: 28px;
-          border-radius: 50%;
-          overflow: hidden;
-          border: 1.5px solid rgba(201,165,90,0.22);
-          background: #0f1825;
-          flex-shrink: 0;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        .tn-user-initial {
-          font-size: 0.7rem;
-          font-weight: 700;
-          color: #c9a55a;
-        }
-        .tn-user-info {
-          display: flex;
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 0;
-        }
-        .tn-user-name {
-          font-size: 0.75rem;
-          font-weight: 600;
-          color: #e2e8f0;
-          white-space: nowrap;
-          max-width: 100px;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          line-height: 1.2;
-        }
-        .tn-user-role {
-          font-size: 0.62rem;
-          line-height: 1;
-          white-space: nowrap;
-        }
-        .tn-chevron { flex-shrink: 0; }
-        /* Dropdown */
-        .tn-dropdown {
-          position: absolute;
-          top: calc(100% + 6px);
-          right: 0;
-          min-width: 220px;
-          background: #0d1520;
-          border: 1px solid rgba(201,165,90,0.14);
-          border-radius: 12px;
-          box-shadow: 0 16px 40px rgba(0,0,0,0.5);
-          z-index: 100;
-          overflow: hidden;
-          animation: tn-dropdown-in 0.12s ease-out;
-        }
-        @keyframes tn-dropdown-in {
-          from { opacity: 0; transform: translateY(-4px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        .tn-dropdown-header {
-          display: flex;
-          align-items: center;
-          gap: 0.625rem;
-          padding: 0.875rem 0.875rem 0.75rem;
-        }
-        .tn-dd-avatar {
-          position: relative;
-          width: 38px;
-          height: 38px;
-          border-radius: 50%;
-          overflow: hidden;
-          border: 1.5px solid rgba(201,165,90,0.25);
-          background: #0f1825;
-          flex-shrink: 0;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        .tn-dd-initial {
-          font-size: 0.9rem;
-          font-weight: 700;
-          color: #c9a55a;
-        }
-        .tn-dd-name {
-          font-size: 0.85rem;
-          font-weight: 600;
-          color: #f1f5f9;
-          margin: 0;
-          line-height: 1.2;
-        }
-        .tn-dd-role {
-          font-size: 0.72rem;
-          margin: 0.15rem 0 0;
-          line-height: 1;
-        }
-        .tn-dd-roles {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 0.3rem;
-          padding: 0 0.875rem 0.75rem;
-        }
-        .tn-dd-role-pill {
-          font-size: 0.62rem;
-          font-weight: 600;
-          color: #94a3b8;
-          background: rgba(255,255,255,0.05);
-          border: 1px solid rgba(255,255,255,0.07);
-          border-radius: 999px;
-          padding: 0.1rem 0.5rem;
-          white-space: nowrap;
-        }
-        .tn-dd-divider { height: 1px; background: rgba(255,255,255,0.05); }
-        .tn-dd-item {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          width: 100%;
-          padding: 0.625rem 0.875rem;
-          font-size: 0.8rem;
-          color: #94a3b8;
-          text-decoration: none;
-          background: none;
-          border: none;
-          cursor: pointer;
-          text-align: left;
-          transition: background 0.1s, color 0.1s;
-        }
-        .tn-dd-item:hover { background: rgba(255,255,255,0.04); color: #e2e8f0; }
-        .tn-dd-count {
-          font-size: 0.65rem;
-          background: #c9a55a;
-          color: #0a0c10;
-          border-radius: 999px;
-          padding: 0.05rem 0.35rem;
-          font-weight: 700;
-        }
-        .tn-dd-signout:hover { color: #ef4444; background: rgba(239,68,68,0.05); }
-        .tn-signin-btn {
-          font-size: 0.8rem;
-          font-weight: 600;
-          color: #c9a55a;
-          background: rgba(201,165,90,0.08);
-          border: 1px solid rgba(201,165,90,0.22);
-          border-radius: 8px;
-          padding: 0.35rem 0.875rem;
-          text-decoration: none;
-          transition: background 0.12s;
-        }
-        .tn-signin-btn:hover { background: rgba(201,165,90,0.16); }
-      `}</style>
     </div>
   );
 }

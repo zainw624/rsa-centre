@@ -2,65 +2,25 @@ import Image from 'next/image';
 
 export function BrandHeader({ title, subtitle }: { title?: string; subtitle?: string }) {
   return (
-    <header className="bh-wrap">
-      <div className="bh-left">
-        <div className="bh-logo">
-          <Image src="/assets/rsa1.png" alt="RSA logo" fill sizes="56px" className="object-contain" priority />
+    <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+      <div className="flex items-center gap-4">
+        <div className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-2xl overflow-hidden border border-primary/20 bg-background/50 flex items-center justify-center shrink-0 shadow-inner">
+          <Image src="/assets/rsa1.png" alt="RSA logo" fill sizes="56px" className="object-contain p-2" priority />
         </div>
         <div>
-          <p className="bh-eyebrow">RSA Operations Centre</p>
-          <p className="bh-title">{title ?? 'Dashboard'}</p>
-          {subtitle && <p className="bh-sub">{subtitle}</p>}
+          <p className="text-[0.65rem] sm:text-xs font-bold tracking-[0.2em] uppercase text-primary mb-1">
+            RSA Operations Centre
+          </p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight font-display leading-none">
+            {title ?? 'Dashboard'}
+          </h1>
+          {subtitle && (
+            <p className="text-sm sm:text-base text-muted-foreground mt-1">
+              {subtitle}
+            </p>
+          )}
         </div>
       </div>
-
-      <style>{`
-        .bh-wrap {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          border-radius: 16px;
-          border: 1px solid rgba(201,165,90,0.12);
-          background: linear-gradient(135deg, rgba(12,17,28,0.9) 0%, rgba(8,12,20,0.9) 100%);
-          padding: 1.1rem 1.25rem;
-          gap: 1rem;
-        }
-        .bh-left {
-          display: flex;
-          align-items: center;
-          gap: 0.875rem;
-        }
-        .bh-logo {
-          position: relative;
-          width: 48px;
-          height: 48px;
-          border-radius: 12px;
-          overflow: hidden;
-          border: 1px solid rgba(201,165,90,0.20);
-          background: #060d18;
-          flex-shrink: 0;
-        }
-        .bh-eyebrow {
-          font-size: 0.62rem;
-          font-weight: 700;
-          letter-spacing: 0.22em;
-          text-transform: uppercase;
-          color: #c9a55a;
-          margin: 0 0 0.2rem;
-        }
-        .bh-title {
-          font-size: 1.15rem;
-          font-weight: 700;
-          color: #f1f5f9;
-          margin: 0;
-          line-height: 1.2;
-        }
-        .bh-sub {
-          font-size: 0.75rem;
-          color: #64748b;
-          margin: 0.2rem 0 0;
-        }
-      `}</style>
     </header>
   );
 }
