@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 const { memberHasRoleNames } = require('../utils/permissions');
+const { ALL_STAFF, BOT_OWNER_ROLE } = require('../utils/hierarchy');
 const { buildResultAddEmbed, buildResultEditEmbed, buildResultDeleteEmbed, buildResultsListEmbed, buildTeamResultsEmbed } = require('../utils/embeds');
 
 module.exports = {
@@ -93,12 +94,12 @@ module.exports = {
     const subcommand = interaction.options.getSubcommand();
 
     // Check permissions for add, edit, remove
-    const editRoles = ['RSA', 'Officials', 'Bot Owner'];
+    const editRoles = [...ALL_STAFF, BOT_OWNER_ROLE];
     const hasPermission = memberHasRoleNames(interaction.member, editRoles) || interaction.user.id === interaction.guild.ownerId;
 
     if (['add', 'edit', 'remove'].includes(subcommand) && !hasPermission) {
       await interaction.reply({
-        content: '❌ You do not have permission to manage results. Only RSA | Officials and Bot Owner can add, edit, or remove results.',
+        content: '❌ You do not have permission to manage results. Only RSA staff (Officials and above) and the Bot Owner can add, edit, or remove results.',
         ephemeral: true,
       });
       return;

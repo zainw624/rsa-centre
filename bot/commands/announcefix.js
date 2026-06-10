@@ -6,8 +6,9 @@ const { getProcessedLogoAttachment } = require('../utils/logo');
 const { addFixture, parseKickoffDate, getUpcomingFixtures } = require('../utils/fixtures');
 const { addActivityEvent } = require('../utils/dashboardStorage');
 const { scheduleDashboardUpdate } = require('../events/dashboardAutoUpdate');
+const { LEAGUE_AND_ADMIN, BOT_OWNER_ROLE } = require('../utils/hierarchy');
 
-const FIXTURE_ANNOUNCE_ROLES = ['RSA | Founders', 'RSA | Co Founders', 'RSA | Executive'];
+const FIXTURE_ANNOUNCE_ROLES = [...LEAGUE_AND_ADMIN, BOT_OWNER_ROLE];
 const DEFAULT_FIXTURE_CHANNEL_ID = '1509978110647336990';
 
 module.exports = {

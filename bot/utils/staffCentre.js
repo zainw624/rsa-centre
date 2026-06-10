@@ -1,41 +1,10 @@
 const { EmbedBuilder } = require('discord.js');
 const { loadSettings } = require('./settings');
+const { HIERARCHY, DEPARTMENT_MAP } = require('./hierarchy');
 
-const DEFAULT_STAFF_ROLES = [
-  'RSA | Founders',
-  'RSA | Co Founders',
-  'RSA | Executive',
-  'RSA | Chairman',
-  'RSA | Vice Chairman',
-  'RSA | Board of Directors',
-  'RSA | Director',
-  'RSA | Head of Development',
-  'RSA | Head Of Staff',
-  'RSA | Developer',
-  'RSA | Senior Staff',
-  'RSA | Staff',
-  'RSA | Media',
-  'RSA | Panel',
-  'RSA | Officials',
-];
+const DEFAULT_STAFF_ROLES = [...HIERARCHY];
 
-const STAFF_DEPARTMENT_MAP = {
-  'RSA | Founders': 'Executive Leadership',
-  'RSA | Co Founders': 'Executive Leadership',
-  'RSA | Executive': 'Executive Leadership',
-  'RSA | Chairman': 'Executive Leadership',
-  'RSA | Vice Chairman': 'Executive Leadership',
-  'RSA | Board of Directors': 'Board Leadership',
-  'RSA | Director': 'Board Leadership',
-  'RSA | Head of Development': 'Administration',
-  'RSA | Head Of Staff': 'Administration',
-  'RSA | Developer': 'Administration',
-  'RSA | Senior Staff': 'Administration',
-  'RSA | Staff': 'Administration',
-  'RSA | Media': 'Operations Team',
-  'RSA | Panel': 'Operations Team',
-  'RSA | Officials': 'League Operations',
-};
+const STAFF_DEPARTMENT_MAP = DEPARTMENT_MAP;
 
 function normalizeRoleName(roleName) {
   return roleName.trim();
@@ -48,7 +17,7 @@ async function scanStaffCentre(guild) {
     const name = normalizeRoleName(rawName);
     return {
       roleName: name,
-      department: STAFF_DEPARTMENT_MAP[name] || 'Administration',
+      department: STAFF_DEPARTMENT_MAP[name] || 'Staff',
       members: [],
       status: 'Vacant',
       roleId: null,
@@ -90,7 +59,7 @@ function buildStaffCentreEmbed(staffRoles) {
     .setFooter({ text: 'Automatically updated based on role membership' });
 
   const rolesByDepartment = staffRoles.reduce((acc, role) => {
-    const department = role.department || 'Administration';
+    const department = role.department || 'Staff';
     acc[department] = acc[department] || [];
     acc[department].push(role);
     return acc;

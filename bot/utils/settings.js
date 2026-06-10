@@ -1,5 +1,11 @@
 const path = require('path');
 const { readJSON, writeJSON, ensureFile } = require('./storage');
+const {
+  HIERARCHY,
+  ADMIN_ROLES,
+  LEAGUE_AND_ADMIN,
+  MANAGER_ROLES,
+} = require('./hierarchy');
 
 const SETTINGS_PATH = path.join(__dirname, '..', 'data', 'settings.json');
 
@@ -12,28 +18,16 @@ const DEFAULT_SETTINGS = {
   freeAgentRoleName: 'Free Agent',
   sanctionedRoleId: '1483172660228919407',
   cupTiedRoleId: '1512515140346445876',
-  managerRoleNames: ['RSA | Managers', 'RSA | Assistant Managers'],
-  sanctionRoleNames: ['RSA | Founders', 'RSA | Co Founders', 'RSA | Executive', 'RSA | Chairman', 'RSA | Vice Chairman', 'RSA | Staff'],
-  auditRoleNames: ['RSA | Founders', 'RSA | Co Founders', 'RSA | Executive', 'RSA | Chairman', 'RSA | Vice Chairman'],
-  worldCupLockRoleNames: ['RSA | Founders', 'RSA | Co Founders', 'RSA | Executive', 'RSA | Chairman', 'RSA | Vice Chairman'],
-  worldCupUnlockRoleNames: ['RSA | Founders', 'RSA | Co Founders'],
-  staffCentreRoleNames: [
-    'RSA | Founders',
-    'RSA | Co Founders',
-    'RSA | Executive',
-    'RSA | Chairman',
-    'RSA | Vice Chairman',
-    'RSA | Board of Directors',
-    'RSA | Director',
-    'RSA | Head of Development',
-    'RSA | Head Of Staff',
-    'RSA | Developer',
-    'RSA | Senior Staff',
-    'RSA | Staff',
-    'RSA | Media',
-    'RSA | Panel',
-    'RSA | Officials',
-  ],
+  managerRoleNames: [...MANAGER_ROLES],
+  // Discipline / sanctions — league staff & admins (website manageDiscipline)
+  sanctionRoleNames: [...LEAGUE_AND_ADMIN],
+  // Audit logs — league staff & admins (website viewAdmin)
+  auditRoleNames: [...LEAGUE_AND_ADMIN],
+  // World Cup lock — league staff & admins (website manageCompetitions)
+  worldCupLockRoleNames: [...LEAGUE_AND_ADMIN],
+  // World Cup unlock is destructive — kept to leadership only on purpose
+  worldCupUnlockRoleNames: [...ADMIN_ROLES],
+  staffCentreRoleNames: [...HIERARCHY],
   worldCupMode: false,
   transferWindowOpen: true,
 };

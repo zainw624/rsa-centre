@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 const { memberHasRoleNames } = require('../utils/permissions');
+const { LEAGUE_AND_ADMIN, BOT_OWNER_ROLE } = require('../utils/hierarchy');
 const {
   buildComplianceSummaryEmbed,
   buildComplianceWarningEmbed,
@@ -92,8 +93,8 @@ module.exports = {
     const complianceEngine = interaction.client.complianceEngine;
     const leagueMonitor = interaction.client.leagueMonitor;
 
-    // Check permissions
-    const adminRoles = ['RSA', 'Officials', 'Bot Owner'];
+    // Check permissions — league staff & admins (mirrors website manageDiscipline)
+    const adminRoles = [...LEAGUE_AND_ADMIN, BOT_OWNER_ROLE];
     const hasPermission = memberHasRoleNames(interaction.member, adminRoles) || interaction.user.id === interaction.guild.ownerId;
 
     if (!hasPermission) {
