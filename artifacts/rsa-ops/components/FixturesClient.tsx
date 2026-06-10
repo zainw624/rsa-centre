@@ -7,6 +7,21 @@ interface TeamOption {
   name: string;
   code: string;
   group: 'A' | 'B' | 'C' | 'D';
+  logo: string;
+}
+
+function TeamLogo({ src, alt }: { src: string; alt: string }) {
+  const [errored, setErrored] = useState(false);
+  return (
+    <Image
+      src={errored ? '/assets/rsa1.png' : src}
+      alt={alt}
+      fill
+      sizes="48px"
+      className="object-contain"
+      onError={() => setErrored(true)}
+    />
+  );
 }
 
 export default function FixturesClient({
@@ -27,6 +42,14 @@ export default function FixturesClient({
     const res = await fetch('/api/fixtures');
     if (res.ok) setFixtures(await res.json());
   }, []);
+
+  const logoSrc = useCallback(
+    (code?: string | null) => {
+      const slug = teams.find((t) => t.code === code)?.logo;
+      return slug ? `/assets/${slug}.png` : '/assets/rsa1.png';
+    },
+    [teams]
+  );
 
   const handleCreate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -217,7 +240,7 @@ export default function FixturesClient({
               <div className="flex items-center justify-between gap-4 mt-auto py-2">
                 <div className="flex flex-col items-center gap-2 flex-1">
                   <div className="relative w-12 h-12 rounded-xl bg-background border border-border shadow-sm flex items-center justify-center p-1.5">
-                    <Image src={`/assets/${(f.homeTeamCode || f.homeTeam || '').toLowerCase()}.png`} alt={f.homeTeam} fill sizes="48px" className="object-contain" />
+                    <TeamLogo src={logoSrc(f.homeTeamCode)} alt={f.homeTeam} />
                   </div>
                   <span className="text-sm font-bold text-foreground text-center line-clamp-2 leading-tight">{f.homeTeam}</span>
                 </div>
@@ -226,7 +249,7 @@ export default function FixturesClient({
 
                 <div className="flex flex-col items-center gap-2 flex-1">
                   <div className="relative w-12 h-12 rounded-xl bg-background border border-border shadow-sm flex items-center justify-center p-1.5">
-                    <Image src={`/assets/${(f.awayTeamCode || f.awayTeam || '').toLowerCase()}.png`} alt={f.awayTeam} fill sizes="48px" className="object-contain" />
+                    <TeamLogo src={logoSrc(f.awayTeamCode)} alt={f.awayTeam} />
                   </div>
                   <span className="text-sm font-bold text-foreground text-center line-clamp-2 leading-tight">{f.awayTeam}</span>
                 </div>

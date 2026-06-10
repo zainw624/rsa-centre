@@ -25,7 +25,8 @@ export default async function FixturesPage() {
   const isAdmin = can(perm, 'manageFixtures') || isOwner;
 
   // Only client-safe team fields — never expose Discord roleId to the browser.
-  const teams = TEAMS.map((t) => ({ name: t.name, code: t.code, group: t.group }));
+  // `logo` is the asset slug (e.g. "usa", "norway") used for /assets/<logo>.png.
+  const teams = TEAMS.map((t) => ({ name: t.name, code: t.code, group: t.group, logo: t.flag }));
 
   return (
     <div className="space-y-6">
