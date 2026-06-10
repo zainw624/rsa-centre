@@ -11,7 +11,7 @@
  */
 import { prisma } from '@/lib/prismaClient';
 import { resolvePermission, fetchGuildRoles, fetchAllGuildMembers } from '@/lib/discord';
-import { TEAMS, ensureTeams, removeMorocco } from '@/lib/teamRoles';
+import { TEAMS, ensureTeams, removeMorocco, removeNonCanonicalTeams } from '@/lib/teamRoles';
 import { TRACKED_ROLES } from '@/lib/permissions';
 
 const MANAGER_ROLE_NAMES   = ['RSA | Managers'];
@@ -195,6 +195,7 @@ export async function syncAllFromDiscord(opts?: { actorUserId?: string | null; s
   // 1. Ensure canonical teams exist with correct role IDs, and purge Morocco.
   await ensureTeams(prisma);
   await removeMorocco(prisma);
+  await removeNonCanonicalTeams(prisma);
 
   // 2. Load Discord role map + all members.
   const roleMap = await fetchGuildRoles();

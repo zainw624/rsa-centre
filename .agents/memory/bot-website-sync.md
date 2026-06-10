@@ -16,8 +16,19 @@ do directly.
 - For sync to work, BOTH sides need matching `WEBSITE_URL` (bot) and `ROLES_SYNC_SECRET`.
   Bot sync calls are deliberately **non-fatal**: a failed POST must never block the
   Discord-side action.
-- Only `/results add` and `/announcefix` push to the website. `/results edit|remove`
-  stay local by design.
+- Endpoints that exist today: `/api/bot/results`, `/api/bot/announcefix`, `/api/bot/sign`,
+  `/api/bot/sign-status` (accept/decline bookkeeping — updates Transfer status, deactivates
+  roster on decline), `/api/bot/transfer-window` (upserts `Settings.transferWindowOpen`
+  keyed on `guildId`). Bot helpers: `postSignStatus()` in `bot/commands/sign.js`,
+  `syncTransferWindowToWebsite()` in `bot/utils/transferWindow.js` (called from twopen/twclose).
+- `/results edit|remove` stay local by design.
+- `bot/utils/database.js` is DEAD CODE — nothing imports it. Never wire bot DB writes
+  through it; always go through `/api/bot/*`. (Its stale `db*` exports once caused a
+  `ReferenceError: dbUpsertTeam is not defined` in `sign.js`.)
+- Team identity: the website is canonical. `lib/teamRoles.ts` `TEAMS` + `teamIdForCode`
+  (= `code.toLowerCase()`) are the source of truth; bot slug teamIds (e.g. "france")
+  must be resolved to canonical codes (e.g. "fra") via `roleId`. `removeNonCanonicalTeams()`
+  (wired into `syncAllFromDiscord`) self-heals any slug-duplicate team rows on each sync.
 
 **Why:** decided to keep the Discord flow resilient and the website the single source
 of truth for standings/stats/dashboard.

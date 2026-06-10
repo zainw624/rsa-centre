@@ -1,6 +1,6 @@
 ﻿const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { loadSettings } = require('../utils/settings');
-const { setTransferWindow } = require('../utils/transferWindow');
+const { setTransferWindow, syncTransferWindowToWebsite } = require('../utils/transferWindow');
 const { addTransaction, createTransactionId } = require('../utils/transactions');
 const { addActivityEvent } = require('../utils/dashboardStorage');
 const { scheduleDashboardUpdate } = require('../events/dashboardAutoUpdate');
@@ -15,6 +15,7 @@ module.exports = {
     }
 
     await setTransferWindow(false);
+    await syncTransferWindowToWebsite(interaction.guild.id, false);
     if (interaction.client.leagueMonitor?.refreshTransferWindow) {
       await interaction.client.leagueMonitor.refreshTransferWindow().catch(() => null);
     }

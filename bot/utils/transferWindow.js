@@ -9,7 +9,25 @@ async function setTransferWindow(value) {
   return updateSettings({ transferWindowOpen: value });
 }
 
+// Non-fatal: mirror the transfer-window state into the website DB so the site
+// shows it correctly. A failed POST must never block the Discord-side action.
+async function syncTransferWindowToWebsite(guildId, open) {
+  const websiteUrl = process.env.WEBSITE_URL;
+  const syncSecret = process.env.ROLES_SYNC_SECRET;
+  if (!websiteUrl || !syncSecret) return;
+  try {
+    await fetch(`${websiteUrl}/api/bot/transfer-window`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-sync-secret': syncSecret },
+      body: JSON.stringify({ guildId, open }),
+    });
+  } catch (error) {
+    console.error('Failed to sync transfer window to website:', error);
+  }
+}
+
 module.exports = {
   loadTransferWindow,
   setTransferWindow,
+  syncTransferWindowToWebsite,
 };

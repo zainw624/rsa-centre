@@ -128,3 +128,51 @@ export async function removeMorocco(prisma: any): Promise<void> {
     console.warn('[teamRoles] removeMorocco cleanup skipped:', err?.message);
   }
 }
+
+/**
+ * Remove any team row whose teamId is not one of the 16 canonical teams. These
+ * arise when something upserts a team using a non-canonical id (e.g. a slug like
+ * "france" instead of "fra"), producing duplicate cards on the site. History
+ * (fixtures/results/sanctions/transfers) is reassigned to the canonical team
+ * that shares the same Discord role; derived rows (rosters/managers/standings)
+ * are deleted because the auto-sync rebuilds them from Discord roles. Safe to
+ * call repeatedly.
+ */
+export async function removeNonCanonicalTeams(prisma: any): Promise<void> {
+  try {
+    const canonicalIds = new Set(TEAMS.map((t) => teamIdForCode(t.code)));
+    const allTeams = await prisma.team.findMany();
+
+    for (const team of allTeams) {
+      if (canonicalIds.has(team.teamId)) continue;
+
+      // Reassign historical references to the canonical team with the same role.
+      const sibling = team.roleId
+        ? await prisma.team.findFirst({
+            where: { roleId: team.roleId, teamId: { in: Array.from(canonicalIds) } },
+          })
+        : null;
+      const reassignTo = sibling?.id ?? null;
+
+      await prisma.fixture.updateMany({ where: { teamId: team.id }, data: { teamId: reassignTo } });
+      await prisma.result.updateMany({ where: { teamId: team.id }, data: { teamId: reassignTo } });
+      await prisma.sanction.updateMany({ where: { teamId: team.id }, data: { teamId: reassignTo } });
+      await prisma.transfer.updateMany({ where: { teamId: team.id }, data: { teamId: reassignTo } });
+
+      // Derived rows are rebuilt from Discord roles / re-seeded, so drop them.
+      await prisma.leagueTable.deleteMany({ where: { teamId: team.id } });
+      await prisma.rosterPlayer.deleteMany({ where: { teamId: team.id } });
+      await prisma.managerAssignment.deleteMany({ where: { teamId: team.id } });
+      await prisma.playerStat.deleteMany({ where: { teamId: team.id } });
+      await prisma.award.deleteMany({ where: { teamId: team.id } });
+      await prisma.staffRole.deleteMany({ where: { teamId: team.id } });
+      await prisma.team.delete({ where: { id: team.id } });
+
+      console.log(
+        `[teamRoles] Removed non-canonical team "${team.teamName}" (${team.teamId})`
+      );
+    }
+  } catch (err: any) {
+    console.warn('[teamRoles] removeNonCanonicalTeams cleanup skipped:', err?.message);
+  }
+}

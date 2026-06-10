@@ -353,6 +353,15 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
+// Validate ../../app/api/bot/sign-status/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/bot/sign-status">> = Specific
+  const handler = {} as typeof import("../../app/api/bot/sign-status/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../app/api/bot/sign/route.ts
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/bot/sign">> = Specific
@@ -366,6 +375,15 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/bot/stats">> = Specific
   const handler = {} as typeof import("../../app/api/bot/stats/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../app/api/bot/transfer-window/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/bot/transfer-window">> = Specific
+  const handler = {} as typeof import("../../app/api/bot/transfer-window/route.js")
   type __Check = __IsExpected<typeof handler>
   // @ts-ignore
   type __Unused = __Check
