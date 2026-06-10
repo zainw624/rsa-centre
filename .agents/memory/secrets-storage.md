@@ -14,12 +14,20 @@ access. The GitHub-imported setup originally placed these live secrets in
 `[userenv.shared]` in plaintext — a real credential leak. replit.md already
 prescribes the Secrets tab; the imported config violated it.
 
-**Pending remediation (as of June 2026):** the user agreed to rotate the exposed
-credentials and re-add them via the Secrets tab. Once they confirm the secrets are
-present in the encrypted store, remove the plaintext secret lines from `.replit`
-`[userenv.shared]` (keep non-secret config like NEXTAUTH_URL/DISCORD_GUILD_ID if
-desired, but the tokens/secrets must go). Do not delete them before they exist in
-the Secrets store, or Discord login + bot lookups will break.
+**Resolved (June 2026):** the exposed credentials were rotated by the user and the
+4 real secrets (DISCORD_BOT_TOKEN, DISCORD_CLIENT_SECRET, NEXTAUTH_SECRET,
+ROLES_SYNC_SECRET) now live in the encrypted Secrets store. They were removed from
+`.replit` `[userenv.shared]`. Three NON-secret config values intentionally remain
+as plaintext shared env in `.replit`: NEXTAUTH_URL, DISCORD_CLIENT_ID,
+DISCORD_GUILD_ID (public identifiers/URL — not sensitive). Sequence that worked:
+deleteEnvVars(shared) first, then requestEnvVar(secret) to avoid a shared-vs-secret
+name clash. Do not re-add the secrets to shared.
+
+**Bot note:** the Discord bot (separate, deployed on Render from `bot/`, repo
+rootDir `bot`) reads env via process.env using DIFFERENT names — `DISCORD_TOKEN`
+(not DISCORD_BOT_TOKEN), plus WEBSITE_URL, ROLES_SYNC_SECRET, BOT_OWNER_ID,
+DISCORD_GUILD_ID. ROLES_SYNC_SECRET must be identical on Replit (web) and Render
+(bot) for `/api/roles-sync` to authenticate.
 
 **How to apply:** the agent cannot write secret values itself (tooling blocks
 setting secret values). Verify presence via `viewEnvVars({type:"secret"})`, then
