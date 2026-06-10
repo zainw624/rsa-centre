@@ -1,0 +1,8 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "cD2Ea8ys9CP9ei3k_D5hN"
+uri = "file://artifacts/rsa-ops/public/assets/portugal.png"
+type = "image"
+title = "portugal crest"

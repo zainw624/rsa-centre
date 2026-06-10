@@ -819,10 +819,28 @@ export async function updateStandingsFromResult(data: {
   const awayWin  = awayScore > homeScore;
   const draw     = homeScore === awayScore;
 
-  const findEntry = (teamId: string) =>
-    prisma.leagueTable.findFirst({ where: { teamId, ...(seasonId ? { seasonId } : {}) } });
+  // Find the team's standings row — or create it on the fly so a result always
+  // moves the table (as long as we have a season and the team has a group).
+  const ensureEntry = async (team: { id: string; group: string | null }) => {
+    let entry = await prisma.leagueTable.findFirst({
+      where: { teamId: team.id, ...(seasonId ? { seasonId } : {}) },
+    });
+    if (!entry && seasonId && team.group) {
+      entry = await prisma.leagueTable.create({
+        data: {
+          teamId: team.id,
+          seasonId,
+          group: team.group,
+          position: 0,
+          played: 0, won: 0, drew: 0, lost: 0,
+          goalsFor: 0, goalsAgainst: 0, goalDifference: 0, points: 0,
+        },
+      });
+    }
+    return entry;
+  };
 
-  const [homeEntry, awayEntry] = await Promise.all([findEntry(homeTeam.id), findEntry(awayTeam.id)]);
+  const [homeEntry, awayEntry] = await Promise.all([ensureEntry(homeTeam), ensureEntry(awayTeam)]);
 
   const updates: Promise<any>[] = [];
 
@@ -908,5 +926,6 @@ export async function updateStandingsFromResult(data: {
     awayScore,
     homeEntry: Boolean(homeEntry),
     awayEntry: Boolean(awayEntry),
+    standingsUpdated: Boolean(homeEntry) && Boolean(awayEntry),
   };
 }

@@ -1,2 +1,3 @@
-- [Team payload sanitization](team-payload-sanitization.md) — strip Discord/role IDs + teamId from team objects before the client; keep cuid `id` for keys; pick latest league-table entry for record.
-- [Secrets storage](secrets-storage.md) — app secrets live in the encrypted Secrets store (NOT plaintext .replit); bot on Render uses DISCORD_TOKEN; ROLES_SYNC_SECRET must match web+bot.
+- [Bot ↔ website sync](bot-website-sync.md) — bot writes to web via `/api/bot/*` guarded by `x-sync-secret`==ROLES_SYNC_SECRET; non-fatal; needs WEBSITE_URL too.
+- [Standings auto-heal](standings-auto-heal.md) — updateStandingsFromResult creates missing LeagueTable rows from team.group+current season; returns standingsUpdated.
+- [Morocco replaced](morocco-replacement.md) — Morocco gone everywhere (Portugal/Sweden replace it); bot team lists duplicated across 5 files + teamRoles.ts, keep in sync.
