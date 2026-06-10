@@ -1,5 +1,6 @@
 {
-  "/api/bot/transfer-window/route": "app/api/bot/transfer-window/route.js",
-  "/api/bot/sign-status/route": "app/api/bot/sign-status/route.js",
+  "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
+  "/icon.png/route": "app/icon.png/route.js",
+  "/page": "app/page.js",
   "/login/page": "app/login/page.js"
 }
