@@ -2082,6 +2082,10 @@ video {
 .hover\:bg-destructive\/10:hover {
   background-color: hsl(var(--destructive) / 0.1);
 }
+.hover\:bg-emerald-600:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(5 150 105 / var(--tw-bg-opacity, 1));
+}
 .hover\:bg-muted:hover {
   background-color: hsl(var(--muted));
 }
@@ -2102,10 +2106,6 @@ video {
 }
 .hover\:bg-primary\/90:hover {
   background-color: hsl(var(--primary) / 0.9);
-}
-.hover\:bg-emerald-600:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(5 150 105 / var(--tw-bg-opacity, 1));
 }
 .hover\:text-destructive:hover {
   color: hsl(var(--destructive));
