@@ -2,7 +2,7 @@ import NotificationsClient from '@/components/NotificationsClient';
 
 export default function NotificationsPage() {
   return (
-    <div className="mx-auto w-full max-w-7xl">
+    <div className="space-y-6">
       <NotificationsClient />
     </div>
   );

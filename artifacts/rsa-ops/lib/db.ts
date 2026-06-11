@@ -436,7 +436,7 @@ export async function getSearchResults(query: string, type?: string) {
   const searchText = normalized.toLowerCase();
 
   if (!type || type === 'players') {
-    const players = await prisma.rosterPlayer.findMany({
+    const playerRows = await prisma.rosterPlayer.findMany({
       where: {
         OR: [
           { playerTag: { contains: searchText, mode: 'insensitive' } },
@@ -445,8 +445,20 @@ export async function getSearchResults(query: string, type?: string) {
         ],
       },
       include: { team: true, user: true },
-      take: 20,
+      orderBy: [{ active: 'desc' }, { joinedAt: 'desc' }],
+      take: 60,
     });
+    // A player can have multiple roster rows (historical/inactive, or legacy
+    // duplicates). Collapse to one entry per player, preferring the active row.
+    const seenPlayers = new Set<string>();
+    const players = playerRows
+      .filter((p) => {
+        const key = p.playerId || p.id;
+        if (seenPlayers.has(key)) return false;
+        seenPlayers.add(key);
+        return true;
+      })
+      .slice(0, 20);
     if (players.length) results.push({ category: 'Players', items: players });
   }
 
@@ -464,16 +476,28 @@ export async function getSearchResults(query: string, type?: string) {
   }
 
   if (!type || type === 'managers') {
-    const managers = await prisma.managerAssignment.findMany({
+    const managerRows = await prisma.managerAssignment.findMany({
       where: {
+        active: true,
         OR: [
           { user: { name: { contains: searchText, mode: 'insensitive' } } },
           { team: { teamName: { contains: searchText, mode: 'insensitive' } } },
         ],
       },
       include: { user: true, team: true },
-      take: 20,
+      orderBy: { assignedAt: 'desc' },
+      take: 60,
     });
+    // Collapse duplicate assignment rows to one entry per manager+team.
+    const seenManagers = new Set<string>();
+    const managers = managerRows
+      .filter((m) => {
+        const key = `${m.userId ?? m.id}:${m.teamId}`;
+        if (seenManagers.has(key)) return false;
+        seenManagers.add(key);
+        return true;
+      })
+      .slice(0, 20);
     if (managers.length) results.push({ category: 'Managers', items: managers });
   }
 

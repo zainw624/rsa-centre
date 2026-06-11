@@ -28,7 +28,7 @@ export default function TeamsClient({ initial }: { initial: any[] }) {
   }, [initial, refresh]);
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {teams.map((t: any) => (
         <TeamCard key={t.id} team={t} />
       ))}

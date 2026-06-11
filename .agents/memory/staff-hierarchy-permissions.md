@@ -12,11 +12,22 @@ model. The staff directory, the admin-panel gate, the session permission tier
 from it. Change roles here and the rest of the app follows.
 
 - Role strings MUST match the Discord role names **exactly, including casing and
-  spacing** (e.g. `RSA | Head of Development`, `RSA | Staff advisor`). Mapping is by
-  exact string; a casing mismatch silently drops a member to `viewer`.
+  spacing**. Two real Discord names are unintuitive: the dev-head role is MISSPELLED
+  `RSA | Head of Developement` (keep the typo — it matches Discord), and the senior
+  leadership role is bare `Leadership` (NO `RSA | ` prefix). Also `RSA | Staff advisor`
+  (lowercase a), `RSA | Bot Manager`. Mapping is by exact string; a mismatch silently
+  drops a member to `viewer`.
+- A member is only synced/displayed as staff if at least one of their roles is in
+  HIERARCHY (or MANAGER_ROLES). `isTrackedMember` gates the Discord sync, so a person
+  whose ONLY staff role is untracked (e.g. was `Leadership`, `RSA | Bot Manager`,
+  `RSA | Media`) is never written to the DB → invisible on the Staff page. Fix = add
+  the role to HIERARCHY + ROLE_DEPARTMENT, not just the staff page.
 - Permission tiers: leadership roles (CEO → Head Director) = `administrator`;
-  Executive → Staff = `league`; Officials = `results`; Managers = non-admin
-  `manager`; everyone else = `viewer`.
+  `Leadership` (bare) + Executive → Staff + `RSA | Bot Manager` = `league`;
+  Officials = `results`; Managers = non-admin `manager`; everyone else = `viewer`.
+  Tiers are RANK-THRESHOLD based (admin = rank ≥ Head Director, league = rank ≥ Staff),
+  so where a role sits in the HIERARCHY array determines its tier — place new roles
+  carefully to avoid accidental privilege escalation.
 - The capability model (`CAPABILITIES`/`can()`) defines what each tier may do. There
   is deliberately NO capability for editing site source, branding/themes, env
   vars/secrets, bot token, deployment, or DB credentials — **no role, not even

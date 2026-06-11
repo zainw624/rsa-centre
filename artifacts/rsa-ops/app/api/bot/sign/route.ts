@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prismaClient';
+import { TEAMS, teamIdForCode } from '@/lib/teamRoles';
 
 export const runtime = 'nodejs';
 
@@ -20,34 +21,69 @@ export async function POST(request: Request) {
       );
     }
 
-    const team = await prisma.team.upsert({
-      where: { teamId },
-      update: {
-        teamName,
-        teamCode: teamCode || '',
-        logo: logo || null,
-        roleId: roleId || null,
-        coachDiscordId: coachDiscordId || null,
-      },
-      create: {
-        teamId,
-        teamName,
-        teamCode: teamCode || '',
-        logo: logo || null,
-        roleId: roleId || null,
-        coachDiscordId: coachDiscordId || null,
-        rosterLimit: 16,
-      },
-    });
+    // Resolve to the canonical team. Discord role IDs are the single source of
+    // truth, so a slug-style teamId from the bot must never create a second row.
+    const canonicalDef =
+      (roleId && TEAMS.find((t) => t.roleId === roleId)) ||
+      TEAMS.find((t) => t.code === teamCode) ||
+      TEAMS.find((t) => t.name === teamName) ||
+      null;
 
-    const rosterPlayer = await prisma.rosterPlayer.create({
-      data: {
-        playerId,
-        playerTag,
-        teamId: team.id,
-        joinedAt: new Date(),
-      },
+    let team;
+    if (canonicalDef) {
+      const canonicalId = teamIdForCode(canonicalDef.code);
+      team = await prisma.team.upsert({
+        where: { teamId: canonicalId },
+        update: { coachDiscordId: coachDiscordId || undefined },
+        create: {
+          teamId: canonicalId,
+          teamName: canonicalDef.name,
+          teamCode: canonicalDef.code,
+          group: canonicalDef.group,
+          roleId: canonicalDef.roleId,
+          logo: `/assets/${canonicalDef.flag}.png`,
+          coachDiscordId: coachDiscordId || null,
+          rosterLimit: 16,
+        },
+      });
+    } else {
+      // Legacy fallback for teams not in the canonical list: resolve by role/code
+      // /name before creating, so we still avoid duplicate rows.
+      team =
+        (roleId ? await prisma.team.findFirst({ where: { roleId } }) : null) ||
+        (await prisma.team.findFirst({ where: { OR: [{ teamCode }, { teamName }] } }));
+      if (!team) {
+        team = await prisma.team.create({
+          data: {
+            teamId,
+            teamName,
+            teamCode: teamCode || '',
+            logo: logo || null,
+            roleId: roleId || null,
+            coachDiscordId: coachDiscordId || null,
+            rosterLimit: 16,
+          },
+        });
+      } else if (coachDiscordId) {
+        team = await prisma.team.update({ where: { id: team.id }, data: { coachDiscordId } });
+      }
+    }
+
+    // Avoid duplicate active roster rows (auto-sync also derives rosters from roles).
+    let rosterPlayer = await prisma.rosterPlayer.findFirst({
+      where: { teamId: team.id, playerId, active: true },
     });
+    if (!rosterPlayer) {
+      rosterPlayer = await prisma.rosterPlayer.create({
+        data: {
+          playerId,
+          playerTag,
+          teamId: team.id,
+          joinedAt: new Date(),
+          active: true,
+        },
+      });
+    }
 
     const transfer = await prisma.transfer.create({
       data: {
@@ -58,7 +94,7 @@ export async function POST(request: Request) {
         playerId,
         playerTag,
         fromTeam: 'Free Agent',
-        toTeam: teamName,
+        toTeam: team.teamName,
         teamId: team.id,
         sourceCommand: 'sign',
         reason: 'Signing initiated via sign command',
@@ -74,18 +110,18 @@ export async function POST(request: Request) {
         userId: body.staffId || '',
         targetPlayerId: playerId,
         targetTeamId: team.id,
-        details: `Player ${playerTag} signing initiated for ${teamName}`,
+        details: `Player ${playerTag} signing initiated for ${team.teamName}`,
       },
     });
 
     await prisma.activityLog.create({
       data: {
         type: 'sign',
-        text: `Player ${playerTag} signing initiated for ${teamName}`,
+        text: `Player ${playerTag} signing initiated for ${team.teamName}`,
         playerId,
         playerTag,
         teamId: team.id,
-        teamName,
+        teamName: team.teamName,
         staffId: body.staffId || null,
         metadata: {
           transactionId: body.transactionId,

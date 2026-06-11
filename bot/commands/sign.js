@@ -30,6 +30,7 @@ async function runAutoAccept(client, transactionId) {
   transaction.status = 'accepted';
   await saveTransactions(transactions);
   pendingTimeouts.delete(transactionId);
+  await postSignStatus({ transactionId, status: 'accepted', playerId: transaction.playerId, roleId: null });
 
   if (client.leagueMonitor?.transferManager?.addTransfer) {
     await recordTransfer(client, {
@@ -75,6 +76,23 @@ async function runAutoAccept(client, transactionId) {
 async function recordTransfer(client, transfer) {
   if (!client?.leagueMonitor?.transferManager?.addTransfer) return null;
   return client.leagueMonitor.transferManager.addTransfer(transfer);
+}
+
+// Non-fatal: mirror the contract outcome to the website. A failed POST must
+// never block the Discord-side action.
+async function postSignStatus({ transactionId, status, playerId, roleId }) {
+  const websiteUrl = process.env.WEBSITE_URL;
+  const syncSecret = process.env.ROLES_SYNC_SECRET;
+  if (!websiteUrl || !syncSecret) return;
+  try {
+    await fetch(`${websiteUrl}/api/bot/sign-status`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-sync-secret': syncSecret },
+      body: JSON.stringify({ transactionId, status, playerId, roleId }),
+    });
+  } catch (error) {
+    console.error('Failed to sync sign status to website:', error);
+  }
 }
 
 async function cleanupFailedSigning(member, teamRole, freeAgentRole, teamName) {
@@ -367,16 +385,6 @@ module.exports = {
       return;
     }
 
-    const dbTeam = await dbUpsertTeam({
-      teamId: team.teamId,
-      teamName: team.teamName,
-      teamCode: team.teamCode,
-      logo: team.logo,
-      roleId: team.roleId,
-      coachDiscordId: transaction.staffId,
-      rosterLimit: team.rosterLimit,
-    });
-
     const guild = await interaction.client.guilds.fetch(transaction.guildId).catch(() => null);
     if (!guild) {
       await interaction.reply({ content: '❌ Unable to access the guild that initiated the contract.', flags: 64 });
@@ -409,14 +417,11 @@ module.exports = {
       try {
         transaction.status = 'accepted';
         await saveTransactions(transactions);
-        await dbUpdateTransferStatus(transactionId, 'accepted');
-        await dbCreateAuditLog({
-          actionType: 'sign_accepted',
-          sourceCommand: 'sign',
-          userId: interaction.user.id,
-          targetPlayerId: transaction.playerId,
-          targetTeamId: dbTeam.id,
-          details: `Player ${transaction.playerTag} accepted signing with ${team.teamName}`,
+        await postSignStatus({
+          transactionId,
+          status: 'accepted',
+          playerId: transaction.playerId,
+          roleId: team.roleId,
         });
       } catch (error) {
         console.error('Failed to save transaction on accept:', error);
@@ -480,15 +485,11 @@ module.exports = {
       try {
         transaction.status = 'declined';
         await saveTransactions(transactions);
-        await dbUpdateTransferStatus(transactionId, 'declined');
-        await dbRemoveRosterPlayer({ teamId: dbTeam.id, playerId: targetMember.id });
-        await dbCreateAuditLog({
-          actionType: 'sign_declined',
-          sourceCommand: 'sign',
-          userId: interaction.user.id,
-          targetPlayerId: transaction.playerId,
-          targetTeamId: dbTeam.id,
-          details: `Player ${transaction.playerTag} declined signing with ${team.teamName}`,
+        await postSignStatus({
+          transactionId,
+          status: 'declined',
+          playerId: transaction.playerId,
+          roleId: team.roleId,
         });
       } catch (error) {
         console.error('Failed to save declined transaction:', error);

@@ -2,14 +2,12 @@ import React from 'react';
 
 export default function StatCard({ title, value, icon }: { title: string; value: string | number; icon?: React.ReactNode }) {
   return (
-    <div className="card rounded-2xl border border-rsa-border p-4">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-xs uppercase tracking-widest text-rsa-gold">{title}</p>
-          <div className="mt-2 text-2xl font-semibold text-white">{value}</div>
-        </div>
-        {icon && <div className="text-2xl text-white/80">{icon}</div>}
+    <div className="card-panel p-5 flex flex-col justify-between h-full group hover:bg-muted/5 transition-colors">
+      <div className="flex items-center justify-between mb-4">
+        <p className="text-[0.65rem] font-bold uppercase tracking-wider text-muted-foreground group-hover:text-primary transition-colors">{title}</p>
+        {icon && <div className="text-muted-foreground/50 group-hover:text-primary/70 transition-colors">{icon}</div>}
       </div>
+      <div className="text-3xl font-bold text-foreground font-display tracking-tight">{value}</div>
     </div>
   );
 }
