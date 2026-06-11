@@ -1,7 +1,23 @@
 "use client";
 import React, { useCallback, useState } from 'react';
 import Image from 'next/image';
-import { Plus, Calendar } from 'lucide-react';
+import { Plus, Calendar, Pencil } from 'lucide-react';
+
+function toLocalInput(value: string | Date): string {
+  const dt = new Date(value);
+  if (Number.isNaN(dt.getTime())) return '';
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}T${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
+}
+
+// Splits a competition label like "RSA World Cup 2026 · Group D" into its base
+// name and group letter so editing doesn't double-append the group suffix.
+function parseCompetition(value?: string | null): { base: string; group: string } {
+  const raw = (value ?? '').trim();
+  const m = raw.match(/^(.*?)\s*·\s*Group\s+([A-D])\s*$/i);
+  if (m) return { base: m[1].trim(), group: m[2].toUpperCase() };
+  return { base: raw, group: '' };
+}
 
 interface TeamOption {
   name: string;
@@ -35,8 +51,17 @@ export default function FixturesClient({
 }) {
   const [fixtures, setFixtures] = useState<any[]>(initial || []);
   const [isCreating, setIsCreating] = useState(false);
+  const [editing, setEditing] = useState<any | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const formOpen = isCreating || !!editing;
+
+  const closeForm = useCallback(() => {
+    setIsCreating(false);
+    setEditing(null);
+    setError(null);
+  }, []);
 
   const refresh = useCallback(async () => {
     const res = await fetch('/api/fixtures');
@@ -51,10 +76,11 @@ export default function FixturesClient({
     [teams]
   );
 
-  const handleCreate = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
 
+    const isEdit = !!editing;
     const form = new FormData(e.currentTarget);
     const homeCode = String(form.get('homeTeamCode') || '');
     const awayCode = String(form.get('awayTeamCode') || '');
@@ -76,11 +102,12 @@ export default function FixturesClient({
       return;
     }
 
-    const baseCompetition = String(form.get('competition') || '').trim() || 'RSA World Cup 2026';
+    const enteredCompetition = String(form.get('competition') || '').trim();
+    const baseCompetition = parseCompetition(enteredCompetition).base || 'RSA World Cup 2026';
     const group = String(form.get('group') || '');
     const competition = group ? `${baseCompetition} · Group ${group}` : baseCompetition;
 
-    const payload = {
+    const payload: Record<string, unknown> = {
       homeTeam: home.name,
       homeTeamCode: home.code,
       awayTeam: away.name,
@@ -90,11 +117,12 @@ export default function FixturesClient({
       venue: String(form.get('venue') || '').trim() || null,
       notes: String(form.get('notes') || '').trim() || null,
     };
+    if (isEdit) payload.id = editing.id;
 
     setSubmitting(true);
     try {
       const res = await fetch('/api/fixtures', {
-        method: 'POST',
+        method: isEdit ? 'PATCH' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
@@ -102,16 +130,16 @@ export default function FixturesClient({
         const data = await res.json().catch(() => ({}));
         setError(
           res.status === 403
-            ? 'You do not have permission to add fixtures.'
-            : data?.error || 'Could not add the fixture. Please try again.'
+            ? `You do not have permission to ${isEdit ? 'edit' : 'add'} fixtures.`
+            : data?.error || `Could not ${isEdit ? 'update' : 'add'} the fixture. Please try again.`
         );
         return;
       }
-      setIsCreating(false);
+      closeForm();
       (e.target as HTMLFormElement).reset();
       await refresh();
     } catch {
-      setError('Could not add the fixture. Please try again.');
+      setError(`Could not ${isEdit ? 'update' : 'add'} the fixture. Please try again.`);
     } finally {
       setSubmitting(false);
     }
@@ -126,27 +154,35 @@ export default function FixturesClient({
         <div className="flex justify-end">
           <button
             onClick={() => {
-              setError(null);
-              setIsCreating((v) => !v);
+              if (formOpen) {
+                closeForm();
+              } else {
+                setError(null);
+                setEditing(null);
+                setIsCreating(true);
+              }
             }}
             className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-xl text-sm font-bold shadow-sm hover:bg-primary/90 transition-colors"
           >
             <Plus className="w-4 h-4" />
-            {isCreating ? 'Cancel' : 'Add Fixture'}
+            {formOpen ? 'Cancel' : 'Add Fixture'}
           </button>
         </div>
       )}
 
-      {isAdmin && isCreating && (
+      {isAdmin && formOpen && (
         <form
-          onSubmit={handleCreate}
+          key={editing?.id ?? 'new'}
+          onSubmit={handleSubmit}
           className="card-panel p-5 animate-in fade-in slide-in-from-top-4 border-primary/30"
         >
-          <h3 className="text-lg font-bold text-foreground font-display mb-4">Schedule New Fixture</h3>
+          <h3 className="text-lg font-bold text-foreground font-display mb-4">
+            {editing ? 'Edit Fixture' : 'Schedule New Fixture'}
+          </h3>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Home Team</label>
-              <select name="homeTeamCode" required defaultValue="" className={inputClass}>
+              <select name="homeTeamCode" required defaultValue={editing?.homeTeamCode ?? ''} className={inputClass}>
                 <option value="" disabled>Select home team</option>
                 {teams.map((t) => (
                   <option key={t.code} value={t.code}>{t.name} (Group {t.group})</option>
@@ -155,7 +191,7 @@ export default function FixturesClient({
             </div>
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Away Team</label>
-              <select name="awayTeamCode" required defaultValue="" className={inputClass}>
+              <select name="awayTeamCode" required defaultValue={editing?.awayTeamCode ?? ''} className={inputClass}>
                 <option value="" disabled>Select away team</option>
                 {teams.map((t) => (
                   <option key={t.code} value={t.code}>{t.name} (Group {t.group})</option>
@@ -165,11 +201,11 @@ export default function FixturesClient({
 
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Kickoff (date &amp; time)</label>
-              <input name="kickoff" type="datetime-local" required className={`${inputClass} [color-scheme:dark]`} />
+              <input name="kickoff" type="datetime-local" required defaultValue={editing ? toLocalInput(editing.kickoff) : ''} className={`${inputClass} [color-scheme:dark]`} />
             </div>
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Group (optional)</label>
-              <select name="group" defaultValue="" className={inputClass}>
+              <select name="group" defaultValue={editing ? parseCompetition(editing.competition).group : ''} className={inputClass}>
                 <option value="">No group</option>
                 <option value="A">Group A</option>
                 <option value="B">Group B</option>
@@ -180,16 +216,16 @@ export default function FixturesClient({
 
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Competition</label>
-              <input name="competition" defaultValue="RSA World Cup 2026" required className={inputClass} />
+              <input name="competition" defaultValue={editing ? parseCompetition(editing.competition).base : 'RSA World Cup 2026'} required className={inputClass} />
             </div>
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Venue (optional)</label>
-              <input name="venue" placeholder="e.g. Wembley" className={inputClass} />
+              <input name="venue" defaultValue={editing?.venue ?? ''} placeholder="e.g. Wembley" className={inputClass} />
             </div>
 
             <div className="space-y-1.5 sm:col-span-2">
               <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Notes (optional)</label>
-              <input name="notes" placeholder="Any extra details" className={inputClass} />
+              <input name="notes" defaultValue={editing?.notes ?? ''} placeholder="Any extra details" className={inputClass} />
             </div>
           </div>
 
@@ -197,13 +233,21 @@ export default function FixturesClient({
             <p className="mt-4 text-sm font-semibold text-destructive">{error}</p>
           )}
 
-          <div className="mt-5 flex justify-end">
+          <div className="mt-5 flex justify-end gap-2">
+            <button
+              type="button"
+              onClick={closeForm}
+              disabled={submitting}
+              className="border border-border text-foreground px-5 py-2 rounded-lg text-sm font-bold hover:bg-muted transition-colors disabled:opacity-60"
+            >
+              Cancel
+            </button>
             <button
               type="submit"
               disabled={submitting}
               className="bg-primary text-primary-foreground px-6 py-2 rounded-lg text-sm font-bold shadow-sm hover:bg-primary/90 transition-colors disabled:opacity-60"
             >
-              {submitting ? 'Saving…' : 'Save Fixture'}
+              {submitting ? 'Saving…' : editing ? 'Update Fixture' : 'Save Fixture'}
             </button>
           </div>
         </form>
@@ -258,6 +302,23 @@ export default function FixturesClient({
               {f.notes && (
                 <div className="mt-4 pt-3 border-t border-border/50 text-xs text-muted-foreground font-medium">
                   {f.notes}
+                </div>
+              )}
+
+              {isAdmin && (
+                <div className="mt-4 pt-3 border-t border-border/50 flex justify-end">
+                  <button
+                    onClick={() => {
+                      setError(null);
+                      setIsCreating(false);
+                      setEditing(f);
+                      if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="flex items-center gap-1.5 text-xs font-bold text-primary hover:text-primary/80 transition-colors"
+                  >
+                    <Pencil className="w-3.5 h-3.5" />
+                    Edit
+                  </button>
                 </div>
               )}
             </div>

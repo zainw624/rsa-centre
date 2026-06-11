@@ -2116,6 +2116,9 @@ video {
 .hover\:text-primary:hover {
   color: hsl(var(--primary));
 }
+.hover\:text-primary\/80:hover {
+  color: hsl(var(--primary) / 0.8);
+}
 .hover\:underline:hover {
   text-decoration-line: underline;
 }
