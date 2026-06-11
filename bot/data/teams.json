@@ -11,12 +11,12 @@
       "rosterPlayers": []
     },
     {
-      "teamId": "sweden",
-      "teamName": "Sweden",
-      "teamCode": "SWE",
-      "roleId": "1512811729166405763",
+      "teamId": "morocco",
+      "teamName": "Morocco",
+      "teamCode": "MAR",
+      "roleId": "1512180934026330365",
       "coachDiscordId": "",
-      "logo": "assets/sweden.png",
+      "logo": "assets/morocco.png",
       "rosterLimit": 16,
       "rosterPlayers": []
     },

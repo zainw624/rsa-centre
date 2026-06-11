@@ -36,7 +36,7 @@ export const TEAMS: TeamDef[] = [
   { name: 'Netherlands',   code: 'NED', group: 'D', roleId: '1512180758653960312', flag: 'netherlands' },
   { name: 'Germany',       code: 'GER', group: 'D', roleId: '1512180806414635039', flag: 'germany' },
   { name: 'Senegal',       code: 'SEN', group: 'D', roleId: '1512180889663180920', flag: 'senegal' },
-  { name: 'Sweden',        code: 'SWE', group: 'D', roleId: '1512811729166405763', flag: 'sweden' },
+  { name: 'Morocco',       code: 'MAR', group: 'D', roleId: '1512180934026330365', flag: 'morocco' },
 ];
 
 /** Alternative team-name spellings → canonical team name. */
@@ -90,42 +90,6 @@ export async function ensureTeams(prisma: any): Promise<void> {
         logo,
       },
     });
-  }
-}
-
-/**
- * Best-effort removal of any legacy "Morocco" team and its dependent records.
- * Morocco has been permanently replaced by Sweden across the platform.
- */
-export async function removeMorocco(prisma: any): Promise<void> {
-  try {
-    const teams = await prisma.team.findMany({
-      where: {
-        OR: [
-          { teamName: { contains: 'Morocco', mode: 'insensitive' } },
-          { teamCode: { in: ['MAR', 'MOR'] } },
-          { teamId: { in: ['mar', 'mor'] } },
-        ],
-      },
-    });
-
-    for (const team of teams) {
-      // Delete dependent rows that require a team relation.
-      await prisma.leagueTable.deleteMany({ where: { teamId: team.id } });
-      await prisma.rosterPlayer.deleteMany({ where: { teamId: team.id } });
-      await prisma.managerAssignment.deleteMany({ where: { teamId: team.id } });
-      await prisma.playerStat.deleteMany({ where: { teamId: team.id } });
-      await prisma.award.deleteMany({ where: { teamId: team.id } });
-      await prisma.staffRole.deleteMany({ where: { teamId: team.id } });
-      // Detach optional references so the team can be deleted.
-      await prisma.fixture.updateMany({ where: { teamId: team.id }, data: { teamId: null } });
-      await prisma.result.updateMany({ where: { teamId: team.id }, data: { teamId: null } });
-      await prisma.sanction.updateMany({ where: { teamId: team.id }, data: { teamId: null } });
-      await prisma.transfer.updateMany({ where: { teamId: team.id }, data: { teamId: null } });
-      await prisma.team.delete({ where: { id: team.id } });
-    }
-  } catch (err: any) {
-    console.warn('[teamRoles] removeMorocco cleanup skipped:', err?.message);
   }
 }
 

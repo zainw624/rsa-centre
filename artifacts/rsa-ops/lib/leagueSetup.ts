@@ -9,7 +9,7 @@
  * Requires NO user login. Idempotent — safe to call repeatedly.
  */
 import { prisma } from '@/lib/prismaClient';
-import { TEAMS, ensureTeams, removeMorocco, teamIdForCode } from '@/lib/teamRoles';
+import { TEAMS, ensureTeams, teamIdForCode } from '@/lib/teamRoles';
 
 export interface SeedGroupsResult {
   ok: boolean;
@@ -48,9 +48,8 @@ export async function seedSeasonGroups(): Promise<SeedGroupsResult> {
     }
   }
 
-  // 2. Ensure all 16 canonical teams exist (with role IDs/logos) and purge Morocco.
+  // 2. Ensure all 16 canonical teams exist (with role IDs/logos).
   await ensureTeams(prisma);
-  await removeMorocco(prisma);
 
   const created: string[] = [];
   const skipped: string[] = [];
