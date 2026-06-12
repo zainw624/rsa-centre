@@ -2,3 +2,4 @@
 - [Standings auto-heal](standings-auto-heal.md) — updateStandingsFromResult creates missing LeagueTable rows from team.group+current season; returns standingsUpdated.
 - [Morocco replaced](morocco-replacement.md) — Morocco gone everywhere (Portugal/Sweden replace it); bot team lists duplicated across 5 files + teamRoles.ts, keep in sync.
 - [Staff hierarchy & permissions](staff-hierarchy-permissions.md) — lib/permissions.ts is the single source of truth; role strings must match Discord exactly; no role can edit source/secrets/deploy.
+- [/sign & illegal-signing](sign-and-illegal-signing.md) — /sign gated in execute() (Manager/AsstMgr + team role), not registration; illegal flag only on cup-tied/sanctioned; Portugal already canonical (same roleId bot+web).

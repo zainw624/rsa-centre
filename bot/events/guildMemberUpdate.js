@@ -1,6 +1,6 @@
 const { getTeamByRoleId } = require('../utils/teams');
 const { loadSettings } = require('../utils/settings');
-const { findSignTransactionForPlayer, addTransaction, createTransactionId } = require('../utils/transactions');
+const { addTransaction, createTransactionId } = require('../utils/transactions');
 const { buildIllegalSigningEmbed } = require('../utils/embeds');
 const ManagerManager = require('../services/ManagerManager');
 const AssistantManager = require('../services/AssistantManager');
@@ -44,20 +44,16 @@ module.exports = {
       const team = await getTeamByRoleId(roleId, newMember.guild);
       if (!team) continue;
 
-      // Debounce briefly to allow sign flows to complete and transactions to be recorded
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      // Re-fetch team to get up-to-date roster
-      const freshTeam = await getTeamByRoleId(roleId, newMember.guild);
-      const transaction = await findSignTransactionForPlayer(newMember.id, freshTeam?.teamCode || team.teamCode);
-      const rostered = Array.isArray(freshTeam?.rosterPlayers) ? freshTeam.rosterPlayers.some((entry) => entry.playerId === newMember.id) : false;
-      const validTransaction = transaction && ['pending', 'accepted', 'completed'].includes(transaction.status) && transaction.transferWindowOpen === true;
-      if (validTransaction && rostered) continue;
+      // Manually assigning a national team role is NOT treated as an illegal
+      // signing on its own. Only flag when there is clear evidence of a real
+      // rule breach — the player is Cup Tied or under an active sanction.
+      const isCupTied = settings.cupTiedRoleId && newMember.roles.cache.has(settings.cupTiedRoleId);
+      const isSanctioned = settings.sanctionedRoleId && newMember.roles.cache.has(settings.sanctionedRoleId);
+      if (!isCupTied && !isSanctioned) continue;
 
       const issueParts = [];
-      if (!transaction) issueParts.push('No valid signing transaction found.');
-      if (transaction && transaction.transferWindowOpen !== true) issueParts.push('Transfer window was not marked open.');
-      if (!rostered) issueParts.push('Player is not listed on the team roster.');
+      if (isCupTied) issueParts.push('Player is Cup Tied and is ineligible to sign for another national team.');
+      if (isSanctioned) issueParts.push('Player is sanctioned and cannot be signed while the sanction is active.');
 
       const transactionId = createTransactionId();
       await addTransaction({
@@ -66,14 +62,14 @@ module.exports = {
         status: 'flagged',
         playerId: newMember.id,
         playerTag: newMember.user.tag,
-        teamCode: freshTeam?.teamCode || team.teamCode,
-        teamName: freshTeam?.teamName || team.teamName,
+        teamCode: team.teamCode,
+        teamName: team.teamName,
         staffId: null,
         reason: issueParts.join(' '),
         timestamp: new Date().toISOString(),
       });
 
-      const embed = buildIllegalSigningEmbed(`<@${newMember.id}>`, freshTeam?.teamName || team.teamName, issueParts.join(' '), transactionId);
+      const embed = buildIllegalSigningEmbed(`<@${newMember.id}>`, team.teamName, issueParts.join(' '), transactionId);
       if (contractsChannel && contractsChannel.isTextBased()) {
         await contractsChannel.send({ embeds: [embed] }).catch(() => null);
       }

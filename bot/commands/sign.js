@@ -130,8 +130,12 @@ module.exports = {
       return;
     }
 
-    if (!memberHasRoleNames(interaction.member, settings.managerRoleNames)) {
-      await interaction.editReply({ content: '❌ You do not have permission to use this command.' });
+    // Executable only by Managers / Assistant Managers who also hold a national
+    // team role. The command stays visible to everyone; this gate is enforced here.
+    const isManager = memberHasRoleNames(interaction.member, settings.managerRoleNames);
+    const managerTeam = await getTeamForMember(interaction.member);
+    if (!isManager || !managerTeam) {
+      await interaction.editReply({ content: '❌ You must be a Manager or Assistant Manager with a national team role to use this command.' });
       return;
     }
 
