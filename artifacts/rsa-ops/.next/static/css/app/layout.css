@@ -1887,6 +1887,10 @@ video {
   --tw-text-opacity: 1;
   color: rgb(148 163 184 / var(--tw-text-opacity, 1));
 }
+.text-white {
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity, 1));
+}
 .antialiased {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -2078,6 +2082,10 @@ video {
 .hover\:bg-destructive\/10:hover {
   background-color: hsl(var(--destructive) / 0.1);
 }
+.hover\:bg-emerald-600:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(5 150 105 / var(--tw-bg-opacity, 1));
+}
 .hover\:bg-muted:hover {
   background-color: hsl(var(--muted));
 }
@@ -2107,6 +2115,9 @@ video {
 }
 .hover\:text-primary:hover {
   color: hsl(var(--primary));
+}
+.hover\:text-primary\/80:hover {
+  color: hsl(var(--primary) / 0.8);
 }
 .hover\:underline:hover {
   text-decoration-line: underline;
@@ -2144,6 +2155,9 @@ video {
 .disabled\:opacity-50:disabled {
   opacity: 0.5;
 }
+.disabled\:opacity-60:disabled {
+  opacity: 0.6;
+}
 .group:focus-within .group-focus-within\:text-primary {
   color: hsl(var(--primary));
 }
@@ -2174,6 +2188,10 @@ video {
   opacity: 1;
 }
 @media (min-width: 640px) {
+
+  .sm\:col-span-2 {
+    grid-column: span 2 / span 2;
+  }
 
   .sm\:block {
     display: block;

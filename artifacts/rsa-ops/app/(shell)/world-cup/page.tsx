@@ -213,16 +213,17 @@ const FLAG_MAP: Record<string, string> = {
   'united states': 'usa', usa: 'usa', norway: 'norway', croatia: 'croatia', japan: 'japan',
   ghana: 'ghana', 'türkiye': 'turkiye', turkiye: 'turkiye', brazil: 'brazil', belgium: 'belgium',
   portugal: 'portugal', england: 'england', france: 'france', spain: 'spain',
-  netherlands: 'netherlands', germany: 'germany', senegal: 'senegal', sweden: 'sweden',
+  netherlands: 'netherlands', germany: 'germany', senegal: 'senegal', morocco: 'morocco',
 };
 
 function flagFor(name?: string, code?: string): string | null {
-  if (code) return `/assets/${code.toLowerCase()}.png`;
-  if (!name) return null;
-  const key = name.toLowerCase();
-  for (const [k, v] of Object.entries(FLAG_MAP)) {
-    if (key.includes(k)) return `/assets/${v}.png`;
+  if (name) {
+    const key = name.toLowerCase();
+    for (const [k, v] of Object.entries(FLAG_MAP)) {
+      if (key.includes(k)) return `/assets/${v}.png`;
+    }
   }
+  if (code) return `/assets/${code.toLowerCase()}.png`;
   return null;
 }
 

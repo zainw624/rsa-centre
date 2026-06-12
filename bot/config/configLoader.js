@@ -10,7 +10,7 @@ const DEFAULT_CONFIG = {
   assistantManagerRoleNames: ['RSA | Assistant Managers'],
   nationalTeamRoleNames: [
     'Belgium', 'Brazil', 'Croatia', 'England', 'France', 'Germany', 'Ghana', 'Japan',
-    'Netherlands', 'Norway', 'Portugal', 'Senegal', 'Spain', 'Sweden', 'Türkiye', 'USA'
+    'Netherlands', 'Norway', 'Portugal', 'Senegal', 'Spain', 'Morocco', 'Türkiye', 'USA'
   ],
 };
 

@@ -1,7 +1,7 @@
 /**
  * League setup helpers — season + group standings seeding.
  *
- * seedSeasonGroups() initialises the current competitive season ("Season 2026")
+ * seedSeasonGroups() initialises the current competitive season ("World Cup 2026")
  * and creates an empty LeagueTable row for each of the 16 canonical teams in its
  * World Cup group (A–D). This is what makes the Group Stage / League Table pages
  * show every team grouped, before any results have been recorded.
@@ -9,7 +9,7 @@
  * Requires NO user login. Idempotent — safe to call repeatedly.
  */
 import { prisma } from '@/lib/prismaClient';
-import { TEAMS, ensureTeams, removeMorocco, teamIdForCode } from '@/lib/teamRoles';
+import { TEAMS, ensureTeams, teamIdForCode } from '@/lib/teamRoles';
 
 export interface SeedGroupsResult {
   ok: boolean;
@@ -21,18 +21,35 @@ export interface SeedGroupsResult {
 }
 
 export async function seedSeasonGroups(): Promise<SeedGroupsResult> {
-  // 1. Upsert Season 2026 and mark it current.
-  let season = await prisma.season.findFirst({ where: { name: 'Season 2026' } });
+  // 1. Upsert the current season and mark it current.
+  // Migrate the legacy "Season 2026" name to "World Cup 2026" if it exists.
+  const SEASON_NAME = 'World Cup 2026';
+  await prisma.season.updateMany({ where: { name: 'Season 2026' }, data: { name: SEASON_NAME } });
+
+  // Deterministically pick ONE canonical season (prefer the row already marked
+  // current, then the newest) and guarantee exactly one row is current — so
+  // getCurrentSeason() and league-table inserts never bind to an arbitrary row.
+  let season = await prisma.season.findFirst({
+    where: { name: SEASON_NAME },
+    orderBy: [{ current: 'desc' }, { startDate: 'desc' }],
+  });
   if (!season) {
     await prisma.season.updateMany({ where: { current: true }, data: { current: false } });
     season = await prisma.season.create({
-      data: { name: 'Season 2026', current: true, startDate: new Date('2026-01-01') },
+      data: { name: SEASON_NAME, current: true, startDate: new Date('2026-01-01') },
     });
+  } else {
+    await prisma.season.updateMany({
+      where: { current: true, NOT: { id: season.id } },
+      data: { current: false },
+    });
+    if (!season.current) {
+      season = await prisma.season.update({ where: { id: season.id }, data: { current: true } });
+    }
   }
 
-  // 2. Ensure all 16 canonical teams exist (with role IDs/logos) and purge Morocco.
+  // 2. Ensure all 16 canonical teams exist (with role IDs/logos).
   await ensureTeams(prisma);
-  await removeMorocco(prisma);
 
   const created: string[] = [];
   const skipped: string[] = [];

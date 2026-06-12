@@ -6,7 +6,7 @@ const { getLeadershipStats } = require('./leadership');
 const { getUpcomingFixtures } = require('./fixtures');
 
 const TEAMS_PAGE_1 = ['Belgium', 'Brazil', 'Croatia', 'England', 'France', 'Germany', 'Ghana', 'Japan'];
-const TEAMS_PAGE_2 = ['Netherlands', 'Norway', 'Portugal', 'Senegal', 'Spain', 'Sweden', 'Türkiye', 'USA'];
+const TEAMS_PAGE_2 = ['Netherlands', 'Norway', 'Portugal', 'Senegal', 'Spain', 'Morocco', 'Türkiye', 'USA'];
 
 /**
  * Get team logo attachment

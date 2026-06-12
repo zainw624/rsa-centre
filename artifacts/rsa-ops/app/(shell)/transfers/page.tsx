@@ -1,5 +1,8 @@
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 import { getTransfers, getSettings } from '@/lib/db';
 import TransfersClient from '@/components/TransfersClient';
+import TransferWindowToggle from '@/components/TransferWindowToggle';
 import { BrandHeader } from '@/components/BrandHeader';
 import { Replace } from 'lucide-react';
 
@@ -9,6 +12,10 @@ export default async function TransfersPage() {
   let transfers: any[] = [];
   let settings: any = null;
   let dbError = false;
+
+  const session: any = await getServerSession(authOptions as any);
+  const isOwner =
+    !!session?.user?.discordId && process.env.BOT_OWNER_ID === session.user.discordId;
 
   try {
     [transfers, settings] = await Promise.all([getTransfers(25), getSettings()]);
@@ -39,6 +46,12 @@ export default async function TransfersPage() {
           </div>
         )}
       </div>
+
+      {!dbError && isOwner && (
+        <div className="flex justify-end">
+          <TransferWindowToggle initialOpen={!!windowOpen} />
+        </div>
+      )}
 
       {dbError ? (
         <div className="card-panel border-amber-500/20 bg-amber-500/5 p-8 text-center">

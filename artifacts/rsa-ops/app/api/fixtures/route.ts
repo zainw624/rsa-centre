@@ -17,7 +17,11 @@ async function notify(eventType: string, payload: any) {
 }
 
 export async function GET() {
-  const upcoming = await prisma.fixture.findMany({ where: { archived: false }, orderBy: { kickoff: 'asc' } });
+  const upcoming = await prisma.fixture.findMany({
+    where: { archived: false, status: 'scheduled' },
+    orderBy: { kickoff: 'asc' },
+    take: 50,
+  });
   return NextResponse.json(upcoming);
 }
 
@@ -31,13 +35,28 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json().catch(() => ({}));
+
+  const homeTeam = typeof body.homeTeam === 'string' ? body.homeTeam.trim() : '';
+  const awayTeam = typeof body.awayTeam === 'string' ? body.awayTeam.trim() : '';
+  const kickoff = new Date(body.kickoff);
+
+  if (!homeTeam || !awayTeam) {
+    return NextResponse.json({ error: 'Home and away teams are required.' }, { status: 400 });
+  }
+  if (homeTeam === awayTeam) {
+    return NextResponse.json({ error: 'Home and away teams must be different.' }, { status: 400 });
+  }
+  if (Number.isNaN(kickoff.getTime())) {
+    return NextResponse.json({ error: 'A valid kickoff date and time is required.' }, { status: 400 });
+  }
+
   const fixture = await prisma.fixture.create({ data: {
-    homeTeam: body.homeTeam,
-    awayTeam: body.awayTeam,
-    homeTeamCode: body.homeTeamCode,
-    awayTeamCode: body.awayTeamCode,
-    kickoff: new Date(body.kickoff),
-    competition: body.competition,
+    homeTeam,
+    awayTeam,
+    homeTeamCode: body.homeTeamCode || null,
+    awayTeamCode: body.awayTeamCode || null,
+    kickoff,
+    competition: body.competition || null,
     venue: body.venue || null,
     notes: body.notes || null,
     creatorId: session.user.id,
@@ -52,6 +71,56 @@ export async function POST(request: Request) {
     payload: { id: fixture.id, homeTeam: fixture.homeTeam, awayTeam: fixture.awayTeam },
     readBy: [],
   });
+
+  return NextResponse.json(fixture);
+}
+
+export async function PATCH(request: Request) {
+  const session: any = await getServerSession(authOptions as any);
+  if (!session || !session.user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+
+  const permission = session.user.permission || 'viewer';
+  if (!(can(permission, 'manageFixtures') || process.env.BOT_OWNER_ID === session.user.discordId)) {
+    return NextResponse.json({ error: 'forbidden' }, { status: 403 });
+  }
+
+  const body = await request.json().catch(() => ({}));
+
+  const id = typeof body.id === 'string' ? body.id.trim() : '';
+  const homeTeam = typeof body.homeTeam === 'string' ? body.homeTeam.trim() : '';
+  const awayTeam = typeof body.awayTeam === 'string' ? body.awayTeam.trim() : '';
+  const kickoff = new Date(body.kickoff);
+
+  if (!id) {
+    return NextResponse.json({ error: 'Fixture id is required.' }, { status: 400 });
+  }
+  if (!homeTeam || !awayTeam) {
+    return NextResponse.json({ error: 'Home and away teams are required.' }, { status: 400 });
+  }
+  if (homeTeam === awayTeam) {
+    return NextResponse.json({ error: 'Home and away teams must be different.' }, { status: 400 });
+  }
+  if (Number.isNaN(kickoff.getTime())) {
+    return NextResponse.json({ error: 'A valid kickoff date and time is required.' }, { status: 400 });
+  }
+
+  const existing = await prisma.fixture.findUnique({ where: { id } });
+  if (!existing) {
+    return NextResponse.json({ error: 'Fixture not found.' }, { status: 404 });
+  }
+
+  const fixture = await prisma.fixture.update({ where: { id }, data: {
+    homeTeam,
+    awayTeam,
+    homeTeamCode: body.homeTeamCode || null,
+    awayTeamCode: body.awayTeamCode || null,
+    kickoff,
+    competition: body.competition || null,
+    venue: body.venue || null,
+    notes: body.notes || null,
+  }});
+
+  await notify('fixtureUpdated', { id: fixture.id, homeTeam: fixture.homeTeam, awayTeam: fixture.awayTeam });
 
   return NextResponse.json(fixture);
 }
